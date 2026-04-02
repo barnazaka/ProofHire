@@ -112,5 +112,4 @@ Follow these steps for a polished presentation:
 - **Encrypted Proofs:** Midnight's ZK primitives ensure only mathematical commitments are on-chain.
 - **Selective Disclosure:** Users choose exactly which claims to prove.
 
----
-Built with ❤️ for the Midnight Hackathon.
+Lets gooooooo🚀
