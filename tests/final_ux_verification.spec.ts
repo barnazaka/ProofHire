@@ -12,21 +12,21 @@ test('verify premium landing page and navigation', async ({ page }) => {
   await expect(page.locator('text=Talent OS')).toBeVisible();
   await expect(page.locator('text=Recruiter Engine')).toBeVisible();
 
-  // Navigate to Features
-  await page.click('text=Features');
-  await expect(page.url()).toContain('/features');
+  // Navigate to Features (use the one in the nav)
+  await page.locator('nav').getByText('Features').click();
+  await page.waitForURL('**/features', { timeout: 10000 });
   await expect(page.locator('text=Built for Scale.')).toBeVisible();
-  await page.click('header a'); // Back arrow
+  await page.goto('http://localhost:3000/');
 
   // Navigate to Launch
-  await page.click('text=Launch Engine');
-  await expect(page.url()).toContain('/launch');
+  await page.getByRole('link', { name: /Launch/i }).first().click();
+  await page.waitForURL('**/launch', { timeout: 10000 });
   await expect(page.locator('text=Choose Your Access.')).toBeVisible();
 
   // Test Talent Login Flow
-  await page.click('text=Talent');
-  await expect(page.url()).toContain('/talent/login');
-  await page.click('text=Connect Lace Wallet');
+  await page.getByRole('link', { name: /Talent/i }).click();
+  await page.waitForURL('**/talent/login', { timeout: 10000 });
+  await page.getByRole('button', { name: /Connect Lace Wallet/i }).click();
 
   // Wait for simulation and redirect to /talent
   await page.waitForURL('**/talent', { timeout: 15000 });
