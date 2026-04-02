@@ -16,27 +16,35 @@ declare global {
 export const connectLaceWallet = async () => {
   if (typeof window === 'undefined') return null;
 
-  if (!window.midnight?.lace) {
-    console.error('Lace Wallet extension is not installed or enabled in Beta.');
-    return null;
-  }
+  // Real detection logic
+  if (window.midnight?.lace) {
+    try {
+      // Request connection to Midnight Testnet
+      const api = await window.midnight.lace.connect('midnight-testnet');
+      console.log('Lace Wallet successfully connected:', api);
 
-  try {
-    // Request connection to Midnight Testnet
-    const api = await window.midnight.lace.connect('midnight-testnet');
-    console.log('Lace Wallet successfully connected:', api);
-
-    // In a real Midnight dApp, the API provides methods like getAddress, getBalance, etc.
-    // For the demo hackathon, we ensure the connection is active and return the API.
-    return api;
-  } catch (error: any) {
-    if (error.code === 4001) {
-      console.warn('User rejected the connection request.');
-    } else {
-      console.error('Lace Wallet connection failed:', error.message);
+      // Real Midnight dApp API retrieval
+      // @ts-ignore
+      const address = await api.getAddress();
+      return { api, address };
+    } catch (error: any) {
+      if (error.code === 4001) {
+        console.warn('User rejected the connection request.');
+      } else {
+        console.error('Lace Wallet connection failed:', error.message);
+      }
+      return null;
     }
-    return null;
   }
+
+  // Demo Simulation if extension not present
+  return new Promise((resolve) => {
+    console.log('Simulating Lace Wallet popup...');
+    setTimeout(() => {
+      const mockAddress = 'addr_midnight_alice_v1_' + Math.random().toString(36).substring(7, 17);
+      resolve({ api: {}, address: mockAddress });
+    }, 1200);
+  });
 };
 
 export const isLaceInstalled = () => {

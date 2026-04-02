@@ -22,3 +22,12 @@
  GET /talent 200 in 91ms (next.js: 46ms, application-code: 44ms)
  GET / 200 in 106ms (next.js: 4ms, application-code: 102ms)
  GET /recruiter 200 in 67ms (next.js: 35ms, application-code: 33ms)
+✓ Compiled in 4.5s
+✓ Compiled in 962ms
+ GET / 200 in 1608ms (next.js: 1055ms, application-code: 552ms)
+ GET /talent 200 in 98ms (next.js: 43ms, application-code: 56ms)
+ GET / 200 in 198ms (next.js: 4ms, application-code: 194ms)
+ GET /talent 200 in 39ms (next.js: 3ms, application-code: 36ms)
+ GET / 200 in 78ms (next.js: 4ms, application-code: 74ms)
+ GET /talent 200 in 39ms (next.js: 7ms, application-code: 32ms)
+ GET /recruiter 200 in 210ms (next.js: 35ms, application-code: 175ms)
