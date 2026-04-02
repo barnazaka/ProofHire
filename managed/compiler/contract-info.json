@@ -85,6 +85,37 @@
       "result-type": {
         "type-name": "Boolean"
       }
+    },
+    {
+      "name": "grantAccess",
+      "pure": true,
+      "proof": false,
+      "arguments": [
+        {
+          "name": "recipient",
+          "type": {
+            "type-name": "Opaque",
+            "tsType": "string"
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "clearProfile",
+      "pure": true,
+      "proof": false,
+      "arguments": [
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
     }
   ],
   "witnesses": [

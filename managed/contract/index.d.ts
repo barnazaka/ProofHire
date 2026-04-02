@@ -28,6 +28,8 @@ export type ProvableCircuits<PS> = {
 }
 
 export type PureCircuits = {
+  grantAccess(recipient_0: string): [];
+  clearProfile(): [];
 }
 
 export type Circuits<PS> = {
@@ -40,6 +42,8 @@ export type Circuits<PS> = {
               claimType_0: bigint,
               timestamp_0: bigint): __compactRuntime.CircuitResults<PS, []>;
   verifyProof(context: __compactRuntime.CircuitContext<PS>, pHash_0: Uint8Array): __compactRuntime.CircuitResults<PS, boolean>;
+  grantAccess(context: __compactRuntime.CircuitContext<PS>, recipient_0: string): __compactRuntime.CircuitResults<PS, []>;
+  clearProfile(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
 }
 
 export type Ledger = {
@@ -49,6 +53,7 @@ export type Ledger = {
   readonly proof_type: bigint;
   readonly proof_timestamp: bigint;
   readonly proof_owner: string;
+  readonly badge_hash: Uint8Array;
 }
 
 export type ContractReferenceLocations = any;

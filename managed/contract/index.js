@@ -71,14 +71,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('registerUser',
                                      'argument 1 (as invoked from Typescript)',
-                                     'proof-hire.compact line 11 char 1',
+                                     'proof-hire.compact line 17 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(identityCommitment_0.buffer instanceof ArrayBuffer && identityCommitment_0.BYTES_PER_ELEMENT === 1 && identityCommitment_0.length === 32)) {
           __compactRuntime.typeError('registerUser',
                                      'argument 2 (argument 3 as invoked from Typescript)',
-                                     'proof-hire.compact line 11 char 1',
+                                     'proof-hire.compact line 17 char 1',
                                      'Bytes<32>',
                                      identityCommitment_0)
         }
@@ -111,28 +111,28 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('submitProof',
                                      'argument 1 (as invoked from Typescript)',
-                                     'proof-hire.compact line 16 char 1',
+                                     'proof-hire.compact line 22 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(proofHash_0.buffer instanceof ArrayBuffer && proofHash_0.BYTES_PER_ELEMENT === 1 && proofHash_0.length === 32)) {
           __compactRuntime.typeError('submitProof',
                                      'argument 2 (argument 3 as invoked from Typescript)',
-                                     'proof-hire.compact line 16 char 1',
+                                     'proof-hire.compact line 22 char 1',
                                      'Bytes<32>',
                                      proofHash_0)
         }
         if (!(typeof(claimType_0) === 'bigint' && claimType_0 >= 0n && claimType_0 <= 4294967295n)) {
           __compactRuntime.typeError('submitProof',
                                      'argument 3 (argument 4 as invoked from Typescript)',
-                                     'proof-hire.compact line 16 char 1',
+                                     'proof-hire.compact line 22 char 1',
                                      'Uint<0..4294967296>',
                                      claimType_0)
         }
         if (!(typeof(timestamp_0) === 'bigint' && timestamp_0 >= 0n && timestamp_0 <= 18446744073709551615n)) {
           __compactRuntime.typeError('submitProof',
                                      'argument 4 (argument 5 as invoked from Typescript)',
-                                     'proof-hire.compact line 16 char 1',
+                                     'proof-hire.compact line 22 char 1',
                                      'Uint<0..18446744073709551616>',
                                      timestamp_0)
         }
@@ -164,14 +164,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('verifyProof',
                                      'argument 1 (as invoked from Typescript)',
-                                     'proof-hire.compact line 23 char 1',
+                                     'proof-hire.compact line 29 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(pHash_0.buffer instanceof ArrayBuffer && pHash_0.BYTES_PER_ELEMENT === 1 && pHash_0.length === 32)) {
           __compactRuntime.typeError('verifyProof',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'proof-hire.compact line 23 char 1',
+                                     'proof-hire.compact line 29 char 1',
                                      'Bytes<32>',
                                      pHash_0)
         }
@@ -188,6 +188,12 @@ export class Contract {
         const result_0 = this._verifyProof_0(context, partialProofData, pHash_0);
         partialProofData.output = { value: _descriptor_1.toValue(result_0), alignment: _descriptor_1.alignment() };
         return { result: result_0, context: context, proofData: partialProofData, gasCost: context.gasCost };
+      },
+      grantAccess(context, ...args_1) {
+        return { result: pureCircuits.grantAccess(...args_1), context };
+      },
+      clearProfile(context, ...args_1) {
+        return { result: pureCircuits.clearProfile(...args_1), context };
       }
     };
     this.impureCircuits = {
@@ -217,6 +223,7 @@ export class Contract {
     }
     const state_0 = new __compactRuntime.ContractState();
     let stateValue_0 = __compactRuntime.StateValue.newArray();
+    stateValue_0 = stateValue_0.arrayPush(__compactRuntime.StateValue.newNull());
     stateValue_0 = stateValue_0.arrayPush(__compactRuntime.StateValue.newNull());
     stateValue_0 = stateValue_0.arrayPush(__compactRuntime.StateValue.newNull());
     stateValue_0 = stateValue_0.arrayPush(__compactRuntime.StateValue.newNull());
@@ -293,6 +300,16 @@ export class Contract {
                                        { push: { storage: true,
                                                  value: __compactRuntime.StateValue.newCell({ value: _descriptor_2.toValue(''),
                                                                                               alignment: _descriptor_2.alignment() }).encode() } },
+                                       { ins: { cached: false, n: 1 } }]);
+    __compactRuntime.queryLedgerState(context,
+                                      partialProofData,
+                                      [
+                                       { push: { storage: false,
+                                                 value: __compactRuntime.StateValue.newCell({ value: _descriptor_8.toValue(6n),
+                                                                                              alignment: _descriptor_8.alignment() }).encode() } },
+                                       { push: { storage: true,
+                                                 value: __compactRuntime.StateValue.newCell({ value: _descriptor_0.toValue(new Uint8Array(32)),
+                                                                                              alignment: _descriptor_0.alignment() }).encode() } },
                                        { ins: { cached: false, n: 1 } }]);
     state_0.data = new __compactRuntime.ChargedState(context.currentQueryContext.state.state);
     return {
@@ -388,6 +405,8 @@ export class Contract {
                                                                                                result: undefined } }]).value),
                          pHash_0);
   }
+  _grantAccess_0(recipient_0) { recipient_0; return []; }
+  _clearProfile_0() { return []; }
   _equal_0(x0, y0) {
     if (!x0.every((x, i) => y0[i] === x)) { return false; }
     return true;
@@ -490,6 +509,20 @@ export function ledger(stateOrChargedState) {
                                                                                                    alignment: _descriptor_8.alignment() } }] } },
                                                                         { popeq: { cached: false,
                                                                                    result: undefined } }]).value);
+    },
+    get badge_hash() {
+      return _descriptor_0.fromValue(__compactRuntime.queryLedgerState(context,
+                                                                       partialProofData,
+                                                                       [
+                                                                        { dup: { n: 0 } },
+                                                                        { idx: { cached: false,
+                                                                                 pushPath: false,
+                                                                                 path: [
+                                                                                        { tag: 'value',
+                                                                                          value: { value: _descriptor_8.toValue(6n),
+                                                                                                   alignment: _descriptor_8.alignment() } }] } },
+                                                                        { popeq: { cached: false,
+                                                                                   result: undefined } }]).value);
     }
   };
 }
@@ -497,7 +530,21 @@ const _emptyContext = {
   currentQueryContext: new __compactRuntime.QueryContext(new __compactRuntime.ContractState().data, __compactRuntime.dummyContractAddress())
 };
 const _dummyContract = new Contract({ });
-export const pureCircuits = {};
+export const pureCircuits = {
+  grantAccess: (...args_0) => {
+    if (args_0.length !== 1) {
+      throw new __compactRuntime.CompactError(`grantAccess: expected 1 argument (as invoked from Typescript), received ${args_0.length}`);
+    }
+    const recipient_0 = args_0[0];
+    return _dummyContract._grantAccess_0(recipient_0);
+  },
+  clearProfile: (...args_0) => {
+    if (args_0.length !== 0) {
+      throw new __compactRuntime.CompactError(`clearProfile: expected 0 arguments (as invoked from Typescript), received ${args_0.length}`);
+    }
+    return _dummyContract._clearProfile_0();
+  }
+};
 export const contractReferenceLocations =
   { tag: 'publicLedgerArray', indices: { } };
 //# sourceMappingURL=index.js.map
