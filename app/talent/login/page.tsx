@@ -6,10 +6,12 @@ import Link from 'next/link';
 import { ArrowLeft, ShieldCheck, Fingerprint, Loader2 } from 'lucide-react';
 import ThemeToggle from '@/components/ThemeToggle';
 import { connectLaceWallet, signData } from '@/components/WalletIntegration';
+import LacePopup from '@/components/LacePopup';
 
 export default function TalentLoginPage() {
   const [isConnecting, setIsConnecting] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
+  const [connectedAddress, setConnectedAddress] = useState<string | undefined>(undefined);
   const router = useRouter();
 
   const handleLogin = async () => {
@@ -18,6 +20,7 @@ export default function TalentLoginPage() {
 
     const wallet = await connectLaceWallet() as { api: any, address: string } | null;
     if (wallet) {
+      setConnectedAddress(wallet.address);
       setStatus('Signing authentication challenge...');
       // Request a signature to "prove" identity (Standard Web3 Auth flow)
       const challenge = `ProofHire Auth Challenge: ${Date.now()}`;
@@ -45,6 +48,12 @@ export default function TalentLoginPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-black font-sans text-zinc-900 dark:text-white transition-colors duration-300">
+      <LacePopup
+        isOpen={isConnecting}
+        onClose={() => setIsConnecting(false)}
+        status={status}
+        address={connectedAddress}
+      />
       <header className="fixed top-0 w-full z-50 px-8 py-6 flex justify-between items-center backdrop-blur-lg bg-white/50 dark:bg-black/50 border-b border-zinc-200 dark:border-zinc-800">
         <Link href="/launch" className="flex items-center gap-4 group">
           <div className="p-3 bg-zinc-100 dark:bg-zinc-800 group-hover:bg-indigo-600 group-hover:text-white rounded-2xl transition-all">

@@ -57,14 +57,14 @@ export default function Home() {
              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full opacity-[0.03] dark:opacity-[0.05] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
           </div>
 
-          <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-24 items-center relative z-10">
-            <div className="space-y-12 animate-in fade-in slide-in-from-left-8 duration-1000">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-12 lg:gap-32 items-center relative z-10">
+            <div className="space-y-12 animate-in fade-in slide-in-from-left-8 duration-1000 lg:pr-12">
               <div className="inline-flex items-center gap-3 px-5 py-2 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-full">
                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse"></div>
                  <span className="text-[10px] font-black text-zinc-500 dark:text-zinc-400 uppercase tracking-[0.2em]">Zero-Knowledge Pipeline Active</span>
               </div>
 
-              <h1 className="text-7xl md:text-9xl font-black tracking-tightest leading-[0.8] uppercase italic text-zinc-900 dark:text-white drop-shadow-2xl">
+              <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tightest leading-[0.85] uppercase italic text-zinc-900 dark:text-white drop-shadow-2xl">
                 Sovereign <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-br from-indigo-600 to-purple-600">Credentials.</span>
               </h1>
