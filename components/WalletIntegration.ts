@@ -39,11 +39,39 @@ export const connectLaceWallet = async () => {
 
   // Demo Simulation if extension not present
   return new Promise((resolve) => {
-    console.log('Simulating Lace Wallet popup...');
+    console.log('Simulating Lace Wallet connection...');
     setTimeout(() => {
       const mockAddress = 'addr_midnight_alice_v1_' + Math.random().toString(36).substring(7, 17);
       resolve({ api: {}, address: mockAddress });
     }, 1200);
+  });
+};
+
+export const signData = async (address: string, payload: string) => {
+  if (typeof window === 'undefined') return null;
+
+  // Real signing if wallet is present
+  if (window.midnight?.lace) {
+    try {
+      // In a real Midnight environment, we'd use the connected API to sign
+      // This is a placeholder for the actual API call: api.signData(payload)
+      console.log('Requesting Lace signature for payload:', payload);
+      // Simulating successful signature
+      const mockSignature = 'sig_zkp_' + Math.random().toString(36).substring(2, 32);
+      return mockSignature;
+    } catch (error) {
+      console.error('Signing failed:', error);
+      return null;
+    }
+  }
+
+  // Demo Simulation
+  return new Promise((resolve) => {
+    console.log('Simulating Lace Wallet signing...');
+    setTimeout(() => {
+      const mockSignature = 'sig_zkp_' + Math.random().toString(36).substring(2, 32);
+      resolve(mockSignature);
+    }, 800);
   });
 };
 

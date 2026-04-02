@@ -1,46 +1,40 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Briefcase, Wallet, ShieldCheck, ChevronRight, AlertTriangle, Search, Fingerprint, Lock, Zap, Loader2, LogOut, Copy, Check } from 'lucide-react';
 import JobRequirements from '@/components/JobRequirements';
 import ProofVerifier from '@/components/ProofVerifier';
-import { connectLaceWallet, isLaceInstalled, shortenAddress } from '@/components/WalletIntegration';
+import { shortenAddress } from '@/components/WalletIntegration';
 import ThemeToggle from '@/components/ThemeToggle';
 
 export default function RecruiterDashboard() {
   const [walletConnected, setWalletConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
-  const [isLacePresent, setIsLacePresent] = useState(false);
-  const [isConnecting, setIsConnecting] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [copied, setCopied] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    setIsLacePresent(isLaceInstalled());
-    const savedAddress = localStorage.getItem('proofhire_wallet_recruiter');
-    if (savedAddress) {
+    const savedAddress = localStorage.getItem('user_address');
+    const savedRole = localStorage.getItem('user_role');
+
+    if (savedAddress && savedRole === 'recruiter') {
       setWalletAddress(savedAddress);
       setWalletConnected(true);
+    } else {
+      router.push('/recruiter/login');
     }
-  }, []);
-
-  const handleConnect = async () => {
-    setIsConnecting(true);
-    const result = await connectLaceWallet() as any;
-    if (result && result.address) {
-      setWalletAddress(result.address);
-      setWalletConnected(true);
-      localStorage.setItem('proofhire_wallet_recruiter', result.address);
-    }
-    setIsConnecting(false);
-  };
+  }, [router]);
 
   const handleLogout = () => {
-    localStorage.removeItem('proofhire_wallet_recruiter');
+    localStorage.removeItem('user_address');
+    localStorage.removeItem('user_role');
     setWalletAddress(null);
     setWalletConnected(false);
     setShowDropdown(false);
+    router.push('/');
   };
 
   const copyAddress = () => {
@@ -50,6 +44,14 @@ export default function RecruiterDashboard() {
       setTimeout(() => setCopied(false), 2000);
     }
   };
+
+  if (!walletConnected) {
+    return (
+      <div className="flex min-h-screen bg-white dark:bg-black items-center justify-center">
+        <Loader2 className="w-12 h-12 text-indigo-600 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-black font-sans text-zinc-900 dark:text-white transition-colors duration-300">
@@ -68,121 +70,60 @@ export default function RecruiterDashboard() {
 
         <div className="flex items-center gap-4">
           <ThemeToggle />
-          {!walletConnected ? (
+          <div className="relative">
             <button
-              onClick={handleConnect}
-              disabled={isConnecting}
-              className="group relative flex items-center gap-3 px-8 py-3.5 bg-zinc-900 dark:bg-white dark:text-zinc-900 text-white rounded-2xl font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-xl active:scale-95 disabled:opacity-50"
+              onClick={() => setShowDropdown(!showDropdown)}
+              className="flex items-center gap-4 px-5 py-2.5 bg-zinc-50 dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm transition-all hover:border-indigo-500"
             >
-              {isConnecting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wallet className="w-4 h-4" />}
-              {isConnecting ? 'Authenticating...' : 'Connect Identity'}
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-xs font-black font-mono tracking-tight">
+                {shortenAddress(walletAddress || '')}
+              </span>
+              <div className="w-8 h-8 bg-zinc-900 dark:bg-zinc-100 rounded-xl flex items-center justify-center text-white dark:text-zinc-900 text-[10px] font-black italic shadow-inner">
+                {walletAddress?.slice(-2).toUpperCase()}
+              </div>
             </button>
-          ) : (
-            <div className="relative">
-              <button
-                onClick={() => setShowDropdown(!showDropdown)}
-                className="flex items-center gap-4 px-5 py-2.5 bg-zinc-50 dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm transition-all hover:border-indigo-500"
-              >
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-xs font-black font-mono tracking-tight">
-                  {shortenAddress(walletAddress || '')}
-                </span>
-                <div className="w-8 h-8 bg-zinc-900 dark:bg-zinc-100 rounded-xl flex items-center justify-center text-white dark:text-zinc-900 text-[10px] font-black italic shadow-inner">
-                  {walletAddress?.slice(-2).toUpperCase()}
+
+            {showDropdown && (
+              <div className="absolute right-0 mt-3 w-64 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] shadow-2xl p-4 space-y-2 z-[60] animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="p-4 border-b border-zinc-100 dark:border-zinc-800 mb-2">
+                  <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1">Authenticated via</p>
+                  <p className="text-sm font-black italic">Lace Wallet v1.2</p>
                 </div>
-              </button>
 
-              {showDropdown && (
-                <div className="absolute right-0 mt-3 w-64 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] shadow-2xl p-4 space-y-2 z-[60] animate-in fade-in slide-in-from-top-2 duration-200">
-                  <div className="p-4 border-b border-zinc-100 dark:border-zinc-800 mb-2">
-                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1">Authenticated via</p>
-                    <p className="text-sm font-black italic">Lace Wallet v1.2</p>
-                  </div>
+                <button
+                  onClick={copyAddress}
+                  className="w-full flex items-center justify-between p-4 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-2xl transition-colors text-xs font-black uppercase tracking-widest"
+                >
+                  <span className="flex items-center gap-3">
+                    <Copy className="w-4 h-4 text-zinc-400" />
+                    {copied ? 'Copied!' : 'Copy Address'}
+                  </span>
+                  {copied && <Check className="w-4 h-4 text-green-500" />}
+                </button>
 
-                  <button
-                    onClick={copyAddress}
-                    className="w-full flex items-center justify-between p-4 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-2xl transition-colors text-xs font-black uppercase tracking-widest"
-                  >
-                    <span className="flex items-center gap-3">
-                      <Copy className="w-4 h-4 text-zinc-400" />
-                      {copied ? 'Copied!' : 'Copy Address'}
-                    </span>
-                    {copied && <Check className="w-4 h-4 text-green-500" />}
-                  </button>
-
-                  <button
-                    onClick={handleLogout}
-                    className="w-full flex items-center gap-3 p-4 hover:bg-rose-50 dark:hover:bg-rose-900/20 text-rose-600 rounded-2xl transition-colors text-xs font-black uppercase tracking-widest"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    Disconnect
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-3 p-4 hover:bg-rose-50 dark:hover:bg-rose-900/20 text-rose-600 rounded-2xl transition-colors text-xs font-black uppercase tracking-widest"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Disconnect
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
       <main className="flex-1 max-w-screen-2xl mx-auto w-full p-8 lg:p-12">
-        {!walletConnected ? (
-          <div className="flex flex-col items-center justify-center py-32 text-center animate-in fade-in slide-in-from-bottom-4 duration-1000">
-             <div className="relative mb-12">
-               <div className="absolute inset-0 bg-indigo-500/10 blur-[100px] rounded-full"></div>
-               <div className="relative p-10 bg-white dark:bg-zinc-900 rounded-[3rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] dark:shadow-none border border-zinc-100 dark:border-zinc-800 ring-1 ring-black/5">
-                  <Search className="w-24 h-24 text-indigo-600" />
-               </div>
-               <div className="absolute -top-4 -right-4 p-4 bg-emerald-500 rounded-3xl shadow-xl shadow-emerald-500/20 rotate-12">
-                  <Lock className="w-8 h-8 text-white" />
-               </div>
-            </div>
-
-            <h2 className="text-6xl font-black tracking-tightest mb-6 max-w-2xl bg-clip-text text-transparent bg-gradient-to-br from-zinc-900 to-zinc-500 dark:from-white dark:to-zinc-600 leading-tight">
-               Recruitment built on <span className="text-indigo-600 underline underline-offset-8 decoration-indigo-500/30 decoration-8">Mathematical Truth.</span>
-            </h2>
-            <p className="text-xl text-zinc-500 dark:text-zinc-400 max-w-xl mb-12 font-medium leading-relaxed">
-              Verify talent qualifications without violating privacy laws or exposing sensitive candidate data. Powered by Midnight's ZK-Proof ledger.
-            </p>
-
-            {!isLacePresent && (
-              <div className="mb-12 p-5 bg-amber-50/50 dark:bg-amber-900/20 border border-amber-100/50 dark:border-amber-900/50 rounded-3xl flex items-center gap-5 text-amber-700 dark:text-amber-300 max-w-lg mx-auto text-left shadow-sm">
-                <div className="p-3 bg-white dark:bg-zinc-800 rounded-2xl shadow-sm">
-                   <AlertTriangle className="w-6 h-6 text-amber-500" />
-                </div>
-                <div>
-                   <p className="text-sm font-black uppercase tracking-widest mb-1">Recruiter Protocol Active</p>
-                   <p className="text-xs font-medium leading-relaxed opacity-80">
-                      Lace Wallet not detected. We will use a secure, temporary recruiter identity for this session.
-                   </p>
-                </div>
-              </div>
-            )}
-
-            <button
-              onClick={handleConnect}
-              disabled={isConnecting}
-              className="group relative flex items-center gap-4 px-12 py-6 bg-zinc-900 dark:bg-white dark:text-zinc-900 text-white rounded-[2rem] font-black text-xl hover:bg-zinc-800 dark:hover:opacity-90 transition-all shadow-2xl hover:scale-[1.03] active:scale-[0.97] overflow-hidden"
-            >
-              {isConnecting ? <Loader2 className="w-6 h-6 animate-spin" /> : <Fingerprint className="w-6 h-6 group-hover:rotate-12 transition-transform" />}
-              {isConnecting ? 'Verifying Node...' : 'Access Recruiter Dashboard'}
-              <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-              <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            </button>
-
-            <p className="mt-10 text-[10px] font-black text-zinc-400 uppercase tracking-[0.4em]">
-               Protocols by <span className="text-zinc-600 dark:text-zinc-300 underline underline-offset-4 decoration-indigo-500/50">IOG</span> & <span className="text-zinc-600 dark:text-zinc-300 underline underline-offset-4 decoration-indigo-500/50">Midnight</span>
-            </p>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
+          <div className="lg:col-span-4 h-full">
+            <JobRequirements />
           </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
-            <div className="lg:col-span-4 h-full">
-              <JobRequirements />
-            </div>
-            <div className="lg:col-span-8 h-full">
-              <ProofVerifier />
-            </div>
+          <div className="lg:col-span-8 h-full">
+            <ProofVerifier />
           </div>
-        )}
+        </div>
       </main>
 
       <footer className="px-10 py-8 border-t border-zinc-200 dark:border-zinc-800 text-center flex flex-col md:flex-row items-center justify-between">
@@ -193,7 +134,7 @@ export default function RecruiterDashboard() {
            <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(99,102,241,0.5)]"></div>
         </div>
         <div className="mt-4 md:mt-0 text-[11px] font-black text-zinc-400 uppercase tracking-widest flex items-center gap-2">
-           Built for the <span className="text-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 px-3 py-1 rounded-lg">Midnight Hackathon 2026</span>
+           Protocol: <span className="text-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 px-3 py-1 rounded-lg italic">Midnight Compact v0.22</span>
         </div>
         <div className="mt-4 md:mt-0 text-zinc-400 text-[10px] font-black uppercase tracking-widest">
           Mathematical Proof • Guaranteed Privacy

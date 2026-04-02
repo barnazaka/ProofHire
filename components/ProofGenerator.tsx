@@ -37,7 +37,7 @@ export default function ProofGenerator() {
         throw new Error('Please save your personal data first.');
       }
 
-      const walletAddr = localStorage.getItem('proofhire_wallet') || 'unknown';
+      const walletAddr = localStorage.getItem('user_address') || 'unknown';
       const data: TalentData = JSON.parse(storedData);
 
       // Real-time status simulation for high-stakes demo
