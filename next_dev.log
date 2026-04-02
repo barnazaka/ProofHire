@@ -1,0 +1,18 @@
+
+> tmp_next@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.2 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+✓ Ready in 596ms
+
+ HEAD / 200 in 3.5s (next.js: 3.2s, application-code: 217ms)
+ GET / 200 in 129ms (next.js: 10ms, application-code: 118ms)
+[browser] Image with src "http://localhost:3000/vercel.svg" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+ GET / 200 in 213ms (next.js: 27ms, application-code: 186ms)
+✓ Compiled in 78ms
+ GET / 200 in 778ms (next.js: 574ms, application-code: 204ms)
+ GET /talent 200 in 1416ms (next.js: 1375ms, application-code: 41ms)
+ GET / 200 in 93ms (next.js: 14ms, application-code: 79ms)
+ GET /recruiter 200 in 974ms (next.js: 924ms, application-code: 50ms)
