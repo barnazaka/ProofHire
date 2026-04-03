@@ -144,25 +144,29 @@ export default function TalentOnboardingPage() {
         yoe: formData.experiences.reduce((sum, exp) => sum + (parseInt(exp.years) || 0), 0),
         skills: formData.skills.map(s => s.name).sort()
       });
-      const hashHex = CryptoJS.SHA256(claimString).toString();
-      const proofHashUint8 = new Uint8Array(hashHex.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
 
       const totalYears = formData.experiences.reduce((sum, exp) => sum + (parseInt(exp.years) || 0), 0);
-      const timestamp = BigInt(Date.now());
+      const claimType = `${formData.primaryRole || 'Professional'}`;
 
       await new Promise(resolve => setTimeout(resolve, 1500));
       setDeploymentStatus('Broadcasting Proving Transaction to Midnight Network...');
 
-      // Call Midnight SDK contract wrapper
-      await proofHireContract.submitProof(connection.api as any, {
-        userAddr: walletAddr,
-        proofHash: proofHashUint8,
-        claimType: BigInt(totalYears),
-        timestamp: timestamp
-      });
+      // Call Midnight SDK contract wrapper for real deployment and submission
+      const { deployAndSubmitProof } = await import('@/lib/contract-utils');
 
-      const finalHash = '0x' + Array.from(proofHashUint8).map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 32) + '...';
-      setProofHash(finalHash);
+      // Convert wallet address to Bytes<32> commitment
+      // In a real Midnight app, this would be a hash of the public key
+      const walletCommitment = new Uint8Array(32).fill(0);
+      const addrBytes = Buffer.from(walletAddr.slice(0, 32));
+      walletCommitment.set(addrBytes);
+
+      const contractAddress = await deployAndSubmitProof(
+        walletCommitment,
+        claimString,
+        claimType
+      );
+
+      setProofHash(contractAddress.slice(0, 32) + '...');
 
       // Save data locally with AES-256 encryption
       const encryptedData = encryptData(formData);
@@ -172,10 +176,11 @@ export default function TalentOnboardingPage() {
       const initialProof = {
         id: Math.random().toString(36).substring(7),
         candidateId: walletAddr.slice(0, 8).toUpperCase(),
-        type: `${formData.primaryRole || 'Professional'} (Verified)`,
+        type: `${claimType} (Verified)`,
         timestamp: new Date().toLocaleString(),
-        hash: finalHash,
-        status: 'on-chain'
+        hash: contractAddress,
+        status: 'on-chain',
+        walletCommitment: Array.from(walletCommitment)
       };
       localStorage.setItem('proofhire_proofs', JSON.stringify([initialProof]));
 

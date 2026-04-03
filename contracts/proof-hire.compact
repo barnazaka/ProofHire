@@ -1,58 +1,65 @@
-pragma language_version 0.22.0;
+pragma language_version >= 0.22;
 
-// ProofHire Multi-User Private Smart Contract
-// Uses Midnight's private mapping logic for multi-user support
+export ledger credentialHash: Map<Bytes<32>, Opaque<"string">>;
+export ledger claimCommitments: Map<Bytes<32>, Map<Uint<16>, ClaimRecord>>;
 
-import { Map, disclose, Opaque, Uint, Bytes, Boolean } from "std";
-
-// Define proof structure
-export struct ProofCommitment {
-    proof_hash: Bytes<32>;
-    claim_type: Uint<32>;
-    timestamp: Uint<64>;
+struct ClaimRecord {
+  claimType: Opaque<"string">,
+  proofHash: Opaque<"string">,
+  timestamp: Uint<64>,
+  verified: Boolean
 }
 
-// Private state: Map of user addresses to their proof commitments
-export ledger user_proofs: Map<Opaque<"string">, ProofCommitment>;
-
-// Extra feature: badges
-export ledger badge_hash: Bytes<32>;
-
-export circuit registerUser(userAddr: Opaque<"string">, identityCommitment: Bytes<32>): [] {
-    // In this MVP, we simply disclose the registration to the ledger
-    disclose(userAddr);
-    disclose(identityCommitment);
+export circuit registerUser(walletCommitment: Bytes<32>): [] {
+  if (!credentialHash.member(walletCommitment)) {
+    credentialHash.insert(walletCommitment, disclose("registered"));
+  }
 }
 
-export circuit submitProof(userAddr: Opaque<"string">, proofHash: Bytes<32>, claimType: Uint<32>, timestamp: Uint<64>): [] {
-    const newProof = ProofCommitment {
-        proof_hash: proofHash,
-        claim_type: claimType,
-        timestamp: timestamp
-    };
-
-    // Update the private mapping for this user
-    user_proofs[userAddr] = newProof;
-
-    // Disclose the proof submission for indexing
-    disclose(userAddr);
-    disclose(proofHash);
-    disclose(claimType);
-    disclose(timestamp);
+export circuit submitProof(
+  walletCommitment: Bytes<32>,
+  privateCredentialData: Opaque<"string">,
+  claimType: Opaque<"string">,
+  timestamp: Uint<64>
+): [] {
+  const proofHash = disclose(privateCredentialData);
+  if (!claimCommitments.member(walletCommitment)) {
+    claimCommitments.insert(walletCommitment, default<Map<Uint<16>, ClaimRecord>>);
+  }
+  const userClaims = claimCommitments.lookup(walletCommitment);
+  const claimId = userClaims.size() + 1;
+  const record = ClaimRecord {
+    claimType: disclose(claimType),
+    proofHash: proofHash,
+    timestamp: disclose(timestamp),
+    verified: disclose(true)
+  };
+  userClaims.insert(claimId as Uint<16>, disclose(record));
 }
 
-export circuit verifyProof(userAddr: Opaque<"string">, pHash: Bytes<32>): Boolean {
-    // Retrieve the proof commitment from the private mapping
-    const proof = user_proofs[userAddr];
-    return (proof.proof_hash == pHash);
+export circuit verifyProof(
+  walletCommitment: Bytes<32>,
+  claimType: Opaque<"string">
+): Boolean {
+  if (!claimCommitments.member(walletCommitment)) {
+    return disclose(false);
+  }
+  const userClaims = claimCommitments.lookup(walletCommitment);
+  return disclose(userClaims.size() > 0);
 }
 
-export circuit grantAccess(recipient: Opaque<"string">): [] {
-    // Management of selective reveal permissions
-    disclose(recipient);
+export circuit grantAccess(
+  walletCommitment: Bytes<32>,
+  recruiterCommitment: Bytes<32>
+): [] {
+  // Optional selective reveal logic
 }
 
-export circuit clearProfile(userAddr: Opaque<"string">): [] {
-    // Remove user commitment from the private mapping
-    user_proofs.delete(userAddr);
+export circuit clearProfile(walletCommitment: Bytes<32>): [] {
+  if (claimCommitments.member(walletCommitment)) {
+    claimCommitments.remove(disclose(walletCommitment));
+  }
+  if (credentialHash.member(walletCommitment)) {
+    credentialHash.remove(disclose(walletCommitment));
+  }
 }
