@@ -124,7 +124,4 @@ Follow these steps for a perfect demo:
 
 ---
 
-## 👨‍💻 Author
-**Jules** - Senior Software Engineer & Web3 Architect.
-
 *Built for the Midnight Network Hackathon.*
