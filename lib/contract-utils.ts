@@ -1,77 +1,97 @@
-import { Contract, Witnesses, Ledger, ledger } from '../managed/contract';
-import { CircuitContext } from '@midnight-ntwrk/compact-runtime';
+import { FetchZkConfigProvider } from "@midnight-ntwrk/midnight-js-fetch-zk-config-provider";
+import { httpClientProofProvider } from "@midnight-ntwrk/midnight-js-http-client-proof-provider";
+import { indexerPublicDataProvider } from "@midnight-ntwrk/midnight-js-indexer-public-data-provider";
+import { levelPrivateStateProvider } from "@midnight-ntwrk/midnight-js-level-private-state-provider";
+import {
+  deployContract,
+  findDeployedContract,
+  getPublicStates
+} from '@midnight-ntwrk/midnight-js-contracts';
 
-// This utility provides a bridge between the React UI and the Midnight Smart Contract
-// In a production environment, 'context' would be provided by the Midnight SDK / Lace Wallet
-// For this hackathon demo, we provide a structured way to call these circuits
-
-export interface ProofData {
-  userAddr: string;
-  proofHash: Uint8Array;
-  claimType: bigint;
-  timestamp: bigint;
+// We assume these are generated and available
+let compiledContract: any;
+try {
+  compiledContract = require('../managed/proof-hire/contract');
+} catch (e) {
+  console.warn('Compiled contract bindings not found at managed/proof-hire/contract. Run compact compile first.');
 }
 
-export class ProofHireContractWrapper {
-  private contract: Contract;
-
-  constructor() {
-    // Basic witnesses for the ZK circuits
-    const witnesses: Witnesses<any> = {};
-    this.contract = new Contract(witnesses);
+export const getMidnightProviders = async () => {
+  if (typeof window === 'undefined' || !window.midnight?.mnLace) {
+    throw new Error('Midnight Lace wallet not found');
   }
 
-  // Wrappers for the Compact circuits defined in proof-hire.compact
+  const wallet = window.midnight.mnLace;
+  const connectedApi = await wallet.connect('preview');
+  const uris = await connectedApi.getConfiguration();
+  const walletState = await connectedApi.state();
 
-  async registerUser(context: CircuitContext<any>, userAddr: string, commitment: Uint8Array) {
-    console.log(`[Midnight] Executing registerUser for ${userAddr}`);
-    return this.contract.circuits.registerUser(context, userAddr, commitment);
-  }
+  return {
+    privateStateProvider: levelPrivateStateProvider({
+      privateStateStoreName: "proofhire-private-state",
+    }),
+    zkConfigProvider: new FetchZkConfigProvider(
+      window.location.origin,
+      fetch.bind(window)
+    ),
+    proofProvider: httpClientProofProvider(uris.proverServerUri),
+    publicDataProvider: indexerPublicDataProvider(
+      uris.indexerUri,
+      uris.indexerWsUri
+    ),
+    walletProvider: {
+      coinPublicKey: walletState.coinPublicKey,
+      encryptionPublicKey: walletState.encryptionPublicKey,
+      balanceTx: (tx: any, newCoins: any) =>
+        connectedApi.balanceAndProveTransaction(tx, newCoins),
+    },
+    midnightProvider: {
+      submitTx: (tx: any) => connectedApi.submitTransaction(tx),
+    },
+  };
+};
 
-  async submitProof(context: any, proof: ProofData) {
-    console.log(`[Midnight] Transmitting cryptographic proof to ledger: Type ${proof.claimType}`);
+export const deployAndSubmitProof = async (walletCommitment: Uint8Array, privateCredentialData: string, claimType: string) => {
+  const providers = await getMidnightProviders();
 
-    // In real Midnight environment, 'context' is derived from connectedApi.getConfiguration()
-    // and injected into the circuit call via Midnight SDK Providers.
-    if (!context) {
-      throw new Error('[Midnight] Midnight SDK Context missing. Connection required for on-chain submission.');
-    }
+  const deployed = await deployContract(providers, {
+    compiledContract,
+    privateStateId: 'proofhire-talent',
+    initialPrivateState: {},
+  });
 
-    // Pass the wallet-provided configuration to the SDK's execution engine
-    return this.contract.circuits.submitProof(
-      context,
-      proof.userAddr,
-      proof.proofHash,
-      proof.claimType,
-      proof.timestamp
-    );
-  }
+  const contractAddress = deployed.deployTxData.public.contractAddress;
+  localStorage.setItem('proofhire_contract_address', contractAddress);
 
-  async verifyProof(context: any, proof: { proofHash: Uint8Array, userAddr: string }) {
-    console.log('[Midnight] Initializing on-chain verification protocol...');
+  // Submit the proof after deploy
+  await (deployed.callTx as any).submitProof(
+    walletCommitment,
+    privateCredentialData,
+    claimType,
+    BigInt(Date.now())
+  );
 
-    if (!context) {
-      throw new Error('[Midnight] Midnight SDK Context missing. Connection required for verification.');
-    }
+  return contractAddress;
+};
 
-    return this.contract.circuits.verifyProof(context, proof.proofHash);
-  }
+export const verifyCandidateClaim = async (contractAddress: string, walletCommitment: Uint8Array, claimType: string) => {
+  const providers = await getMidnightProviders();
 
-  async grantAccess(context: CircuitContext<any>, recipient: string) {
-    // @ts-ignore - added in recent compact update
-    if (this.contract.circuits.grantAccess) {
-       // @ts-ignore
-       return this.contract.circuits.grantAccess(context, recipient);
-    }
-  }
+  const existing = await findDeployedContract(providers, {
+    compiledContract,
+    contractAddress,
+    privateStateId: 'proofhire-recruiter',
+  });
 
-  async clearProfile(context: CircuitContext<any>) {
-    // @ts-ignore - added in recent compact update
-    if (this.contract.circuits.clearProfile) {
-       // @ts-ignore
-       return this.contract.circuits.clearProfile(context);
-    }
-  }
-}
+  const result = await (existing.callTx as any).verifyProof(
+    walletCommitment,
+    claimType
+  );
 
-export const proofHireContract = new ProofHireContractWrapper();
+  return result;
+};
+
+export const getLedgerState = async (contractAddress: string) => {
+  const providers = await getMidnightProviders();
+  return await getPublicStates(providers, contractAddress);
+};

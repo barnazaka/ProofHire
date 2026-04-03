@@ -108,10 +108,31 @@ export default function RecruiterCandidates() {
 
   const verifyProof = async (id: string) => {
     setVerifying(id);
-    // Simulate Midnight network verification call
-    await new Promise(resolve => setTimeout(resolve, 2500));
-    setVerified(prev => ({ ...prev, [id]: true }));
-    setVerifying(null);
+    try {
+      const proof = proofs.find(p => p.id === id);
+      if (!proof) throw new Error('Proof not found');
+
+      const { verifyCandidateClaim } = await import('@/lib/contract-utils');
+
+      // The 'hash' in our proof object is the contract address
+      const contractAddress = proof.hash;
+
+      // Retrieve wallet commitment from proof (stored as array)
+      const walletCommitment = new Uint8Array((proof as any).walletCommitment || []);
+
+      const result = await verifyCandidateClaim(
+        contractAddress,
+        walletCommitment,
+        proof.type.replace(' (Verified)', '')
+      );
+
+      setVerified(prev => ({ ...prev, [id]: !!result }));
+    } catch (err: any) {
+      console.error('Verification failed:', err);
+      alert(`Verification failed: ${err.message}`);
+    } finally {
+      setVerifying(null);
+    }
   };
 
   if (!walletConnected) {
