@@ -1,303 +1,196 @@
 'use client';
 
-import Link from "next/link";
-import { ShieldCheck, UserCircle, Briefcase, Zap, Lock, Globe, Fingerprint, ArrowRight, CheckCircle2, ChevronDown, Layers, Cpu, ShieldAlert, Wallet } from "lucide-react";
-import ThemeToggle from "@/components/ThemeToggle";
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { ShieldCheck, User, Briefcase, Zap, Lock, CheckCircle, ArrowRight, ChevronRight, Menu, X, Globe, Fingerprint, Layers, Cpu } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import ThemeToggle from '@/components/ThemeToggle';
+
+const NavLink = ({ href, children }: { href: string, children: React.ReactNode }) => (
+  <Link href={href} className="text-zinc-400 hover:text-white transition-colors text-sm font-medium">
+    {children}
+  </Link>
+);
+
+const FeatureCard = ({ icon: Icon, title, desc }: { icon: any, title: string, desc: string }) => (
+  <motion.div
+    whileHover={{ y: -5 }}
+    className="p-8 rounded-[2rem] bg-zinc-900/50 border border-zinc-800 backdrop-blur-xl"
+  >
+    <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-6 border border-indigo-500/20">
+      <Icon className="w-6 h-6 text-indigo-500" />
+    </div>
+    <h3 className="text-xl font-bold mb-3 text-white">{title}</h3>
+    <p className="text-zinc-500 text-sm leading-relaxed">{desc}</p>
+  </motion.div>
+);
 
 export default function Home() {
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileMenu, setMobileMenu] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <div className="flex flex-col min-h-screen bg-white dark:bg-black font-sans text-zinc-900 dark:text-white transition-colors duration-300">
+    <div className="min-h-screen bg-black text-white selection:bg-indigo-500 selection:text-white overflow-x-hidden">
+      {/* Background Mesh */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/10 blur-[120px] rounded-full animate-pulse"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/10 blur-[120px] rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+      </div>
 
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 px-8 py-6 flex justify-between items-center backdrop-blur-lg bg-white/50 dark:bg-black/50 border-b border-zinc-200 dark:border-zinc-800 transition-all">
-        <div className="flex items-center gap-4">
-          <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-            <div className="relative p-2.5 bg-black rounded-xl shadow-2xl border border-white/10">
+      <header className={`fixed top-0 w-full z-50 px-6 py-4 transition-all duration-300 ${scrolled ? 'bg-black/60 backdrop-blur-xl border-b border-white/5' : ''}`}>
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-600/20">
               <ShieldCheck className="w-6 h-6 text-white" />
             </div>
+            <span className="text-xl font-bold tracking-tight">ProofHire</span>
           </div>
-          <div className="flex flex-col -space-y-1">
-            <span className="text-xl font-black tracking-tighter uppercase italic text-zinc-900 dark:text-white">ProofHire</span>
-            <span className="text-[8px] font-black tracking-[0.4em] uppercase text-indigo-600 ml-0.5">Protocol v1.0</span>
+
+          <nav className="hidden md:flex items-center gap-10">
+             <NavLink href="/protocol">Protocol</NavLink>
+             <NavLink href="/privacy">Privacy</NavLink>
+             <NavLink href="/features">Features</NavLink>
+          </nav>
+
+          <div className="flex items-center gap-4">
+             <ThemeToggle />
+             <Link href="/launch" className="hidden sm:flex px-6 py-2.5 bg-white text-black rounded-full font-bold text-sm hover:bg-zinc-200 transition-all shadow-xl hover:shadow-white/10 active:scale-95">
+               Launch App
+             </Link>
+             <button className="md:hidden p-2 text-zinc-400" onClick={() => setMobileMenu(!mobileMenu)}>
+                {mobileMenu ? <X /> : <Menu />}
+             </button>
           </div>
-        </div>
-
-        <nav className="hidden md:flex items-center gap-10">
-          <Link href="/protocol" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors relative group">
-            Protocol
-            <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-indigo-600 transition-all group-hover:w-full"></span>
-          </Link>
-          <Link href="/privacy" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors relative group">
-            Privacy
-            <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-indigo-600 transition-all group-hover:w-full"></span>
-          </Link>
-          <Link href="/features" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors relative group">
-            Features
-            <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-indigo-600 transition-all group-hover:w-full"></span>
-          </Link>
-        </nav>
-
-        <div className="flex items-center gap-6">
-          <ThemeToggle />
-          <Link href="/launch" className="group relative overflow-hidden px-8 py-3 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-indigo-500/20">
-            <span className="relative z-10 text-indigo-600 dark:text-indigo-600 font-black mr-2 uppercase italic">Launch</span>
-            <span className="relative z-10">Engine</span>
-            <div className="absolute inset-0 bg-indigo-600 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-          </Link>
         </div>
       </header>
 
-      <main className="flex-1">
-        {/* Hero Section */}
-        <section className="relative pt-64 pb-32 px-8 overflow-hidden">
-          <div className="absolute inset-0 pointer-events-none">
-             <div className="absolute top-0 right-[-10%] w-[50%] h-[50%] bg-indigo-600/10 blur-[160px] rounded-full animate-pulse"></div>
-             <div className="absolute bottom-0 left-[-10%] w-[50%] h-[50%] bg-purple-600/10 blur-[160px] rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
-             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full opacity-[0.03] dark:opacity-[0.05] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
-          </div>
+      {/* Hero */}
+      <section className="relative pt-40 pb-24 px-6 z-10">
+        <div className="max-w-5xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs font-medium text-indigo-400 mb-8">
+               <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-ping"></span>
+               Now Live on Midnight Testnet
+             </div>
+             <h1 className="text-6xl md:text-8xl font-bold tracking-tight mb-8 leading-[1.05]">
+               Hire on proof. <br />
+               <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">Not paper.</span>
+             </h1>
+             <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto mb-12 leading-relaxed">
+               The first decentralized recruitment network powered by Zero-Knowledge Proofs.
+               Prove your qualifications without revealing a single byte of personal data.
+             </p>
 
-          <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-12 lg:gap-32 items-center relative z-10">
-            <div className="space-y-12 animate-in fade-in slide-in-from-left-8 duration-1000 lg:pr-12">
-              <div className="inline-flex items-center gap-3 px-5 py-2 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-full">
-                 <div className="w-1.5 h-1.5 bg-green-500 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse"></div>
-                 <span className="text-[10px] font-black text-zinc-500 dark:text-zinc-400 uppercase tracking-[0.2em]">Zero-Knowledge Pipeline Active</span>
-              </div>
-
-              <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tightest leading-[0.85] uppercase italic text-zinc-900 dark:text-white drop-shadow-2xl">
-                Sovereign <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-br from-indigo-600 to-purple-600">Credentials.</span>
-              </h1>
-
-              <div className="flex items-center gap-10">
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-600 mb-1">Access Type A</span>
-                  <span className="text-xl font-black uppercase italic tracking-tighter">Talent OS</span>
-                </div>
-                <div className="w-[1px] h-10 bg-zinc-200 dark:border-zinc-800"></div>
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-600 mb-1">Access Type B</span>
-                  <span className="text-xl font-black uppercase italic tracking-tighter">Recruiter Engine</span>
-                </div>
-              </div>
-
-              <p className="text-xl md:text-2xl text-zinc-500 dark:text-zinc-400 max-w-xl font-medium leading-tight border-l-4 border-indigo-600 pl-8 italic">
-                Mathematically guaranteed verification without disclosure. Re-engineering trust for the 2026 talent economy.
-              </p>
-
-              <div className="flex flex-col sm:flex-row items-center gap-6 pt-8">
-                <Link href="/launch" className="group w-full sm:w-auto flex items-center justify-center gap-4 px-12 py-6 bg-indigo-600 text-white rounded-2xl text-lg font-black uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-2xl shadow-indigo-500/40 hover:-translate-y-1">
-                  Authenticate <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                <Link href="/talent/auth" className="w-full sm:w-auto px-10 py-5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl text-lg font-bold transition-all shadow-2xl shadow-indigo-600/30 flex items-center justify-center gap-2 group active:scale-95">
+                  I'm a Talent <User className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
-                <div className="flex items-center gap-6 opacity-40">
-                   <div className="h-[1px] w-12 bg-zinc-400"></div>
-                   <span className="text-[10px] font-black uppercase tracking-widest">Secured by Midnight</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="hidden lg:block relative animate-in fade-in slide-in-from-right-8 duration-1000 delay-300">
-               <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/20 to-purple-600/20 blur-3xl rounded-full"></div>
-               <div className="relative aspect-[4/3] bg-zinc-900 rounded-[3rem] border border-white/10 shadow-3xl overflow-hidden group">
-                  <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center opacity-40 grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000"></div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-transparent to-transparent"></div>
-                  <div className="absolute bottom-0 left-0 w-full p-12 space-y-4">
-                     <div className="flex items-center gap-2">
-                        <Lock className="w-5 h-5 text-indigo-500" />
-                        <span className="text-xs font-black uppercase tracking-[0.3em] text-white">Private State Verifier</span>
-                     </div>
-                     <div className="h-[2px] w-full bg-white/10 relative overflow-hidden">
-                        <div className="absolute inset-0 bg-indigo-600 w-1/3 animate-ping"></div>
-                     </div>
-                     <p className="text-[10px] font-mono text-zinc-400">0x6461746120707269766163792069732068756d616e207269676874</p>
-                  </div>
-               </div>
-               {/* Floating elements */}
-               <div className="absolute -top-6 -right-6 p-6 bg-white dark:bg-zinc-800 rounded-3xl shadow-2xl border border-zinc-200 dark:border-zinc-700 animate-bounce transition-all hover:rotate-12">
-                  <Zap className="w-8 h-8 text-indigo-600" />
-               </div>
-               <div className="absolute -bottom-10 -left-10 p-8 bg-indigo-600 rounded-[2.5rem] shadow-2xl animate-pulse">
-                  <ShieldCheck className="w-12 h-12 text-white" />
-               </div>
-            </div>
-          </div>
-
-          <div className="mt-32 flex flex-col items-center gap-4 animate-bounce opacity-40">
-             <span className="text-[9px] font-black uppercase tracking-[0.4em]">Scroll to Explore</span>
-             <ChevronDown className="w-4 h-4" />
-          </div>
-        </section>
-
-        {/* How It Works Section */}
-        <section id="how-it-works" className="py-32 px-8 bg-zinc-50 dark:bg-zinc-950 border-y border-zinc-200 dark:border-zinc-900">
-          <div className="max-w-6xl mx-auto">
-            <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-20">
-              <div>
-                <h2 className="text-4xl md:text-6xl font-black uppercase italic leading-none tracking-tighter">The ZK Hiring <br />Protocol.</h2>
-              </div>
-              <p className="text-zinc-500 dark:text-zinc-400 max-w-sm text-sm font-medium leading-relaxed">
-                We've abstracted the complexity of Zero-Knowledge Proofs into a seamless hiring experience.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-1px bg-zinc-200 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 rounded-3xl overflow-hidden shadow-2xl">
-              <div className="bg-white dark:bg-black p-12 space-y-6">
-                <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-black text-xl">1</div>
-                <h3 className="text-2xl font-black uppercase tracking-tight">Local Input</h3>
-                <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium leading-relaxed">
-                  Enter your credentials in our secure local environment. Data stays in browser memory—never touches a server.
-                </p>
-                <div className="pt-4 flex items-center gap-2 text-indigo-600">
-                   <Lock className="w-4 h-4" />
-                   <span className="text-[10px] font-black uppercase tracking-widest">Client-Side Secure</span>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-black p-12 space-y-6">
-                <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-black text-xl">2</div>
-                <h3 className="text-2xl font-black uppercase tracking-tight">ZK Proof</h3>
-                <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium leading-relaxed">
-                  Generate mathematical proofs locally. Only cryptographic commitments are sent to the Midnight ledger.
-                </p>
-                <div className="pt-4 flex items-center gap-2 text-indigo-600">
-                   <Cpu className="w-4 h-4" />
-                   <span className="text-[10px] font-black uppercase tracking-widest">Midnight Compact logic</span>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-black p-12 space-y-6">
-                <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-black text-xl">3</div>
-                <h3 className="text-2xl font-black uppercase tracking-tight">Verification</h3>
-                <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium leading-relaxed">
-                  Recruiters verify your claims against the blockchain. They see a "Valid" status, but never your name or PII.
-                </p>
-                <div className="pt-4 flex items-center gap-2 text-indigo-600">
-                   <CheckCircle2 className="w-4 h-4" />
-                   <span className="text-[10px] font-black uppercase tracking-widest">Trustless matching</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Midnight Section */}
-        <section id="privacy" className="py-32 px-8">
-           <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-              <div className="space-y-10">
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg">
-                   <Layers className="w-3.5 h-3.5 text-zinc-500" />
-                   <span className="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-500">The Infrastructure</span>
-                </div>
-                <h2 className="text-5xl md:text-7xl font-black uppercase italic tracking-tighter leading-none">
-                  Powered by <br />
-                  <span className="text-indigo-600">Midnight Network.</span>
-                </h2>
-                <p className="text-zinc-500 dark:text-zinc-400 text-lg font-medium leading-relaxed">
-                  Midnight is a privacy-first blockchain built as a Cardano sidechain. It supports smart contracts that handle both private and public data using Zero-Knowledge Proofs.
-                </p>
-                <div className="grid grid-cols-2 gap-6">
-                   <div className="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800">
-                      <Zap className="w-6 h-6 text-indigo-600 mb-4" />
-                      <h4 className="font-black text-xs uppercase tracking-widest mb-2">Dual Token</h4>
-                      <p className="text-[10px] text-zinc-400 leading-relaxed">NIGHT for governance, DUST for computation resources.</p>
-                   </div>
-                   <div className="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800">
-                      <ShieldAlert className="w-6 h-6 text-indigo-600 mb-4" />
-                      <h4 className="font-black text-xs uppercase tracking-widest mb-2">Private Input</h4>
-                      <p className="text-[10px] text-zinc-400 leading-relaxed">Sensitive data stays local. Only proofs enter the ledger.</p>
-                   </div>
-                </div>
-              </div>
-
-              <div className="relative group">
-                 <div className="absolute inset-0 bg-indigo-600/10 blur-[100px] rounded-full group-hover:bg-indigo-600/20 transition-all"></div>
-                 <div className="relative aspect-square bg-white dark:bg-zinc-900 rounded-[3rem] border border-zinc-200 dark:border-zinc-800 shadow-3xl flex flex-col p-12 overflow-hidden">
-                    <div className="flex-1 flex flex-col items-center justify-center gap-8">
-                       <Fingerprint className="w-32 h-32 text-indigo-600 animate-pulse" />
-                       <div className="text-center space-y-2">
-                          <span className="text-[11px] font-black uppercase tracking-[0.4em] text-zinc-400">Security Core</span>
-                          <p className="text-2xl font-black italic uppercase">Encryption Layer Active</p>
-                       </div>
-                    </div>
-                    <div className="p-6 bg-indigo-600 text-white rounded-2xl flex items-center justify-between">
-                       <span className="text-[10px] font-black uppercase tracking-widest">Network Status</span>
-                       <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-bold">Midnight Preprod</span>
-                          <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                       </div>
-                    </div>
-                 </div>
-              </div>
-           </div>
-        </section>
-
-        {/* Features Grid */}
-        <section id="features" className="py-32 px-8 bg-zinc-900 text-white">
-           <div className="max-w-6xl mx-auto space-y-20">
-              <div className="text-center space-y-6">
-                <h2 className="text-4xl md:text-6xl font-black uppercase italic tracking-tightest">Engineered for <br />Enterprise Privacy.</h2>
-                <div className="h-1 w-20 bg-indigo-600 mx-auto"></div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                 {[
-                   { title: "Lace Wallet", desc: "Integrated authentication with Cardano's premier wallet.", icon: Wallet },
-                   { title: "Compact DSL", desc: "Logic written in Midnight's statically typed language.", icon: Cpu },
-                   { title: "DID Integration", desc: "Decentralized identifiers for trustless identity.", icon: Fingerprint },
-                   { title: "Local Proofs", desc: "Zero data leakage. ZK proofs generated in-browser.", icon: Globe }
-                 ].map((feat, i) => (
-                   <div key={i} className="group p-8 bg-zinc-800 hover:bg-indigo-600 rounded-3xl border border-zinc-700 hover:border-indigo-500 transition-all duration-500">
-                      <feat.icon className="w-10 h-10 mb-6 text-indigo-500 group-hover:text-white transition-colors" />
-                      <h4 className="text-xl font-black uppercase tracking-tight mb-3 italic">{feat.title}</h4>
-                      <p className="text-zinc-400 group-hover:text-white/80 text-xs font-medium leading-relaxed">
-                        {feat.desc}
-                      </p>
-                   </div>
-                 ))}
-              </div>
-           </div>
-        </section>
-      </main>
-
-      <footer className="px-8 py-16 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-12">
-          <div className="space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-zinc-900 dark:bg-white rounded-lg">
-                <ShieldCheck className="w-5 h-5 text-white dark:text-zinc-900" />
-              </div>
-              <span className="text-lg font-black tracking-tighter uppercase italic">ProofHire</span>
-            </div>
-            <p className="text-zinc-500 text-xs font-medium max-w-xs leading-relaxed">
-              Decentralized, privacy-first recruitment infrastructure. Re-engineering trust through zero-knowledge proofs on the Midnight Network.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-12 lg:gap-24">
-             <div className="space-y-4">
-                <h5 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400">Resources</h5>
-                <ul className="space-y-2 text-xs font-black uppercase tracking-widest">
-                   <li><a href="https://docs.midnight.network/" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-600">Docs</a></li>
-                   <li><a href="https://github.com/midnightntwrk" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-600">Github</a></li>
-                   <li><a href="https://midnight.network/" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-600">Midnight</a></li>
-                </ul>
+                <Link href="/recruiter/auth" className="w-full sm:w-auto px-10 py-5 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-white rounded-2xl text-lg font-bold transition-all flex items-center justify-center gap-2 group active:scale-95">
+                  I'm a Recruiter <Briefcase className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
              </div>
-             <div className="space-y-4">
-                <h5 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400">Identity</h5>
-                <ul className="space-y-2 text-xs font-black uppercase tracking-widest">
-                   <li><Link href="/talent" className="hover:text-indigo-600">Talent</Link></li>
-                   <li><Link href="/recruiter" className="hover:text-indigo-600">Recruiter</Link></li>
-                </ul>
-             </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Feature Grid */}
+      <section className="py-24 px-6 z-10 relative">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <FeatureCard
+              icon={Zap}
+              title="Zero Knowledge Proofs"
+              desc="Proof of skills and degree generated locally in your browser. Raw PII never touches the ledger."
+            />
+            <FeatureCard
+              icon={Layers}
+              title="Lace Wallet Identity"
+              desc="Secure authentication via Cardano's premier wallet. Your wallet address is your sovereign identity."
+            />
+            <FeatureCard
+              icon={Cpu}
+              title="On-Chain Verification"
+              desc="Mathematical certainty for recruiters. Verify candidate claims in seconds with cryptographic proof."
+            />
           </div>
         </div>
-        <div className="max-w-6xl mx-auto mt-20 pt-10 border-t border-zinc-100 dark:border-zinc-900 flex flex-col sm:flex-row justify-between items-center gap-6">
-           <p className="text-[9px] font-black text-zinc-400 uppercase tracking-[0.4em]">&copy; 2026 PROOFHIRE LABS. ALL PRIVACY RESERVED.</p>
-           <div className="flex items-center gap-6 opacity-40 grayscale">
-              <span className="text-[9px] font-black">MIDNIGHT</span>
-              <span className="text-[9px] font-black">CARDANO</span>
-              <span className="text-[9px] font-black">ZK-PROOFS</span>
+      </section>
+
+      {/* How it Works */}
+      <section className="py-24 px-6 z-10 relative overflow-hidden">
+        <div className="max-w-6xl mx-auto text-center">
+          <h2 className="text-4xl font-bold mb-20 tracking-tight">The Trustless Pipeline.</h2>
+
+          <div className="relative flex flex-col md:flex-row justify-between items-center gap-16 md:gap-8">
+            {/* Horizontal Line */}
+            <div className="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-zinc-800 to-transparent hidden md:block -translate-y-12"></div>
+
+            {[
+              { icon: User, title: "Input Locally", desc: "Save credentials in your browser.", step: 1 },
+              { icon: Zap, title: "Generate ZKP", desc: "Local cryptographic proving.", step: 2 },
+              { icon: ShieldCheck, title: "Verify On-Chain", desc: "Recruiter confirms proof.", step: 3 }
+            ].map((s, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.2 }}
+                className="relative flex flex-col items-center max-w-[240px] z-10"
+              >
+                <div className="w-24 h-24 rounded-[2rem] bg-black border border-zinc-800 flex items-center justify-center mb-8 relative shadow-2xl">
+                  <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-xs font-bold text-zinc-500">
+                    {s.step}
+                  </div>
+                  <s.icon className="w-10 h-10 text-indigo-500" />
+                </div>
+                <h4 className="text-xl font-bold mb-2">{s.title}</h4>
+                <p className="text-zinc-500 text-sm">{s.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-32 px-6 z-10 relative">
+        <div className="max-w-4xl mx-auto rounded-[3rem] bg-indigo-600 p-16 text-center relative overflow-hidden">
+           <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+           <div className="relative z-10">
+              <h2 className="text-4xl md:text-5xl font-bold mb-8 tracking-tight">Ready to re-engineer trust?</h2>
+              <Link href="/launch" className="px-10 py-5 bg-white text-indigo-600 rounded-2xl text-lg font-bold hover:bg-zinc-100 transition-all shadow-2xl active:scale-95 inline-flex items-center gap-2 group">
+                 Enter the Protocol <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
            </div>
+        </div>
+      </section>
+
+      <footer className="py-16 border-t border-white/5 relative z-10">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+           <div className="flex items-center gap-3 opacity-60">
+              <ShieldCheck className="w-5 h-5 text-indigo-500" />
+              <span className="text-lg font-bold">ProofHire</span>
+           </div>
+           <div className="flex items-center gap-8 text-zinc-500 text-sm font-medium">
+              <a href="#" className="hover:text-white transition-colors">Docs</a>
+              <a href="#" className="hover:text-white transition-colors">Github</a>
+              <a href="#" className="hover:text-white transition-colors">Midnight Network</a>
+           </div>
+           <p className="text-zinc-600 text-xs uppercase tracking-widest font-medium">
+             © 2026 ProofHire Protocol. All Rights Reserved.
+           </p>
         </div>
       </footer>
     </div>

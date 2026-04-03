@@ -30,6 +30,16 @@ export class ProofHireContractWrapper {
 
   async submitProof(context: CircuitContext<any>, proof: ProofData) {
     console.log(`[Midnight] Executing submitProof: Type ${proof.claimType}`);
+
+    // DEMO MODE: If we are in a browser environment without a real Midnight CircuitContext,
+    // we bypass the actual circuit execution to allow the UI to function for the hackathon demo.
+    // In a production environment, 'context' is provided by the Midnight SDK and contains
+    // the necessary proving keys and ledger state.
+    if (!context || Object.keys(context).length === 0) {
+      console.warn('[Midnight] No CircuitContext found. Running in Demo Simulation Mode.');
+      return { success: true, txHash: '0x' + Math.random().toString(16).slice(2) };
+    }
+
     return this.contract.circuits.submitProof(
       context,
       proof.userAddr,
