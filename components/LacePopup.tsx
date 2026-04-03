@@ -6,11 +6,12 @@ import { useEffect, useState } from "react";
 interface LacePopupProps {
   isOpen: boolean;
   onClose: () => void;
+  onConfirm?: () => void;
   status: string | null;
   address?: string;
 }
 
-export default function LacePopup({ isOpen, onClose, status, address }: LacePopupProps) {
+export default function LacePopup({ isOpen, onClose, onConfirm, status, address }: LacePopupProps) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -95,7 +96,8 @@ export default function LacePopup({ isOpen, onClose, status, address }: LacePopu
                 Cancel
               </button>
               <button
-                className="py-4 bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-indigo-600/20 hover:bg-indigo-700 transition-all"
+                onClick={onConfirm}
+                className="py-4 bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-indigo-600/20 hover:bg-indigo-700 transition-all active:scale-[0.98]"
               >
                 Confirm
               </button>

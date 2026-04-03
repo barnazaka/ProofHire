@@ -1,101 +1,130 @@
-# ProofHire - Privacy-First Web3 Hiring Platform
+# ProofHire: Privacy-First Talent OS
 
-ProofHire is a privacy-first hiring platform powered by **Zero-Knowledge Proofs (ZKPs)** on the **Midnight Network**. It allows candidates to prove their skills and qualifications without revealing any personal identifying information (PII) to recruiters.
+**Privacy-First Hiring Powered by Zero-Knowledge Proofs on the Midnight Network.**
 
-## Goal
-The application empowers talent to maintain full control over their data while providing recruiters with a mathematically guaranteed way to verify claims (e.g., "Has a degree", "2+ years experience").
-
----
-
-## What Is Midnight Network?
-Midnight is a privacy-first blockchain built as a Cardano sidechain. It supports smart contracts that handle private and public data. Developers write logic using **Compact** and build apps with TypeScript.
-
-### How it Works
-- **Privacy First:** Zero-knowledge proofs protect sensitive inputs, which never go on-chain.
-- **Local Proof Server:** Processes private data and generates proofs on the user's machine. The chain stores only the proof, not the actual input.
-- **Dual Token Structure:**
-  - **NIGHT:** Secures the network, handles staking and governance.
-  - **DUST:** computational resource token used to execute smart contracts.
+ProofHire is a decentralized hiring platform that enables candidates to prove their professional qualifications (degrees, experience, skills) without revealing any personal data. It leverages the **Midnight Network** and **Zero-Knowledge Proofs (ZKP)** to ensure that trust is established through mathematical certainty rather than manual background checks.
 
 ---
 
-## Development & Deployment Guide
+## 🚀 Vision
+In the traditional hiring world, personal data is leaked at every stage of the funnel. ProofHire re-engineers this pipeline:
+- **Talent** keeps raw data in their browser.
+- **ZKP Circuits** run locally to generate proof commitments.
+- **Smart Contracts** on Midnight store only the mathematical proofs.
+- **Recruiters** verify claims instantly without ever seeing a CV.
 
-### Step 1: Set Up the Lace Wallet
-1. **Recommended Browser:** Use Google Chrome (version 119+).
-2. **Install Lace Wallet:** Add the Lace Wallet extension via the Chrome Web Store.
-3. **Create a Wallet:** Secure your 24-word recovery phrase.
-4. **Get tDUST Tokens:** Visit the [Midnight Faucet](https://midnight.network/faucet) and paste your address to receive test tokens.
+---
 
-### Step 2: Run the Midnight Proof Server
-The proof server generates ZK proofs locally on your machine.
-1. Install Docker.
-2. Run the server:
-   ```bash
-   docker run -p 6300:6300 midnightnetwork/proof-server -- 'midnight-proof-server --network testnet'
-   ```
+## 🛠 Tech Stack
+- **Blockchain:** [Midnight Network](https://midnight.network/) (Compact v0.22.0)
+- **ZK Language:** [Compact](https://compact.midnight.network/)
+- **Frontend:** Next.js 15, Tailwind CSS, Framer Motion
+- **Wallet:** Lace Wallet (Integration via Midnight SDK)
+- **Deployment:** Vercel (Frontend), Midnight Testnet (Smart Contract)
 
-### Step 3: Install Development Tools
-1. **Node.js:** Use v18+ (via NVM).
-   ```bash
-   nvm install 18 --lts
-   nvm use 18
-   ```
-2. **Compact Compiler:** Download from the Midnight Testnet release page and add to PATH.
-   ```bash
-   export COMPACT_HOME="~/midnight-tools/compactc"
-   export PATH="$COMPACT_HOME:$PATH"
-   ```
+---
 
-### Step 4: Write and Compile the Contract
-Our contract is located in `contracts/proof-hire.compact`. It defines the logic for talent registration and proof submission.
+## 🏗 Architecture
+ProofHire follows a **Stateless Backend** architecture:
+1. **Local State:** All candidate credentials (Name, Education, Experience) are stored exclusively in the browser's `localStorage`.
+2. **Local Proving:** ZK Proofs are generated on the client-side using the Midnight SDK.
+3. **On-Chain Commitment:** Only the proof hash and claim type are submitted to the `ProofHireContract`.
+4. **Trustless Verification:** Recruiters call the smart contract to verify a candidate's proof. The result is a binary `Valid` or `Invalid`.
 
-**Compile command:**
+---
+
+## 🔧 Installation & Local Setup
+
+### Prerequisites
+- Node.js 18.x or higher
+- [Midnight SDK](https://midnight.network/docs/getting-started)
+- Lace Wallet (Browser Extension)
+
+### 1. Clone the Repository
 ```bash
-compact compile contracts/proof-hire.compact managed
+git clone https://github.com/user/proofhire.git
+cd proofhire
 ```
-This generates:
-- Compiled contract artifact
-- ZK proof logic and metadata
-- TypeScript bindings for the frontend
 
-### Step 5: Deploy to Midnight Testnet
-Use the Midnight CLI to deploy the compiled contract:
+### 2. Install Dependencies
 ```bash
-midnight deploy --contract managed/contract/index.json --wallet <your-wallet-address> --network testnet
+npm install
 ```
-*Note: You will need to sign the transaction using your Lace wallet with tDUST.*
+
+### 3. Environment Configuration
+Create a `.env.local` file (see `.env.example`):
+```env
+NEXT_PUBLIC_MIDNIGHT_NETWORK=testnet
+NEXT_PUBLIC_CONTRACT_ADDRESS=0x...
+```
+
+### 4. Run Locally
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 ---
 
-## Running the Frontend Locally
-1. Install dependencies: `npm install`
-2. Copy env: `cp .env.example .env.local`
-3. Start dev server: `npm run dev`
-4. Open [http://localhost:3000](http://localhost:3000)
+## 📜 Smart Contract Deployment
+
+The `ProofHireContract` is written in Compact.
+
+1. **Compile the Contract:**
+   ```bash
+   compact-cli compile contracts/proof-hire.compact
+   ```
+2. **Deploy to Midnight Testnet:**
+   Follow the [Midnight Deployment Guide](https://midnight.network/docs/how-to/deploy-contract) using your Midnight developer keys.
 
 ---
 
-## Hackathon Demo Script
+## 🧪 Testing & Verification
 
-### Phase 1: Landing Page & Theme
-- Show the all-black professional landing page.
-- Toggle between **Dark** and **Light** modes using the sun/moon icon.
-- Navigate through the "Protocol", "Privacy", and "Features" sections.
+We use **Playwright** for end-to-end ZK workflow verification.
 
-### Phase 2: Talent OS Login
-- Click **Launch App** or **Talent Login**.
-- Click **Connect Lace Wallet**. Watch the 1.2s authentication simulation (or real Lace popup).
-- Once logged in, click the wallet address to see the **Copy Address** and **Logout** options.
+### Run Talent Proof Generation Test
+```bash
+npx ts-node tests/verify_proofs.ts
+```
+*Verifies: Local storage -> ZK Proving sequence -> Ledger Entry.*
 
-### Phase 3: ZK Proof Generation
-- Fill in your local data (Education, Skills).
-- Generate a "Has Degree" proof.
-- Explain that the **Proof Server** is running locally and no data has left your machine.
+### Run Recruiter Verification Test
+```bash
+npx ts-node tests/verify_recruiter_flow.ts
+```
+*Verifies: Rule Building -> Ledger Scanning -> On-Chain Verification.*
 
-### Phase 4: Recruiter Verification
-- Switch to the **Recruiter Dashboard**.
-- Click **Verify** on a candidate proof.
-- Show the "Valid" result confirmed by the Midnight smart contract on the testnet.
+---
 
-Lets gooooooo🚀
+## 🎭 Hackathon Demo Script
+
+Follow these steps for a perfect demo:
+
+### Step 1: The Talent Experience
+1. Navigate to the **Landing Page** and click **"I'm a Talent"**.
+2. **Connect Lace Wallet:** Experience the secure handshake and address request.
+3. **Local Profile:** Fill in "MIT BS in Cryptography" and "5 Years Experience". Save locally.
+4. **Proof Factory:** Select "University Degree". Watch the ZK-Circuit initialize, prove locally, and commit to the Midnight ledger.
+5. **Ledger History:** See your proof hash appear in the "Talent Ledger History".
+
+### Step 2: The Recruiter Experience
+1. Navigate to the **Landing Page** and click **"I'm a Recruiter"**.
+2. **Connect Wallet:** Authenticate to enter the **Recruiter OS**.
+3. **Rule Builder:** Set a requirement for "Min 2 Years Experience".
+4. **ZK Browser:** Find the candidate commitment. Click **"Verify Proof"**.
+5. **Mathematical Match:** See the "Valid Proof" status confirmed directly by the Midnight smart contract.
+
+---
+
+## 🔒 Security & Privacy
+- **Zero Raw Data Leakage:** Raw input fields never leave the browser's DOM.
+- **Stateless interactions:** The platform has no database. User identity is strictly tied to the Lace Wallet address.
+- **Protocol Integrity:** Verification is handled by the `proof_hash == pHash` circuit logic on-chain.
+
+---
+
+## 👨‍💻 Author
+**Jules** - Senior Software Engineer & Web3 Architect.
+
+*Built for the Midnight Network Hackathon.*

@@ -1,0 +1,151 @@
+
+> tmp_next@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.2 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+✓ Ready in 560ms
+
+ GET / 200 in 651ms (next.js: 295ms, application-code: 357ms)
+ GET /launch 200 in 121ms (next.js: 31ms, application-code: 90ms)
+ GET /talent/auth 200 in 144ms (next.js: 28ms, application-code: 116ms)
+ GET /talent/auth 200 in 1708ms (next.js: 856ms, application-code: 852ms)
+ GET /talent/auth 200 in 93ms (next.js: 7ms, application-code: 86ms)
+ GET /talent/auth 200 in 98ms (next.js: 4ms, application-code: 94ms)
+ GET /talent/auth 200 in 67ms (next.js: 3ms, application-code: 64ms)
+ GET /talent/auth 200 in 79ms (next.js: 5ms, application-code: 74ms)
+[browser] Auth: No mockAddress found during confirm
+    at handleConfirm (app/talent/auth/page.tsx:42:15)
+  40 |       router.push('/talent/dashboard');
+  41 |     } else {
+> 42 |       console.error('Auth: No mockAddress found during confirm');
+     |               ^
+  43 |     }
+  44 |   };
+  45 | (app/talent/auth/page.tsx:42:15)
+ GET /talent/auth 200 in 84ms (next.js: 8ms, application-code: 76ms)
+[browser] Auth: No mockAddress found during confirm
+    at handleConfirm (app/talent/auth/page.tsx:44:15)
+  42 |       router.push('/talent/dashboard');
+  43 |     } else {
+> 44 |       console.error('Auth: No mockAddress found during confirm');
+     |               ^
+  45 |     }
+  46 |   };
+  47 | (app/talent/auth/page.tsx:44:15)
+ GET /talent/auth 200 in 93ms (next.js: 6ms, application-code: 87ms)
+[browser] Auth: No mockAddress found during confirm
+    at handleConfirm (app/talent/auth/page.tsx:45:15)
+  43 |       router.push('/talent/dashboard');
+  44 |     } else {
+> 45 |       console.error('Auth: No mockAddress found during confirm');
+     |               ^
+  46 |     }
+  47 |   };
+  48 | (app/talent/auth/page.tsx:45:15)
+ GET /talent/auth 200 in 78ms (next.js: 6ms, application-code: 73ms)
+ GET /talent/dashboard 200 in 2.9s (next.js: 2.8s, application-code: 44ms)
+ GET /talent/dashboard 200 in 238ms (next.js: 162ms, application-code: 76ms)
+ GET /talent/auth 200 in 751ms (next.js: 35ms, application-code: 715ms)
+ GET /talent/dashboard 200 in 28ms (next.js: 4ms, application-code: 25ms)
+ GET /talent/auth 200 in 400ms (next.js: 122ms, application-code: 277ms)
+ GET /talent/auth 200 in 90ms (next.js: 6ms, application-code: 84ms)
+ GET /talent/auth 200 in 90ms (next.js: 5ms, application-code: 85ms)
+ GET /talent/dashboard 200 in 82ms (next.js: 21ms, application-code: 61ms)
+[browser] Uncaught ReferenceError: Award is not defined
+    at TalentDashboard (app/talent/dashboard/page.tsx:77:16)
+  75 |             </Link>
+  76 |             <Link href="/talent/proofs" className="flex items-center gap-2 px-4 py-2 text-...
+> 77 |               <Award className="w-4 h-4" />
+     |                ^
+  78 |               Proof Factory
+  79 |             </Link>
+  80 |           </nav>
+ GET /talent/auth 200 in 74ms (next.js: 4ms, application-code: 70ms)
+ GET /talent/dashboard 200 in 40ms (next.js: 3ms, application-code: 37ms)
+[browser] Uncaught ReferenceError: Award is not defined
+    at TalentDashboard (app/talent/dashboard/page.tsx:77:16)
+  75 |             </Link>
+  76 |             <Link href="/talent/proofs" className="flex items-center gap-2 px-4 py-2 text-...
+> 77 |               <Award className="w-4 h-4" />
+     |                ^
+  78 |               Proof Factory
+  79 |             </Link>
+  80 |           </nav>
+ GET /talent/auth 200 in 434ms (next.js: 130ms, application-code: 304ms)
+ GET /talent/dashboard 200 in 44ms (next.js: 12ms, application-code: 32ms)
+ GET /talent/profile 200 in 1236ms (next.js: 1193ms, application-code: 43ms)
+ GET /talent/proofs 200 in 1290ms (next.js: 1223ms, application-code: 67ms)
+ GET /talent/auth 200 in 387ms (next.js: 119ms, application-code: 268ms)
+ GET /talent/dashboard 200 in 50ms (next.js: 12ms, application-code: 38ms)
+ GET /talent/profile 200 in 49ms (next.js: 14ms, application-code: 36ms)
+ GET /talent/proofs 200 in 141ms (next.js: 12ms, application-code: 129ms)
+ GET /talent/auth 200 in 78ms (next.js: 4ms, application-code: 75ms)
+ GET /talent/dashboard 200 in 38ms (next.js: 5ms, application-code: 33ms)
+ GET /talent/profile 200 in 43ms (next.js: 4ms, application-code: 39ms)
+ GET /talent/proofs 200 in 64ms (next.js: 3ms, application-code: 61ms)
+ GET /talent/auth 200 in 79ms (next.js: 3ms, application-code: 76ms)
+ GET /talent/dashboard 200 in 40ms (next.js: 3ms, application-code: 37ms)
+ GET /talent/profile 200 in 37ms (next.js: 3ms, application-code: 35ms)
+ GET /talent/proofs 200 in 53ms (next.js: 3ms, application-code: 50ms)
+ GET /talent/auth 200 in 136ms (next.js: 7ms, application-code: 129ms)
+ GET /talent/dashboard 200 in 85ms (next.js: 10ms, application-code: 76ms)
+ GET /talent/profile 200 in 45ms (next.js: 5ms, application-code: 40ms)
+ GET /talent/proofs 200 in 81ms (next.js: 3ms, application-code: 78ms)
+ GET /talent/auth 200 in 82ms (next.js: 3ms, application-code: 79ms)
+ GET /talent/dashboard 200 in 31ms (next.js: 4ms, application-code: 27ms)
+ GET /talent/profile 200 in 41ms (next.js: 5ms, application-code: 35ms)
+ GET /talent/proofs 200 in 53ms (next.js: 4ms, application-code: 49ms)
+[browser] [Midnight] No CircuitContext found. Running in Demo Simulation Mode. (lib/contract-utils.ts:39:15)
+ GET /recruiter/auth 200 in 1663ms (next.js: 1577ms, application-code: 86ms)
+ GET /talent/auth 200 in 62ms (next.js: 3ms, application-code: 59ms)
+ GET /talent/dashboard 200 in 40ms (next.js: 3ms, application-code: 37ms)
+ GET /talent/profile 200 in 36ms (next.js: 5ms, application-code: 32ms)
+ GET /talent/proofs 200 in 65ms (next.js: 3ms, application-code: 62ms)
+[browser] [Midnight] No CircuitContext found. Running in Demo Simulation Mode. (lib/contract-utils.ts:39:15)
+ GET /recruiter/auth 200 in 68ms (next.js: 5ms, application-code: 63ms)
+ GET /recruiter/dashboard 200 in 1492ms (next.js: 1421ms, application-code: 71ms)
+ GET /recruiter/candidates 200 in 1351ms (next.js: 1294ms, application-code: 57ms)
+ GET /talent/auth 200 in 1063ms (next.js: 204ms, application-code: 859ms)
+ GET /talent/dashboard 200 in 136ms (next.js: 31ms, application-code: 104ms)
+ GET /talent/profile 200 in 118ms (next.js: 31ms, application-code: 87ms)
+ GET /talent/proofs 200 in 134ms (next.js: 20ms, application-code: 114ms)
+ GET /talent/auth 200 in 442ms (next.js: 20ms, application-code: 422ms)
+ GET /talent/dashboard 200 in 74ms (next.js: 8ms, application-code: 67ms)
+ GET /talent/profile 200 in 65ms (next.js: 5ms, application-code: 60ms)
+ GET /talent/proofs 200 in 60ms (next.js: 3ms, application-code: 57ms)
+[browser] [Midnight] No CircuitContext found. Running in Demo Simulation Mode. (lib/contract-utils.ts:39:15)
+ GET /recruiter/auth 200 in 103ms (next.js: 11ms, application-code: 92ms)
+ GET /recruiter/dashboard 200 in 41ms (next.js: 14ms, application-code: 28ms)
+ GET /recruiter/candidates 200 in 40ms (next.js: 11ms, application-code: 29ms)
+ GET /talent/auth 200 in 80ms (next.js: 4ms, application-code: 76ms)
+ GET /talent/dashboard 200 in 56ms (next.js: 3ms, application-code: 53ms)
+ GET /talent/profile 200 in 45ms (next.js: 5ms, application-code: 40ms)
+ GET /talent/auth 200 in 58ms (next.js: 3ms, application-code: 55ms)
+ GET /talent/dashboard 200 in 56ms (next.js: 6ms, application-code: 50ms)
+ GET /talent/profile 200 in 28ms (next.js: 6ms, application-code: 22ms)
+ GET /talent/proofs 200 in 43ms (next.js: 4ms, application-code: 39ms)
+[browser] [Midnight] No CircuitContext found. Running in Demo Simulation Mode. (lib/contract-utils.ts:39:15)
+ GET /recruiter/auth 200 in 63ms (next.js: 3ms, application-code: 59ms)
+ GET /recruiter/dashboard 200 in 34ms (next.js: 4ms, application-code: 29ms)
+ GET /recruiter/candidates 200 in 64ms (next.js: 5ms, application-code: 58ms)
+ GET /recruiter/auth 200 in 63ms (next.js: 3ms, application-code: 60ms)
+ GET /recruiter/dashboard 200 in 58ms (next.js: 3ms, application-code: 55ms)
+ GET /recruiter/candidates 200 in 29ms (next.js: 6ms, application-code: 24ms)
+ GET /talent/auth 200 in 78ms (next.js: 3ms, application-code: 75ms)
+ GET /talent/dashboard 200 in 39ms (next.js: 3ms, application-code: 36ms)
+ GET /talent/profile 200 in 35ms (next.js: 4ms, application-code: 32ms)
+ GET /talent/proofs 200 in 36ms (next.js: 7ms, application-code: 29ms)
+ GET /recruiter/auth 200 in 64ms (next.js: 3ms, application-code: 61ms)
+ GET /recruiter/dashboard 200 in 36ms (next.js: 3ms, application-code: 34ms)
+ GET /recruiter/candidates 200 in 41ms (next.js: 3ms, application-code: 38ms)
+ GET /talent/auth 200 in 65ms (next.js: 3ms, application-code: 62ms)
+ GET /talent/dashboard 200 in 46ms (next.js: 5ms, application-code: 41ms)
+ GET /talent/profile 200 in 127ms (next.js: 3ms, application-code: 124ms)
+ GET /talent/proofs 200 in 49ms (next.js: 3ms, application-code: 47ms)
+[browser] [Midnight] No CircuitContext found. Running in Demo Simulation Mode. (lib/contract-utils.ts:39:15)
+ GET /recruiter/auth 200 in 87ms (next.js: 3ms, application-code: 83ms)
+ GET /recruiter/dashboard 200 in 33ms (next.js: 3ms, application-code: 30ms)
+ GET /recruiter/candidates 200 in 104ms (next.js: 3ms, application-code: 101ms)
+ GET /launch 200 in 163ms (next.js: 44ms, application-code: 119ms)
