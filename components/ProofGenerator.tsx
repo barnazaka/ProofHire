@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Loader2, Plus, CheckCircle2, AlertCircle, ShieldCheck, Award, Link as LinkIcon, Zap, Wallet, ArrowRight } from 'lucide-react';
 import { TalentData } from './ClaimForm';
 import { proofHireContract } from '@/lib/contract-utils';
+import { decryptData } from '@/lib/encryption-utils';
 
 interface ProofRecord {
   id: string;
@@ -38,7 +39,16 @@ export default function ProofGenerator() {
       }
 
       const walletAddr = localStorage.getItem('user_address') || 'unknown';
-      const data: TalentData = JSON.parse(storedData);
+      let data: TalentData;
+      try {
+        data = JSON.parse(storedData);
+      } catch (e) {
+        data = decryptData(storedData);
+      }
+
+      if (!data) {
+        throw new Error('Failed to decrypt local data vault.');
+      }
 
       // Real-time status simulation for high-stakes demo
       setCurrentStep('Initializing Midnight SDK & Wallet Binding...');
@@ -55,14 +65,19 @@ export default function ProofGenerator() {
 
       setCurrentStep('Submitting Proof Commitment to Midnight Ledger...');
 
-      // REAL CONTRACT INTERACTION: Call the compiled Compact circuit
-      // In a live environment, 'context' would be managed by the Midnight SDK
-      const mockContext = { /* Mock for demo purposes */ } as any;
+      // PRODUCTION SDK INTERACTION
+      const { connectLaceWallet } = await import('@/components/WalletIntegration');
+      const connection = await connectLaceWallet();
+
+      if (!connection) {
+        throw new Error('Active Midnight Wallet connection required for proving.');
+      }
+
       const proofHashUint8 = new Uint8Array(32).fill(Math.floor(Math.random() * 255));
       const typeNum = BigInt(claimType.length);
       const timestamp = BigInt(Date.now());
 
-      await proofHireContract.submitProof(mockContext, {
+      await proofHireContract.submitProof(connection.api as any, {
         userAddr: walletAddr,
         proofHash: proofHashUint8,
         claimType: typeNum,

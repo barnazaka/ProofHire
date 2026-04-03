@@ -33,7 +33,14 @@ export default function ClaimForm() {
   useEffect(() => {
     const savedData = localStorage.getItem(STORAGE_KEY);
     if (savedData) {
-      setFormData(JSON.parse(savedData));
+      const { decryptData } = require('@/lib/encryption-utils');
+      let parsed;
+      try {
+        parsed = JSON.parse(savedData);
+      } catch (e) {
+        parsed = decryptData(savedData);
+      }
+      if (parsed) setFormData(parsed);
     }
   }, []);
 
@@ -48,7 +55,9 @@ export default function ClaimForm() {
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+    const { encryptData } = require('@/lib/encryption-utils');
+    const encrypted = encryptData(formData);
+    localStorage.setItem(STORAGE_KEY, encrypted);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };

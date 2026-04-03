@@ -21,23 +21,32 @@ export default function TalentAuthPage() {
     addressRef.current = mockAddress;
   }, [mockAddress]);
 
-  const handleConnect = () => {
+  const handleConnect = async () => {
     console.log('Auth: handleConnect triggered');
     setIsConnecting(true);
     setShowPopup(true);
-    setPopupStatus('Initializing Handshake...');
+    setPopupStatus('Connecting to Lace Wallet...');
 
-    setTimeout(() => {
-      console.log('Auth: Mock address generated');
-      setPopupStatus('Requesting Address...');
-      const addr = 'addr_mid1' + Math.random().toString(36).substring(2, 15);
-      setMockAddress(addr);
-    }, 500);
+    try {
+      const { connectLaceWallet } = await import('@/components/WalletIntegration');
+      const connection = await connectLaceWallet();
+
+      if (connection) {
+        setMockAddress(connection.address);
+        setPopupStatus('Wallet Connected. Awaiting Confirmation.');
+      } else {
+        setPopupStatus('Lace Wallet NOT Found. Please install the extension.');
+        setIsConnecting(false);
+      }
+    } catch (err: any) {
+      setPopupStatus(`Connection Error: ${err.message}`);
+      setIsConnecting(false);
+    }
   };
 
   const handleConfirm = async () => {
-    console.log('Auth: handleConfirm started. current mockAddress from ref is:', addressRef.current);
-    setPopupStatus('Signing Identity Commitment...');
+    console.log('Auth: handleConfirm started');
+    setPopupStatus('Requesting ZK-Identity Signature...');
 
     let addr = addressRef.current;
     if (!addr) {
@@ -60,14 +69,36 @@ export default function TalentAuthPage() {
       });
     }
 
+    try {
+      const { signData } = await import('@/components/WalletIntegration');
+      const signature = await signData(addr || '', `Authenticate ProofHire as Talent: ${Date.now()}`);
+
+      if (!signature) {
+        setPopupStatus('Signature Rejected. Access Denied.');
+        return;
+      }
+
+      console.log('Auth: Signature received:', signature);
+      setPopupStatus('Sovereign Identity Verified.');
+    } catch (err: any) {
+      setPopupStatus(`Signature Error: ${err.message}`);
+      return;
+    }
+
     await new Promise(resolve => setTimeout(resolve, 1500));
 
-    console.log('Auth: After delay, using address:', addr);
+    console.log('Auth: Verification complete, using address:', addr);
     if (addr) {
-      console.log('Auth: Redirecting to dashboard with address:', addr);
+      console.log('Auth: Redirecting with address:', addr);
       localStorage.setItem('user_address', addr);
       localStorage.setItem('user_role', 'talent');
-      router.push('/talent/dashboard');
+
+      const onboarded = localStorage.getItem('onboarding_complete');
+      if (onboarded === 'true') {
+        router.push('/talent/dashboard');
+      } else {
+        router.push('/talent/onboarding');
+      }
     } else {
       console.error('Auth: No mockAddress found during confirm');
     }

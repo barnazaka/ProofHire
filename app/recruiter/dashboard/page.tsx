@@ -18,6 +18,8 @@ export default function RecruiterDashboard() {
     candidatesFound: 0,
     verificationsDone: 0
   });
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [primaryFilter, setPrimaryFilter] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -36,6 +38,13 @@ export default function RecruiterDashboard() {
       const globalProofs = localStorage.getItem('proofhire_proofs_global');
       if (globalProofs) {
         setStats(prev => ({ ...prev, candidatesFound: JSON.parse(globalProofs).length }));
+      }
+
+      const savedFilter = localStorage.getItem('recruiter_primary_filter');
+      if (!savedFilter) {
+        setShowFilterModal(true);
+      } else {
+        setPrimaryFilter(savedFilter);
       }
     } else {
       router.push('/recruiter/auth');
@@ -83,8 +92,61 @@ export default function RecruiterDashboard() {
     </Link>
   );
 
+  const saveFilter = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (primaryFilter.trim()) {
+      localStorage.setItem('recruiter_primary_filter', primaryFilter.trim());
+      setShowFilterModal(false);
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-black font-sans text-zinc-900 dark:text-white transition-colors duration-300">
+      {showFilterModal && (
+          <div id="filter-modal" className="fixed inset-0 z-[100] flex items-center justify-center p-8">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/80 backdrop-blur-3xl"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              className="relative w-full max-w-xl bg-zinc-900 border border-zinc-800 rounded-[3.5rem] p-16 shadow-3xl text-center space-y-10"
+            >
+              <div className="w-20 h-20 bg-indigo-600 rounded-3xl flex items-center justify-center mx-auto shadow-2xl shadow-indigo-600/20">
+                 <Search className="w-10 h-10 text-white" />
+              </div>
+              <div className="space-y-4">
+                 <h2 className="text-4xl font-black italic uppercase tracking-tightest text-white">Target Focus.</h2>
+                 <p className="text-zinc-500 font-medium text-sm leading-relaxed px-8">
+                    To optimize your ZK-candidate discovery engine, specify your primary hiring target.
+                    This helps the protocol prioritize relevant proof commitments.
+                 </p>
+              </div>
+              <form onSubmit={saveFilter} className="space-y-6">
+                 <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Primary Hiring Role / Skill</label>
+                    <input
+                      autoFocus
+                      value={primaryFilter}
+                      onChange={(e) => setPrimaryFilter(e.target.value)}
+                      className="w-full bg-black border border-zinc-800 rounded-2xl p-6 text-xl font-black italic text-white focus:ring-2 focus:ring-indigo-600 outline-none transition-all placeholder:text-zinc-800"
+                      placeholder="e.g. Senior Rust Engineer"
+                    />
+                 </div>
+                 <button
+                   type="submit"
+                   className="w-full py-6 bg-white text-black rounded-2xl font-black uppercase italic tracking-widest hover:bg-indigo-600 hover:text-white transition-all shadow-xl"
+                 >
+                    Set Command Focus
+                 </button>
+              </form>
+            </motion.div>
+          </div>
+        )}
+
       <header className="px-10 py-6 flex justify-between items-center border-b border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-black/50 backdrop-blur-2xl sticky top-0 z-50">
         <div className="flex items-center gap-4">
           <Link href="/" className="mr-4 p-3 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-2xl transition-all">

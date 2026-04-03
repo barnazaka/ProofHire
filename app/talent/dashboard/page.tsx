@@ -21,6 +21,11 @@ export default function TalentDashboard() {
     const savedRole = localStorage.getItem('user_role');
 
     if (savedAddress && savedRole === 'talent') {
+      const onboarded = localStorage.getItem('onboarding_complete');
+      if (onboarded !== 'true') {
+        router.push('/talent/onboarding');
+        return;
+      }
       setWalletAddress(savedAddress);
       setWalletConnected(true);
     } else {
