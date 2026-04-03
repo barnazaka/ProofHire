@@ -21,20 +21,30 @@ export default function RecruiterAuthPage() {
     addressRef.current = mockAddress;
   }, [mockAddress]);
 
-  const handleConnect = () => {
+  const handleConnect = async () => {
     setIsConnecting(true);
     setShowPopup(true);
-    setPopupStatus('Initializing Handshake...');
+    setPopupStatus('Connecting to Lace Wallet...');
 
-    setTimeout(() => {
-      setPopupStatus('Requesting Address...');
-      const addr = 'addr_mid1' + Math.random().toString(36).substring(2, 15);
-      setMockAddress(addr);
-    }, 500);
+    try {
+      const { connectLaceWallet } = await import('@/components/WalletIntegration');
+      const connection = await connectLaceWallet();
+
+      if (connection) {
+        setMockAddress(connection.address);
+        setPopupStatus('Wallet Connected. Awaiting Confirmation.');
+      } else {
+        setPopupStatus('Lace Wallet NOT Found. Please install the extension.');
+        setIsConnecting(false);
+      }
+    } catch (err: any) {
+      setPopupStatus(`Connection Error: ${err.message}`);
+      setIsConnecting(false);
+    }
   };
 
   const handleConfirm = async () => {
-    setPopupStatus('Signing Partner Commitment...');
+    setPopupStatus('Requesting Recruiter Signature...');
 
     let addr = addressRef.current;
     if (!addr) {
@@ -47,6 +57,22 @@ export default function RecruiterAuthPage() {
           }
         }, 100);
       });
+    }
+
+    try {
+      const { signData } = await import('@/components/WalletIntegration');
+      const signature = await signData(addr || '', `Authenticate ProofHire as Recruiter: ${Date.now()}`);
+
+      if (!signature) {
+        setPopupStatus('Signature Rejected. Access Denied.');
+        return;
+      }
+
+      console.log('Auth: Recruiter signature received:', signature);
+      setPopupStatus('Partner Identity Verified.');
+    } catch (err: any) {
+      setPopupStatus(`Signature Error: ${err.message}`);
+      return;
     }
 
     await new Promise(resolve => setTimeout(resolve, 1500));
