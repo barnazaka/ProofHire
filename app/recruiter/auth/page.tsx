@@ -3,84 +3,53 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, ShieldCheck, Briefcase, Zap, Lock, Globe, Loader2, Fingerprint, Search, CheckCircle2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowLeft, ShieldCheck, Briefcase, Zap, Lock, Globe, Loader2, Fingerprint, Search, CheckCircle2, AlertTriangle, ExternalLink } from 'lucide-react';
 import ThemeToggle from '@/components/ThemeToggle';
-import LacePopup from '@/components/LacePopup';
+import { connectLaceWallet, shortenAddress } from '@/components/WalletIntegration';
 
 export default function RecruiterAuthPage() {
   const [activeTab, setActiveTab] = useState<'signup' | 'login'>('login');
   const [isConnecting, setIsConnecting] = useState(false);
-  const [showPopup, setShowPopup] = useState(false);
-  const [popupStatus, setPopupStatus] = useState<string | null>(null);
-  const [mockAddress, setMockAddress] = useState<string | null>(null);
-  const addressRef = useRef<string | null>(null);
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    addressRef.current = mockAddress;
-  }, [mockAddress]);
+    // Auto-reconnect check
+    const savedAddress = localStorage.getItem('user_address');
+    const role = localStorage.getItem('user_role');
+    if (savedAddress && role === 'recruiter') {
+      handleConnect(true);
+    }
+  }, []);
 
-  const handleConnect = async () => {
+  const handleConnect = async (isAuto = false) => {
     setIsConnecting(true);
-    setShowPopup(true);
-    setPopupStatus('Connecting to Lace Wallet...');
+    setError(null);
 
     try {
-      const { connectLaceWallet } = await import('@/components/WalletIntegration');
       const connection = await connectLaceWallet();
 
       if (connection) {
-        setMockAddress(connection.address);
-        setPopupStatus('Wallet Connected. Awaiting Confirmation.');
+        setWalletAddress(connection.address);
+        localStorage.setItem('user_address', connection.address);
+        localStorage.setItem('user_role', 'recruiter');
+
+        if (!isAuto) {
+           await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+
+        router.push('/recruiter/dashboard');
       } else {
-        setPopupStatus('Lace Wallet NOT Found. Please install the extension.');
+        if (!isAuto) {
+          setError('Lace Wallet extension NOT detected.');
+        }
         setIsConnecting(false);
       }
     } catch (err: any) {
-      setPopupStatus(`Connection Error: ${err.message}`);
+      setError(`Connection Error: ${err.message || 'Unknown error occurred'}`);
       setIsConnecting(false);
-    }
-  };
-
-  const handleConfirm = async () => {
-    setPopupStatus('Requesting Recruiter Signature...');
-
-    let addr = addressRef.current;
-    if (!addr) {
-      await new Promise(resolve => {
-        const check = setInterval(() => {
-          if (addressRef.current) {
-             addr = addressRef.current;
-             clearInterval(check);
-             resolve(true);
-          }
-        }, 100);
-      });
-    }
-
-    try {
-      const { signData } = await import('@/components/WalletIntegration');
-      const signature = await signData(addr || '', `Authenticate ProofHire as Recruiter: ${Date.now()}`);
-
-      if (!signature) {
-        setPopupStatus('Signature Rejected. Access Denied.');
-        return;
-      }
-
-      console.log('Auth: Recruiter signature received:', signature);
-      setPopupStatus('Partner Identity Verified.');
-    } catch (err: any) {
-      setPopupStatus(`Signature Error: ${err.message}`);
-      return;
-    }
-
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    if (addr) {
-      localStorage.setItem('user_address', addr);
-      localStorage.setItem('user_role', 'recruiter');
-      router.push('/recruiter/dashboard');
     }
   };
 
@@ -127,7 +96,7 @@ export default function RecruiterAuthPage() {
                     <h3 className="text-2xl font-black italic uppercase tracking-tighter">Recruiter Engine</h3>
                     <div className="flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-[9px] font-black uppercase tracking-widest border border-white/5">
                        <ShieldCheck className="w-3 h-3 text-indigo-400" />
-                       ZK-Verifier Enabled
+                       Midnight Preview Network
                     </div>
                  </div>
                  <div className="flex gap-4 opacity-50">
@@ -137,14 +106,6 @@ export default function RecruiterAuthPage() {
                  </div>
               </motion.div>
            </div>
-
-           <motion.div
-              animate={{ x: [0, -10, 0], y: [0, 5, 0] }}
-              transition={{ repeat: Infinity, duration: 3 }}
-              className="absolute -top-6 -left-6 p-6 bg-zinc-900/80 border border-white/10 rounded-3xl shadow-2xl backdrop-blur-xl"
-           >
-              <Fingerprint className="w-8 h-8 text-indigo-500" />
-           </motion.div>
         </motion.div>
 
         {/* Auth Card */}
@@ -161,7 +122,7 @@ export default function RecruiterAuthPage() {
                  </div>
                  <h2 className="text-3xl font-black italic uppercase tracking-tightest mb-4">Partner Terminal</h2>
                  <p className="text-zinc-500 text-sm font-medium leading-relaxed max-w-[240px]">
-                    Authenticate with Lace Wallet to unlock the recruiter engine.
+                    Connect your Lace Wallet to access the ProofHire verification engine.
                  </p>
               </div>
 
@@ -182,9 +143,26 @@ export default function RecruiterAuthPage() {
                  </div>
               </div>
 
-              <div className="p-12 pt-8 flex flex-col items-center gap-10">
+              <div className="p-12 pt-8 flex flex-col items-center gap-6">
+                 {error && (
+                   <div className="w-full p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex flex-col gap-3">
+                      <div className="flex items-center gap-3 text-rose-500">
+                         <AlertTriangle className="w-5 h-5 flex-shrink-0" />
+                         <span className="text-[10px] font-black uppercase tracking-widest leading-tight">{error}</span>
+                      </div>
+                      <a
+                        href="https://midnight.network/lace"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2 py-2 bg-rose-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-600 transition-colors"
+                      >
+                         Install Lace Wallet <ExternalLink className="w-3 h-3" />
+                      </a>
+                   </div>
+                 )}
+
                  <button
-                   onClick={handleConnect}
+                   onClick={() => handleConnect(false)}
                    disabled={isConnecting}
                    className="w-full flex items-center justify-center gap-4 py-6 bg-white text-black rounded-3xl font-black uppercase italic tracking-widest hover:bg-zinc-200 transition-all shadow-xl active:scale-95 disabled:opacity-50 group"
                  >
@@ -195,35 +173,23 @@ export default function RecruiterAuthPage() {
                          <ShieldCheck className="w-5 h-5 text-white" />
                       </div>
                     )}
-                    {isConnecting ? 'Awaiting Signature...' : 'Connect Lace Wallet'}
+                    {isConnecting ? 'Establishing...' : 'Connect Lace Wallet'}
                  </button>
 
                  <div className="space-y-4 text-center">
                     <div className="flex items-center gap-3 justify-center">
                        <CheckCircle2 className="w-4 h-4 text-indigo-500" />
-                       <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Identity Bound to Wallet</span>
+                       <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Midnight DApp Connector</span>
                     </div>
                     <p className="text-[10px] font-medium text-zinc-600 leading-relaxed text-center px-6">
                        Trustless verification of sovereign talent identities.
-                       Zero Exposure Protocol active.
+                       Zero Exposure Protocol active on Preview.
                     </p>
                  </div>
               </div>
            </div>
         </motion.div>
       </main>
-
-      <AnimatePresence>
-        {showPopup && (
-          <LacePopup
-            isOpen={showPopup}
-            onClose={() => { setShowPopup(false); setIsConnecting(false); }}
-            onConfirm={handleConfirm}
-            status={popupStatus}
-            address={mockAddress || undefined}
-          />
-        )}
-      </AnimatePresence>
     </div>
   );
 }

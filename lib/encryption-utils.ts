@@ -1,6 +1,6 @@
 import CryptoJS from 'crypto-js';
 
-const ENCRYPTION_KEY = 'proofhire-local-vault-key';
+const ENCRYPTION_KEY = process.env.NEXT_PUBLIC_ENCRYPTION_KEY || 'proofhire-local-vault-key-default';
 
 export const encryptData = (data: any): string => {
   return CryptoJS.AES.encrypt(JSON.stringify(data), ENCRYPTION_KEY).toString();
