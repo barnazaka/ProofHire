@@ -62,10 +62,13 @@ export default function ProofVerifier() {
         throw new Error('Midnight Wallet connection required for on-chain verification.');
       }
 
+      // Retrieve network configuration from connected wallet
+      const serviceUriConfig = await connection.api.getConfiguration();
+
       // Convert the string hash back to Uint8Array for the contract
       const hashUint8 = new Uint8Array(32).fill(0x1a); // Simulated conversion
 
-      const onChainResult = await proofHireContract.verifyProof(connection.api as any, {
+      const onChainResult = await proofHireContract.verifyProof({ api: connection.api, config: serviceUriConfig }, {
         proofHash: hashUint8,
         userAddr: 'unknown'
       });

@@ -3,7 +3,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, ShieldCheck, Briefcase, Zap, Search, CheckCircle2, User, Award, Loader2, LogOut, Copy, Check, LayoutDashboard, FileText, Fingerprint, Shield } from 'lucide-react';
+import {
+  ArrowLeft, ShieldCheck, Briefcase, Zap,
+  Search, CheckCircle2, User, Award,
+  Loader2, LogOut, Copy, Check,
+  LayoutDashboard, FileText, Fingerprint,
+  Shield, Filter, X, ChevronDown, Sparkles
+} from 'lucide-react';
 import { shortenAddress } from '@/components/WalletIntegration';
 import ThemeToggle from '@/components/ThemeToggle';
 
@@ -15,6 +21,9 @@ interface CandidateProof {
   hash: string;
   status: string;
   isBadge?: boolean;
+  education?: string;
+  experience?: number;
+  skills?: string[];
 }
 
 export default function RecruiterCandidates() {
@@ -23,8 +32,17 @@ export default function RecruiterCandidates() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [copied, setCopied] = useState(false);
   const [proofs, setProofs] = useState<CandidateProof[]>([]);
+  const [filteredProofs, setFilteredProofs] = useState<CandidateProof[]>([]);
   const [verifying, setVerifying] = useState<string | null>(null);
   const [verified, setVerified] = useState<Record<string, boolean>>({});
+
+  // Filter state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [minExperience, setMinExperience] = useState<number | ''>('');
+  const [educationFilter, setEducationFilter] = useState<string>('All');
+  const [skillTag, setSkillTag] = useState<string>('');
+  const [showFilters, setShowFilters] = useState(true);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -38,10 +56,38 @@ export default function RecruiterCandidates() {
       // Load proofs from "global" state
       const globalProofs = JSON.parse(localStorage.getItem('proofhire_proofs_global') || '[]');
       setProofs(globalProofs);
+      setFilteredProofs(globalProofs);
     } else {
       router.push('/recruiter/auth');
     }
   }, [router]);
+
+  useEffect(() => {
+    let result = proofs;
+
+    if (searchQuery) {
+      result = result.filter(p =>
+        p.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.candidateId.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    if (minExperience !== '') {
+      result = result.filter(p => (p.experience || 0) >= minExperience);
+    }
+
+    if (educationFilter !== 'All') {
+      result = result.filter(p => p.education === educationFilter);
+    }
+
+    if (skillTag) {
+      result = result.filter(p =>
+        p.skills?.some(s => s.toLowerCase().includes(skillTag.toLowerCase()))
+      );
+    }
+
+    setFilteredProofs(result);
+  }, [searchQuery, minExperience, educationFilter, skillTag, proofs]);
 
   const handleLogout = () => {
     localStorage.removeItem('user_address');
@@ -146,88 +192,226 @@ export default function RecruiterCandidates() {
         </div>
       </header>
 
-      <main className="flex-1 max-w-6xl mx-auto w-full p-8 lg:p-12">
-        <div className="mb-12">
-           <h2 className="text-4xl font-black italic uppercase tracking-tightest mb-2">Public Proof Ledger</h2>
-           <p className="text-zinc-500 text-sm font-medium italic">Mathematicly verify candidate claims without exposing private identity data.</p>
+      <main className="flex-1 max-w-7xl mx-auto w-full p-8 lg:p-12">
+        <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+           <div className="space-y-2">
+              <h2 className="text-5xl font-black italic uppercase tracking-tightest">Public Ledger <span className="text-indigo-600">Sync.</span></h2>
+              <p className="text-zinc-500 text-sm font-medium italic">Mathematicly verify candidate claims without exposing private identity data.</p>
+           </div>
+
+           <button
+             onClick={() => setShowFilters(!showFilters)}
+             className={`flex items-center gap-3 px-6 py-3 rounded-2xl font-black uppercase italic tracking-widest text-xs transition-all ${showFilters ? 'bg-indigo-600 text-white' : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:border-zinc-700'}`}
+           >
+              <Filter className="w-4 h-4" />
+              {showFilters ? 'Hide Filters' : 'Show Filters'}
+           </button>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
-          {proofs.length === 0 ? (
-            <div className="text-center py-32 bg-zinc-900/30 border-2 border-dashed border-zinc-800 rounded-[3rem] flex flex-col items-center gap-6">
-               <div className="w-20 h-20 bg-zinc-800 rounded-3xl flex items-center justify-center border border-zinc-700 text-zinc-600">
-                  <Fingerprint className="w-10 h-10" />
-               </div>
-               <div className="space-y-1">
-                  <h3 className="text-xl font-black italic uppercase">No Proofs Found</h3>
-                  <p className="text-zinc-500 text-sm max-w-[300px] mx-auto">Candidates have not yet published any cryptographic claims to the global ledger.</p>
-               </div>
-            </div>
-          ) : (
-            proofs.map(proof => (
-              <div key={proof.id} className="bg-zinc-900 border border-zinc-800 rounded-[2.5rem] p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-8 transition-all hover:border-indigo-500/50 shadow-2xl relative overflow-hidden group">
-                 <div className="flex items-center gap-6 relative z-10">
-                    <div className="w-16 h-16 bg-zinc-800 rounded-2xl flex items-center justify-center border border-zinc-700 shadow-inner group-hover:bg-indigo-600/10 transition-colors">
-                       {proof.type.includes('Degree') ? <Award className="w-8 h-8 text-indigo-500" /> : <Shield className="w-8 h-8 text-indigo-500" />}
-                    </div>
-                    <div className="space-y-1">
-                       <div className="flex items-center gap-3">
-                          <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">ID: {proof.candidateId}</span>
-                          <div className="w-1.5 h-1.5 bg-zinc-700 rounded-full"></div>
-                          <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">{proof.timestamp}</span>
-                       </div>
-                       <h3 className="text-2xl font-black italic uppercase tracking-tighter">{proof.type}</h3>
-                       <div className="flex items-center gap-2 text-[10px] font-mono text-zinc-600 bg-black/40 px-3 py-1 rounded-lg w-fit border border-white/5">
-                          <Copy className="w-3 h-3" />
-                          {proof.hash}
-                       </div>
-                    </div>
-                 </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+           {/* Filters Sidebar */}
+           {showFilters && (
+             <aside className="lg:col-span-3 space-y-8 animate-in fade-in slide-in-from-left-4 duration-500">
+                <div className="space-y-6 bg-zinc-900/50 border border-zinc-800 p-8 rounded-[2.5rem]">
+                   <div className="space-y-3">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Search Claims</label>
+                      <div className="relative">
+                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
+                         <input
+                           value={searchQuery}
+                           onChange={(e) => setSearchQuery(e.target.value)}
+                           className="w-full bg-black border border-zinc-800 rounded-xl p-3 pl-10 text-xs font-bold focus:ring-1 focus:ring-indigo-600 outline-none"
+                           placeholder="Backend, ZK..."
+                         />
+                      </div>
+                   </div>
 
-                 <div className="flex items-center gap-4 relative z-10">
-                    {verified[proof.id] ? (
-                       <div className="flex items-center gap-3 px-8 py-4 bg-emerald-600/10 border border-emerald-600/20 rounded-2xl text-emerald-500 font-black uppercase italic tracking-widest text-sm animate-in zoom-in-95 duration-500">
-                          <CheckCircle2 className="w-5 h-5" />
-                          Valid Proof
+                   <div className="space-y-3">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Min. Experience (YoE)</label>
+                      <input
+                        type="number"
+                        value={minExperience}
+                        onChange={(e) => setMinExperience(e.target.value === '' ? '' : parseInt(e.target.value))}
+                        className="w-full bg-black border border-zinc-800 rounded-xl p-3 text-xs font-bold focus:ring-1 focus:ring-indigo-600 outline-none"
+                        placeholder="e.g. 5"
+                      />
+                   </div>
+
+                   <div className="space-y-3">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Education Level</label>
+                      <select
+                        value={educationFilter}
+                        onChange={(e) => setEducationFilter(e.target.value)}
+                        className="w-full bg-black border border-zinc-800 rounded-xl p-3 text-xs font-bold focus:ring-1 focus:ring-indigo-600 outline-none appearance-none"
+                      >
+                         <option>All</option>
+                         <option>Bachelor\'s</option>
+                         <option>Master\'s</option>
+                         <option>PhD</option>
+                         <option>Bootcamp</option>
+                      </select>
+                   </div>
+
+                   <div className="space-y-3">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Skill Tag</label>
+                      <div className="relative">
+                         <Zap className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
+                         <input
+                           value={skillTag}
+                           onChange={(e) => setSkillTag(e.target.value)}
+                           className="w-full bg-black border border-zinc-800 rounded-xl p-3 pl-10 text-xs font-bold focus:ring-1 focus:ring-indigo-600 outline-none"
+                           placeholder="Rust, React..."
+                         />
+                      </div>
+                   </div>
+
+                   <button
+                     onClick={() => {
+                        setSearchQuery('');
+                        setMinExperience('');
+                        setEducationFilter('All');
+                        setSkillTag('');
+                     }}
+                     className="w-full py-4 text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-rose-500 transition-colors"
+                   >
+                      Clear All Filters
+                   </button>
+                </div>
+
+                <div className="p-8 bg-indigo-600/10 border border-indigo-600/20 rounded-[2.5rem] space-y-4">
+                   <div className="flex items-center gap-3 text-indigo-500">
+                      <Sparkles className="w-5 h-5" />
+                      <span className="text-xs font-black uppercase tracking-widest italic">Smart Match</span>
+                   </div>
+                   <p className="text-[11px] font-medium text-indigo-300/70 leading-relaxed">
+                      Anonymous matching uses ZK-Circuit logic to rank candidates based on your requirement commitments.
+                   </p>
+                </div>
+             </aside>
+           )}
+
+           {/* Results Area */}
+           <div className={`${showFilters ? 'lg:col-span-9' : 'lg:col-span-12'} space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700`}>
+             <div className="flex items-center justify-between mb-4 px-2">
+                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">
+                   Showing {filteredProofs.length} Verification Commitments
+                </span>
+             </div>
+
+             {filteredProofs.length === 0 ? (
+               <div className="text-center py-32 bg-zinc-900/30 border-2 border-dashed border-zinc-800 rounded-[3rem] flex flex-col items-center gap-6">
+                  <div className="w-20 h-20 bg-zinc-800 rounded-3xl flex items-center justify-center border border-zinc-700 text-zinc-600">
+                     <Fingerprint className="w-10 h-10" />
+                  </div>
+                  <div className="space-y-1">
+                     <h3 className="text-xl font-black italic uppercase">No Claims Match Filters</h3>
+                     <p className="text-zinc-500 text-sm max-w-[300px] mx-auto">Adjust your requirements to find candidates on the Midnight network.</p>
+                  </div>
+               </div>
+             ) : (
+               filteredProofs.map(proof => (
+                 <div key={proof.id} className="bg-zinc-900 border border-zinc-800 rounded-[2.5rem] p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-8 transition-all hover:border-indigo-500/50 shadow-2xl relative overflow-hidden group">
+                    <div className="flex items-center gap-6 relative z-10">
+                       <div className="w-20 h-20 bg-zinc-800 rounded-3xl flex items-center justify-center border border-zinc-700 shadow-inner group-hover:bg-indigo-600/10 transition-colors relative">
+                          {proof.type.includes('ZK') || proof.type.includes('Researcher') ? <BrainCircuit className="w-10 h-10 text-indigo-500" /> : <Shield className="w-10 h-10 text-indigo-500" />}
+                          <div className="absolute -top-2 -right-2 w-6 h-6 bg-zinc-900 border border-zinc-800 rounded-full flex items-center justify-center text-[8px] font-black">
+                             {proof.experience}y
+                          </div>
                        </div>
-                    ) : (
-                       <button
-                         onClick={() => verifyProof(proof.id)}
-                         disabled={verifying === proof.id}
-                         className="flex items-center gap-3 px-8 py-4 bg-white text-black rounded-2xl font-black uppercase italic tracking-widest text-sm hover:bg-zinc-200 transition-all shadow-xl active:scale-95 disabled:opacity-50"
-                       >
-                          {verifying === proof.id ? <Loader2 className="w-5 h-5 animate-spin" /> : <ShieldCheck className="w-5 h-5" />}
-                          {verifying === proof.id ? 'Verifying Math...' : 'Verify Proof'}
+                       <div className="space-y-2">
+                          <div className="flex items-center gap-3">
+                             <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">ID: {proof.candidateId}</span>
+                             <div className="w-1.5 h-1.5 bg-zinc-700 rounded-full"></div>
+                             <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">{proof.timestamp}</span>
+                             <div className="w-1.5 h-1.5 bg-zinc-700 rounded-full"></div>
+                             <span className="text-[10px] font-black uppercase tracking-widest text-indigo-500 font-mono italic">{proof.education}</span>
+                          </div>
+                          <h3 className="text-2xl font-black italic uppercase tracking-tighter">{proof.type}</h3>
+
+                          <div className="flex flex-wrap gap-2">
+                             {proof.skills?.map(skill => (
+                                <span key={skill} className="text-[9px] font-black bg-black/40 border border-white/5 px-2.5 py-1 rounded-md uppercase tracking-wider text-zinc-400 group-hover:border-indigo-500/30 group-hover:text-indigo-400 transition-colors">
+                                   {skill}
+                                </span>
+                             ))}
+                          </div>
+
+                          <div className="flex items-center gap-2 text-[10px] font-mono text-zinc-600 bg-black/40 px-3 py-1 rounded-lg w-fit border border-white/5">
+                             <Fingerprint className="w-3 h-3" />
+                             {proof.hash}
+                          </div>
+                       </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 relative z-10">
+                       {verified[proof.id] ? (
+                          <div className="flex items-center gap-3 px-10 py-5 bg-emerald-600/10 border border-emerald-600/20 rounded-[1.5rem] text-emerald-500 font-black uppercase italic tracking-widest text-sm animate-in zoom-in-95 duration-500">
+                             <CheckCircle2 className="w-5 h-5" />
+                             Valid Proof
+                          </div>
+                       ) : (
+                          <button
+                            onClick={() => verifyProof(proof.id)}
+                            disabled={verifying === proof.id}
+                            className="flex items-center gap-3 px-10 py-5 bg-white text-black rounded-[1.5rem] font-black uppercase italic tracking-widest text-sm hover:bg-indigo-600 hover:text-white transition-all shadow-xl active:scale-95 disabled:opacity-50"
+                          >
+                             {verifying === proof.id ? <Loader2 className="w-5 h-5 animate-spin" /> : <ShieldCheck className="w-5 h-5" />}
+                             {verifying === proof.id ? 'Computing...' : 'Verify Claim'}
+                          </button>
+                       )}
+
+                       <button className="p-5 bg-zinc-800 hover:bg-zinc-700 rounded-[1.5rem] transition-colors border border-zinc-700 group/btn">
+                          <ChevronDown className="w-6 h-6 text-zinc-400 -rotate-90 group-hover:translate-x-1 transition-transform" />
                        </button>
-                    )}
+                    </div>
 
-                    <button className="p-4 bg-zinc-800 hover:bg-zinc-700 rounded-2xl transition-colors border border-zinc-700">
-                       <ArrowLeft className="w-5 h-5 text-zinc-400 rotate-180" />
-                    </button>
+                    {/* Background decoration */}
+                    <div className="absolute right-0 top-0 w-48 h-48 bg-indigo-600/5 blur-[100px] rounded-full translate-x-16 -translate-y-16"></div>
                  </div>
-
-                 {/* Background decoration */}
-                 <div className="absolute right-0 top-0 w-32 h-32 bg-indigo-600/5 blur-3xl rounded-full translate-x-16 -translate-y-16"></div>
-              </div>
-            ))
-          )}
+               ))
+             )}
+           </div>
         </div>
       </main>
 
-      <footer className="px-10 py-8 border-t border-zinc-800 text-center flex flex-col md:flex-row items-center justify-between">
+      <footer className="px-10 py-8 border-t border-zinc-800 text-center flex flex-col md:flex-row items-center justify-between bg-zinc-950">
         <div className="flex items-center gap-6">
-           <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
-              Trustless Ledger Sync Active
+           <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest flex items-center gap-2">
+              <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
+              Midnight Ledger Sync v4.0.4
            </span>
-           <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
         </div>
         <div className="mt-4 md:mt-0 text-[11px] font-black text-zinc-400 uppercase tracking-widest flex items-center gap-2">
-           Engine: <span className="text-indigo-600 bg-indigo-900/20 px-3 py-1 rounded-lg italic">Midnight-Testnet Verifier</span>
+           Encryption: <span className="text-indigo-600 bg-indigo-900/10 px-3 py-1 rounded-lg italic border border-indigo-500/20">Poseidon Hash / Groth16</span>
         </div>
-        <div className="mt-4 md:mt-0 text-zinc-400 text-[10px] font-black uppercase tracking-widest">
-          Proof verification happens on the Midnight ledger
+        <div className="mt-4 md:mt-0 text-zinc-400 text-[10px] font-black uppercase tracking-widest opacity-60">
+          ProofHire © 2025 • Privacy First Recruitment
         </div>
       </footer>
     </div>
+  );
+}
+
+// Add BrainCircuit icon manually if not in current lucide version or substitute
+function BrainCircuit(props: any) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .52 8.105V19a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-1a4 4 0 0 0-2.526-5.77 4 4 0 0 0-2.526-5.77A3 3 0 0 0 12 5z" />
+      <path d="M9 13h1" />
+      <path d="M14 13h1" />
+      <path d="M12 16v1" />
+      <path d="M12 8v1" />
+    </svg>
   );
 }

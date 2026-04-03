@@ -1,80 +1,65 @@
-export interface MidnightWallet {
-  name: string;
-  icon: string;
-  apiVersion: string;
-  connect: (networkId: string) => Promise<any>;
-}
+import '@midnight-ntwrk/dapp-connector-api';
+import type { InitialAPI, DAppConnectorAPI } from '@midnight-ntwrk/dapp-connector-api';
 
 declare global {
   interface Window {
     midnight?: {
-      lace?: MidnightWallet;
+      mnLace?: InitialAPI;
     };
   }
 }
 
-export const connectLaceWallet = async () => {
+const NETWORK_ID = 'preview';
+
+export interface WalletConnection {
+  api: DAppConnectorAPI;
+  address: string;
+}
+
+export const connectLaceWallet = async (): Promise<WalletConnection | null> => {
   if (typeof window === 'undefined') return null;
 
-  // Real detection logic - Strictly following Midnight dApp Connector API
-  if (window.midnight?.lace) {
+  // Real detection logic - Strictly following Midnight mnLace dApp Connector API
+  if (window.midnight?.mnLace) {
     try {
-      // Request connection as per @midnight-ntwrk/dapp-connector-api
-      // For Midnight, usually we connect then get the API
-      const api = await window.midnight.lace.connect('midnight-testnet');
-      console.log('[Lace] API instance retrieved:', api);
+      const wallet: InitialAPI = window.midnight.mnLace;
+      console.log('[Lace] Initial API found. Version:', wallet.apiVersion);
 
-      // Get the unshielded address from the real wallet API
-      const address = await api.getUnshieldedAddress();
-      console.log('[Lace] Unshielded address:', address);
+      const connectedApi = await wallet.connect(NETWORK_ID);
+      const connectionStatus = await connectedApi.getConnectionStatus();
 
-      return { api, address };
+      if (!connectionStatus) {
+        console.error('[Lace] Connection established but status is false.');
+        return null;
+      }
+
+      // Retrieve shielded address for privacy-first operations
+      const addresses = await connectedApi.getShieldedAddresses();
+      const address = addresses.shieldedAddress;
+
+      console.log('[Lace] Connected to wallet:', address);
+
+      return { api: connectedApi, address };
     } catch (error: any) {
       if (error.code === 4001) {
         console.warn('[Lace] User rejected the connection request.');
       } else {
-        console.error('[Lace] Wallet connection failed:', error.message);
+        console.error('[Lace] Wallet connection failed:', error.message || error);
       }
       return null;
     }
   }
 
-  // Strictly no more simulation logic for production readiness.
-  // If the user has Lace, it will work. If not, it returns null.
-  console.error('[Lace] Wallet extension NOT detected in window.midnight.lace');
-  return null;
-};
-
-export const signData = async (address: string, payload: string) => {
-  if (typeof window === 'undefined') return null;
-
-  if (window.midnight?.lace) {
-    try {
-      const api = await window.midnight.lace.connect('midnight-testnet');
-      console.log('[Lace] Requesting real signature for payload:', payload);
-
-      // Real signature request via Midnight dapp API
-      // Note: Actual method name depends on final Midnight SDK spec,
-      // typically signData or signMessage. Using signData as per instructions.
-      const signature = await api.signData(payload);
-      return signature;
-    } catch (error: any) {
-      console.error('[Lace] Real signing failed:', error.message);
-      return null;
-    }
-  }
-
-  console.error('[Lace] Cannot sign: Wallet NOT detected');
+  console.error('[Lace] Wallet extension NOT detected in window.midnight.mnLace');
   return null;
 };
 
 export const isLaceInstalled = () => {
-  return typeof window !== 'undefined' && !!window.midnight?.lace;
+  return typeof window !== 'undefined' && !!window.midnight?.mnLace;
 };
 
-// Helper to format addresses for UI
 export const shortenAddress = (address: string) => {
   if (!address) return '';
   if (address.length < 15) return address;
-  return `${address.slice(0, 10)}...${address.slice(-6)}`;
+  return `${address.slice(0, 8)}...${address.slice(-6)}`;
 };

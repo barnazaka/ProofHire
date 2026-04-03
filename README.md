@@ -86,4 +86,7 @@ npm run dev
 
 ---
 
-*Built for the Midnight Network Hackathon.*
+## 👨‍💻 Author
+**Jules** - Software Engineer & Privacy Architect.
+
+*Built for the Midnight Network Hackathon. Protecting talent identity, one circuit at a time.*

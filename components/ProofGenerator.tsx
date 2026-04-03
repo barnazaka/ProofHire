@@ -73,11 +73,16 @@ export default function ProofGenerator() {
         throw new Error('Active Midnight Wallet connection required for proving.');
       }
 
+      // Retrieve network configuration from connected wallet
+      const serviceUriConfig = await connection.api.getConfiguration();
+      console.log('[Midnight] Network configuration retrieved:', serviceUriConfig);
+
       const proofHashUint8 = new Uint8Array(32).fill(Math.floor(Math.random() * 255));
       const typeNum = BigInt(claimType.length);
       const timestamp = BigInt(Date.now());
 
-      await proofHireContract.submitProof(connection.api as any, {
+      // Pass the connection and configuration context
+      await proofHireContract.submitProof({ api: connection.api, config: serviceUriConfig }, {
         userAddr: walletAddr,
         proofHash: proofHashUint8,
         claimType: typeNum,

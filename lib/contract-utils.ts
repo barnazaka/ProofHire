@@ -28,15 +28,16 @@ export class ProofHireContractWrapper {
     return this.contract.circuits.registerUser(context, userAddr, commitment);
   }
 
-  async submitProof(context: CircuitContext<any>, proof: ProofData) {
+  async submitProof(context: any, proof: ProofData) {
     console.log(`[Midnight] Transmitting cryptographic proof to ledger: Type ${proof.claimType}`);
 
-    // Production SDK Path: 'context' must be a valid CircuitContext from Midnight SDK.
-    // We remove the explicit "Demo Mode" fallback to ensure production readiness.
-    if (!context || Object.keys(context).length === 0) {
+    // In real Midnight environment, 'context' is derived from connectedApi.getConfiguration()
+    // and injected into the circuit call via Midnight SDK Providers.
+    if (!context) {
       throw new Error('[Midnight] Midnight SDK Context missing. Connection required for on-chain submission.');
     }
 
+    // Pass the wallet-provided configuration to the SDK's execution engine
     return this.contract.circuits.submitProof(
       context,
       proof.userAddr,
@@ -46,10 +47,10 @@ export class ProofHireContractWrapper {
     );
   }
 
-  async verifyProof(context: CircuitContext<any>, proof: { proofHash: Uint8Array, userAddr: string }) {
+  async verifyProof(context: any, proof: { proofHash: Uint8Array, userAddr: string }) {
     console.log('[Midnight] Initializing on-chain verification protocol...');
 
-    if (!context || Object.keys(context).length === 0) {
+    if (!context) {
       throw new Error('[Midnight] Midnight SDK Context missing. Connection required for verification.');
     }
 

@@ -3,104 +3,59 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, ShieldCheck, User, Zap, Lock, Globe, Loader2, Fingerprint, Award, CheckCircle2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowLeft, ShieldCheck, User, Zap, Lock, Globe, Loader2, Fingerprint, Award, CheckCircle2, AlertTriangle, ExternalLink } from 'lucide-react';
 import ThemeToggle from '@/components/ThemeToggle';
-import LacePopup from '@/components/LacePopup';
+import { connectLaceWallet, shortenAddress } from '@/components/WalletIntegration';
 
 export default function TalentAuthPage() {
   const [activeTab, setActiveTab] = useState<'signup' | 'login'>('login');
   const [isConnecting, setIsConnecting] = useState(false);
-  const [showPopup, setShowPopup] = useState(false);
-  const [popupStatus, setPopupStatus] = useState<string | null>(null);
-  const [mockAddress, setMockAddress] = useState<string | null>(null);
-  const addressRef = useRef<string | null>(null);
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    addressRef.current = mockAddress;
-  }, [mockAddress]);
+    // Auto-reconnect check
+    const savedAddress = localStorage.getItem('user_address');
+    const role = localStorage.getItem('user_role');
+    if (savedAddress && role === 'talent') {
+      handleConnect(true);
+    }
+  }, []);
 
-  const handleConnect = async () => {
-    console.log('Auth: handleConnect triggered');
+  const handleConnect = async (isAuto = false) => {
     setIsConnecting(true);
-    setShowPopup(true);
-    setPopupStatus('Connecting to Lace Wallet...');
+    setError(null);
 
     try {
-      const { connectLaceWallet } = await import('@/components/WalletIntegration');
       const connection = await connectLaceWallet();
 
       if (connection) {
-        setMockAddress(connection.address);
-        setPopupStatus('Wallet Connected. Awaiting Confirmation.');
+        setWalletAddress(connection.address);
+        localStorage.setItem('user_address', connection.address);
+        localStorage.setItem('user_role', 'talent');
+
+        // Successful connection
+        if (!isAuto) {
+           await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+
+        const onboarded = localStorage.getItem('onboarding_complete');
+        if (onboarded === 'true') {
+          router.push('/talent/dashboard');
+        } else {
+          router.push('/talent/onboarding');
+        }
       } else {
-        setPopupStatus('Lace Wallet NOT Found. Please install the extension.');
+        if (!isAuto) {
+          setError('Lace Wallet extension NOT detected.');
+        }
         setIsConnecting(false);
       }
     } catch (err: any) {
-      setPopupStatus(`Connection Error: ${err.message}`);
+      setError(`Connection Error: ${err.message || 'Unknown error occurred'}`);
       setIsConnecting(false);
-    }
-  };
-
-  const handleConfirm = async () => {
-    console.log('Auth: handleConfirm started');
-    setPopupStatus('Requesting ZK-Identity Signature...');
-
-    let addr = addressRef.current;
-    if (!addr) {
-      console.log('Auth: mockAddress not ready in ref, waiting...');
-      let attempts = 0;
-      await new Promise(resolve => {
-        const check = setInterval(() => {
-          attempts++;
-          if (addressRef.current) {
-             addr = addressRef.current;
-             clearInterval(check);
-             resolve(true);
-          }
-          if (attempts > 100) {
-            console.error('Auth: Wait for mockAddress timed out');
-            clearInterval(check);
-            resolve(false);
-          }
-        }, 100);
-      });
-    }
-
-    try {
-      const { signData } = await import('@/components/WalletIntegration');
-      const signature = await signData(addr || '', `Authenticate ProofHire as Talent: ${Date.now()}`);
-
-      if (!signature) {
-        setPopupStatus('Signature Rejected. Access Denied.');
-        return;
-      }
-
-      console.log('Auth: Signature received:', signature);
-      setPopupStatus('Sovereign Identity Verified.');
-    } catch (err: any) {
-      setPopupStatus(`Signature Error: ${err.message}`);
-      return;
-    }
-
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    console.log('Auth: Verification complete, using address:', addr);
-    if (addr) {
-      console.log('Auth: Redirecting with address:', addr);
-      localStorage.setItem('user_address', addr);
-      localStorage.setItem('user_role', 'talent');
-
-      const onboarded = localStorage.getItem('onboarding_complete');
-      if (onboarded === 'true') {
-        router.push('/talent/dashboard');
-      } else {
-        router.push('/talent/onboarding');
-      }
-    } else {
-      console.error('Auth: No mockAddress found during confirm');
     }
   };
 
@@ -147,7 +102,7 @@ export default function TalentAuthPage() {
                     <h3 className="text-2xl font-black italic uppercase tracking-tighter">Sovereign Talent</h3>
                     <div className="flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-[9px] font-black uppercase tracking-widest border border-white/5">
                        <Zap className="w-3 h-3 text-indigo-400" />
-                       ZK Pipeline Active
+                       Midnight Preview Active
                     </div>
                  </div>
                  <div className="flex gap-4 opacity-50">
@@ -157,15 +112,6 @@ export default function TalentAuthPage() {
                  </div>
               </motion.div>
            </div>
-
-           {/* Floating elements */}
-           <motion.div
-              animate={{ x: [0, 10, 0], y: [0, 5, 0] }}
-              transition={{ repeat: Infinity, duration: 3 }}
-              className="absolute -top-6 -right-6 p-6 bg-zinc-900/80 border border-white/10 rounded-3xl shadow-2xl backdrop-blur-xl"
-           >
-              <Lock className="w-8 h-8 text-indigo-500" />
-           </motion.div>
         </motion.div>
 
         {/* Auth Card */}
@@ -182,7 +128,7 @@ export default function TalentAuthPage() {
                  </div>
                  <h2 className="text-3xl font-black italic uppercase tracking-tightest mb-4">Talent Gateway</h2>
                  <p className="text-zinc-500 text-sm font-medium leading-relaxed max-w-[240px]">
-                    Authenticate with Lace Wallet to unlock your private talent OS.
+                    Connect your Lace Wallet to enter the ProofHire ecosystem on Midnight Preview.
                  </p>
               </div>
 
@@ -203,9 +149,26 @@ export default function TalentAuthPage() {
                  </div>
               </div>
 
-              <div className="p-12 pt-8 flex flex-col items-center gap-10">
+              <div className="p-12 pt-8 flex flex-col items-center gap-6">
+                 {error && (
+                   <div className="w-full p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex flex-col gap-3">
+                      <div className="flex items-center gap-3 text-rose-500">
+                         <AlertTriangle className="w-5 h-5 flex-shrink-0" />
+                         <span className="text-[10px] font-black uppercase tracking-widest leading-tight">{error}</span>
+                      </div>
+                      <a
+                        href="https://midnight.network/lace"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2 py-2 bg-rose-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-600 transition-colors"
+                      >
+                         Install Lace Wallet <ExternalLink className="w-3 h-3" />
+                      </a>
+                   </div>
+                 )}
+
                  <button
-                   onClick={handleConnect}
+                   onClick={() => handleConnect(false)}
                    disabled={isConnecting}
                    className="w-full flex items-center justify-center gap-4 py-6 bg-white text-black rounded-3xl font-black uppercase italic tracking-widest hover:bg-zinc-200 transition-all shadow-xl active:scale-95 disabled:opacity-50 group"
                  >
@@ -216,16 +179,16 @@ export default function TalentAuthPage() {
                          <ShieldCheck className="w-5 h-5 text-white" />
                       </div>
                     )}
-                    {isConnecting ? 'Awaiting Signature...' : 'Connect Lace Wallet'}
+                    {isConnecting ? 'Establishing...' : 'Connect Lace Wallet'}
                  </button>
 
                  <div className="space-y-4">
                     <div className="flex items-center gap-3 justify-center">
                        <CheckCircle2 className="w-4 h-4 text-indigo-500" />
-                       <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Identity Bound to Wallet</span>
+                       <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Midnight DApp Connector</span>
                     </div>
                     <p className="text-[10px] font-medium text-zinc-600 leading-relaxed text-center px-6">
-                       Your wallet address is your sovereign identity.
+                       Your shielded address is your sovereign identity.
                        No personal information leaves your local environment.
                     </p>
                  </div>
@@ -233,18 +196,6 @@ export default function TalentAuthPage() {
            </div>
         </motion.div>
       </main>
-
-      <AnimatePresence>
-        {showPopup && (
-          <LacePopup
-            isOpen={showPopup}
-            onClose={() => { setShowPopup(false); setIsConnecting(false); }}
-            onConfirm={handleConfirm}
-            status={popupStatus}
-            address={mockAddress || undefined}
-          />
-        )}
-      </AnimatePresence>
     </div>
   );
 }
