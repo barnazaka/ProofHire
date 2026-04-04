@@ -7,6 +7,11 @@ const nextConfig = {
       layers: true,
     };
 
+    config.module.rules.push({
+      test: /\.wasm$/,
+      type: "webassembly/async",
+    });
+
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
