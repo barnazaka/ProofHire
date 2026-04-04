@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { ArrowLeft, ShieldCheck, User, Zap, Lock, Globe, Loader2, Fingerprint, Award, CheckCircle2, AlertTriangle, ExternalLink } from 'lucide-react';
+import { ArrowLeft, ShieldCheck, User, Zap, Lock, Globe, Loader2, Fingerprint, Award, CheckCircle2, AlertTriangle, ExternalLink, Info } from 'lucide-react';
 import ThemeToggle from '@/components/ThemeToggle';
 import { connectLaceWallet, shortenAddress } from '@/components/WalletIntegration';
 
@@ -17,9 +17,9 @@ export default function TalentAuthPage() {
 
   useEffect(() => {
     // Auto-reconnect check
-    const savedAddress = localStorage.getItem('user_address');
+    const savedConnected = localStorage.getItem('proofhire_wallet_connected');
     const role = localStorage.getItem('user_role');
-    if (savedAddress && role === 'talent') {
+    if (savedConnected === 'true' && role === 'talent') {
       handleConnect(true);
     }
   }, []);
@@ -34,6 +34,8 @@ export default function TalentAuthPage() {
       if (connection) {
         setWalletAddress(connection.address);
         localStorage.setItem('user_address', connection.address);
+        localStorage.setItem('proofhire_wallet_address', connection.address);
+        localStorage.setItem('proofhire_wallet_connected', 'true');
         localStorage.setItem('user_role', 'talent');
 
         // Successful connection
@@ -54,7 +56,8 @@ export default function TalentAuthPage() {
         setIsConnecting(false);
       }
     } catch (err: any) {
-      setError(`Connection Error: ${err.message || 'Unknown error occurred'}`);
+      console.error('Connection failed:', err);
+      setError(`Connection failed. Make sure Lace is set to Preview network and try again.`);
       setIsConnecting(false);
     }
   };
@@ -78,7 +81,7 @@ export default function TalentAuthPage() {
         <ThemeToggle />
       </header>
 
-      <main className="relative z-10 w-full max-w-7xl px-8 flex flex-col lg:flex-row items-center justify-center gap-16 lg:gap-32">
+      <main className="relative z-10 w-full max-w-7xl px-8 flex flex-col lg:flex-row items-center justify-center gap-16 lg:gap-32 py-20">
         {/* Visual Decoration */}
         <motion.div
            initial={{ opacity: 0, scale: 0.8 }}
@@ -150,6 +153,19 @@ export default function TalentAuthPage() {
               </div>
 
               <div className="p-12 pt-8 flex flex-col items-center gap-6">
+                 <div className="w-full p-4 bg-indigo-500/5 border border-indigo-500/10 rounded-2xl space-y-3">
+                    <div className="flex items-center gap-2 text-indigo-400">
+                       <Info className="w-4 h-4 flex-shrink-0" />
+                       <span className="text-[9px] font-black uppercase tracking-widest">Network Requirements</span>
+                    </div>
+                    <ul className="text-[9px] font-medium text-zinc-500 space-y-1.5 list-decimal pl-4 leading-relaxed">
+                       <li>Open Lace extension, go to Settings &gt; Midnight</li>
+                       <li>Set Network to Preview</li>
+                       <li>Set Proof Server to: https://lace-proof-pub.preview.midnight.network</li>
+                       <li>Save and refresh this page before connecting</li>
+                    </ul>
+                 </div>
+
                  {error && (
                    <div className="w-full p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex flex-col gap-3">
                       <div className="flex items-center gap-3 text-rose-500">

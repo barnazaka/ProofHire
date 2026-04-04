@@ -1,6 +1,8 @@
 'use client';
 
 // Wallet Detection & Connection Utility for Midnight Preview
+import "@midnight-ntwrk/dapp-connector-api";
+import type { InitialAPI } from "@midnight-ntwrk/dapp-connector-api";
 
 export const shortenAddress = (address: string) => {
   if (!address) return '';
@@ -45,18 +47,21 @@ export const connectLaceWallet = async () => {
       throw new Error('Lace wallet not detected. Make sure the extension is installed and the page is refreshed.');
     }
 
-    const midnight = (window as any).midnight;
-    // Connect explicitly to 'preview' network
-    const api = await midnight.mnLace.connect('preview');
-    const state = await api.state();
+    const wallet: InitialAPI = (window as any).midnight.mnLace;
+    const connectedApi = await wallet.connect('preview');
 
-    // Use the coin public key as a proxy for the address in this demo
-    const address = state.coinPublicKey;
+    const addresses = await connectedApi.getShieldedAddresses();
+    const address = addresses.shieldedAddress;
+    const status = await connectedApi.getConnectionStatus();
+
+    if (!status) {
+       throw new Error('Connection failed. Make sure Lace is set to Preview network.');
+    }
 
     return {
-      api,
+      api: connectedApi,
       address,
-      state
+      status
     };
   } catch (error: any) {
     console.error('Wallet connection failed:', error);
