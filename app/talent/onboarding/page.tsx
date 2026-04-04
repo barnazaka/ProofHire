@@ -160,13 +160,17 @@ export default function TalentOnboardingPage() {
       const addrBytes = Buffer.from(walletAddr.slice(0, 32));
       walletCommitment.set(addrBytes);
 
+      // Generate a cryptographic hash of the claims for the ZK proof hash
+      const hashHex = CryptoJS.SHA256(claimString).toString();
+      const proofHashUint8 = new Uint8Array(hashHex.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
+
       const contractAddress = await deployAndSubmitProof(
-        walletCommitment,
-        claimString,
+        walletAddr,
+        proofHashUint8,
         claimType
       );
 
-      setProofHash(contractAddress.slice(0, 32) + '...');
+      setProofHash(hashHex.slice(0, 32) + '...');
 
       // Save data locally with AES-256 encryption
       const encryptedData = encryptData(formData);
@@ -179,6 +183,7 @@ export default function TalentOnboardingPage() {
         type: `${claimType} (Verified)`,
         timestamp: new Date().toLocaleString(),
         hash: contractAddress,
+        proofHash: Array.from(proofHashUint8),
         status: 'on-chain',
         walletCommitment: Array.from(walletCommitment)
       };

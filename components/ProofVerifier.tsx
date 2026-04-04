@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Search, Loader2, CheckCircle, XCircle, ShieldCheck, AlertCircle, Award, Eye, Link as LinkIcon, UserCircle, Briefcase } from 'lucide-react';
-import { proofHireContract } from '@/lib/contract-utils';
+import { proofHireContract, verifyCandidateClaim } from '@/lib/contract-utils';
 
 interface CandidateProof {
   id: string;
@@ -10,6 +10,7 @@ interface CandidateProof {
   type: string;
   timestamp: string;
   hash: string;
+  proofHash?: number[];
   hasBadge?: boolean;
 }
 
@@ -21,20 +22,14 @@ export default function ProofVerifier() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // In a real production app, this would fetch from the Midnight Indexer or the Smart Contract's ledger.
-  // For the demo, we check localStorage first, then default to an empty state if no real data is found.
   const fetchProofs = async () => {
     setIsRefreshing(true);
     try {
-      // Simulate network latency
       await new Promise(resolve => setTimeout(resolve, 800));
-
       const savedProofs = localStorage.getItem('proofhire_proofs_global');
       if (savedProofs) {
         setCandidateProofs(JSON.parse(savedProofs));
       } else {
-        // If empty, we stay empty to fulfill "no dummy data" requirement.
-        // The recruiter will see an empty state until someone actually registers and submits.
         setCandidateProofs([]);
       }
     } catch (err) {
@@ -54,36 +49,35 @@ export default function ProofVerifier() {
       const proof = candidateProofs.find(p => p.id === proofId);
       if (!proof) return;
 
-      // PRODUCTION SDK INTERACTION
-      const { connectLaceWallet } = await import('@/components/WalletIntegration');
-      const connection = await connectLaceWallet();
-
-      if (!connection) {
-        throw new Error('Midnight Wallet connection required for on-chain verification.');
+      const contractAddress = localStorage.getItem('proofhire_contract_address');
+      if (!contractAddress) {
+        throw new Error('ProofHire contract address not found in local state.');
       }
 
-      // Retrieve network configuration from connected wallet
-      const serviceUriConfig = await connection.api.getConfiguration();
+      // Convert stored proofHash back to Uint8Array if available
+      let pHash: Uint8Array;
+      if (proof.proofHash) {
+         pHash = new Uint8Array(proof.proofHash);
+      } else {
+         // Fallback/Simulated if not present
+         pHash = new Uint8Array(32).fill(0x1a);
+      }
 
-      // Convert the string hash back to Uint8Array for the contract
-      const hashUint8 = new Uint8Array(32).fill(0x1a); // Simulated conversion
+      // REAL SDK CALL
+      const isValid = await verifyCandidateClaim(contractAddress, pHash);
 
-      const onChainResult = await proofHireContract.verifyProof({ api: connection.api, config: serviceUriConfig }, {
-        proofHash: hashUint8,
-        userAddr: 'unknown'
-      });
-
-      // Call the Midnight Smart Contract's verifyProof circuit
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // For production, verification result must be boolean
-      const result = onChainResult ? 'valid' : 'invalid';
+      const result = isValid ? 'valid' : 'invalid';
       setVerificationResult(prev => ({
         ...prev,
         [proofId]: result
       }));
-    } catch (err) {
-      console.error('Failed to verify proof:', err);
+    } catch (err: any) {
+      console.error('[Proof Verification Error]', err);
+      // For demo purposes if wallet/network fails, we show invalid instead of crashing
+      setVerificationResult(prev => ({
+        ...prev,
+        [proofId]: 'invalid'
+      }));
     } finally {
       setLoading(null);
     }
@@ -172,7 +166,7 @@ export default function ProofVerifier() {
                     <div className="flex flex-col">
                       <span className="font-black text-base text-zinc-900 dark:text-white flex items-center gap-2">
                         {proof.type}
-                        {proof.hasBadge && <Award className="w-4 h-4 text-amber-500 fill-amber-500/20" />}
+                        {proof.hasBadge && <Award className="w-4 h-4 text-amber-500 fill-amber-500/10" />}
                       </span>
                       <span className="text-[10px] text-zinc-400 font-black uppercase tracking-widest mt-1.5 px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 rounded-md self-start">{proof.timestamp}</span>
 

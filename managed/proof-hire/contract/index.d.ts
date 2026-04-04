@@ -10,7 +10,7 @@ export type ImpureCircuits<PS> = {
   submitProof(context: __compactRuntime.CircuitContext<PS>,
               userAddr_0: string,
               proofHash_0: Uint8Array,
-              claimType_0: bigint,
+              claimType_0: string,
               timestamp_0: bigint): __compactRuntime.CircuitResults<PS, []>;
   verifyProof(context: __compactRuntime.CircuitContext<PS>, pHash_0: Uint8Array): __compactRuntime.CircuitResults<PS, boolean>;
 }
@@ -22,7 +22,7 @@ export type ProvableCircuits<PS> = {
   submitProof(context: __compactRuntime.CircuitContext<PS>,
               userAddr_0: string,
               proofHash_0: Uint8Array,
-              claimType_0: bigint,
+              claimType_0: string,
               timestamp_0: bigint): __compactRuntime.CircuitResults<PS, []>;
   verifyProof(context: __compactRuntime.CircuitContext<PS>, pHash_0: Uint8Array): __compactRuntime.CircuitResults<PS, boolean>;
 }
@@ -39,7 +39,7 @@ export type Circuits<PS> = {
   submitProof(context: __compactRuntime.CircuitContext<PS>,
               userAddr_0: string,
               proofHash_0: Uint8Array,
-              claimType_0: bigint,
+              claimType_0: string,
               timestamp_0: bigint): __compactRuntime.CircuitResults<PS, []>;
   verifyProof(context: __compactRuntime.CircuitContext<PS>, pHash_0: Uint8Array): __compactRuntime.CircuitResults<PS, boolean>;
   grantAccess(context: __compactRuntime.CircuitContext<PS>, recipient_0: string): __compactRuntime.CircuitResults<PS, []>;
@@ -50,10 +50,9 @@ export type Ledger = {
   readonly user_addr: string;
   readonly user_commitment: Uint8Array;
   readonly proof_hash: Uint8Array;
-  readonly proof_type: bigint;
+  readonly proof_type: string;
   readonly proof_timestamp: bigint;
   readonly proof_owner: string;
-  readonly badge_hash: Uint8Array;
 }
 
 export type ContractReferenceLocations = any;

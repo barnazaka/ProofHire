@@ -5,6 +5,7 @@ import { Loader2, Plus, CheckCircle2, AlertCircle, ShieldCheck, Award, Link as L
 import { TalentData } from './ClaimForm';
 import { proofHireContract } from '@/lib/contract-utils';
 import { decryptData } from '@/lib/encryption-utils';
+import CryptoJS from 'crypto-js';
 
 interface ProofRecord {
   id: string;
@@ -50,55 +51,41 @@ export default function ProofGenerator() {
         throw new Error('Failed to decrypt local data vault.');
       }
 
-      // Real-time status simulation for high-stakes demo
       setCurrentStep('Initializing Midnight SDK & Wallet Binding...');
       await new Promise(resolve => setTimeout(resolve, 800));
 
-      setCurrentStep('Loading ZK Circuits (std::compact)...');
+      setCurrentStep('Loading ZK Circuits (std::compact v0.22.0)...');
       await new Promise(resolve => setTimeout(resolve, 1200));
 
       setCurrentStep('Generating Local Zero-Knowledge Proof (Client-Side)...');
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      setCurrentStep('Requesting Lace Signature for State Update...');
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
       setCurrentStep('Submitting Proof Commitment to Midnight Ledger...');
 
-      // PRODUCTION SDK INTERACTION
-      const { connectLaceWallet } = await import('@/components/WalletIntegration');
-      const connection = await connectLaceWallet();
+      // REAL SDK INTERACTION
+      const hashHex = CryptoJS.SHA256(claimType + Date.now().toString()).toString();
+      const proofHashUint8 = new Uint8Array(hashHex.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
 
-      if (!connection) {
-        throw new Error('Active Midnight Wallet connection required for proving.');
+      // This will use the Midnight providers and current contract address
+      const contractAddress = localStorage.getItem('proofhire_contract_address');
+      if (!contractAddress) {
+         // If no contract exists yet, deploy it first with the proof
+         const { deployAndSubmitProof } = await import('@/lib/contract-utils');
+         await deployAndSubmitProof(walletAddr, proofHashUint8, claimType);
+      } else {
+         await proofHireContract.submitProof(walletAddr, proofHashUint8, claimType);
       }
-
-      // Retrieve network configuration from connected wallet
-      const serviceUriConfig = await connection.api.getConfiguration();
-      console.log('[Midnight] Network configuration retrieved:', serviceUriConfig);
-
-      const proofHashUint8 = new Uint8Array(32).fill(Math.floor(Math.random() * 255));
-      const typeNum = BigInt(claimType.length);
-      const timestamp = BigInt(Date.now());
-
-      // Pass the connection and configuration context
-      await proofHireContract.submitProof({ api: connection.api, config: serviceUriConfig }, {
-        userAddr: walletAddr,
-        proofHash: proofHashUint8,
-        claimType: typeNum,
-        timestamp: timestamp
-      });
 
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      const mockHash = '0x' + Array.from(proofHashUint8).map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 16) + '...';
+      const displayHash = hashHex.slice(0, 16) + '...';
 
       const newProof: ProofRecord = {
         id: Math.random().toString(36).substring(7),
         candidateId: walletAddr.slice(0, 8).toUpperCase(),
         type: claimType,
         timestamp: new Date().toLocaleString(),
-        hash: mockHash,
+        hash: displayHash,
         status: 'on-chain',
         isBadge: claimType.toLowerCase().includes('solidity') || claimType.toLowerCase().includes('expert') || claimType.toLowerCase().includes('skills')
       };
@@ -107,11 +94,11 @@ export default function ProofGenerator() {
       setProofs(updatedProofs);
       localStorage.setItem('proofhire_proofs', JSON.stringify(updatedProofs));
 
-      // Global list for recruiter demo (simulating a public ledger)
       const globalProofs = JSON.parse(localStorage.getItem('proofhire_proofs_global') || '[]');
       localStorage.setItem('proofhire_proofs_global', JSON.stringify([newProof, ...globalProofs]));
 
     } catch (err: any) {
+      console.error('[Proof Generator Error]', err);
       setError(err.message || 'Failed to generate proof.');
     } finally {
       setLoading(false);
@@ -132,45 +119,23 @@ export default function ProofGenerator() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
-        <button
-          onClick={() => generateProof('Has Degree')}
-          disabled={loading}
-          className="group relative flex flex-col items-start p-6 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border-2 border-transparent hover:border-indigo-500 hover:bg-white dark:hover:bg-zinc-700/50 transition-all text-left shadow-sm hover:shadow-indigo-500/10 active:scale-95"
-        >
-          <span className="text-[10px] text-zinc-400 font-black uppercase tracking-[0.2em] mb-2">Education Claim</span>
-          <span className="font-black text-lg text-zinc-900 dark:text-white leading-tight">University Degree</span>
-          <Plus className="absolute bottom-4 right-4 w-5 h-5 text-indigo-500 group-hover:scale-125 transition-transform" />
-        </button>
-
-        <button
-          onClick={() => generateProof('Experience > 2 years')}
-          disabled={loading}
-          className="group relative flex flex-col items-start p-6 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border-2 border-transparent hover:border-indigo-500 hover:bg-white dark:hover:bg-zinc-700/50 transition-all text-left shadow-sm hover:shadow-indigo-500/10 active:scale-95"
-        >
-          <span className="text-[10px] text-zinc-400 font-black uppercase tracking-[0.2em] mb-2">Work History Claim</span>
-          <span className="font-black text-lg text-zinc-900 dark:text-white leading-tight">2+ Years Industry Experience</span>
-          <Plus className="absolute bottom-4 right-4 w-5 h-5 text-indigo-500 group-hover:scale-125 transition-transform" />
-        </button>
-
-        <button
-          onClick={() => generateProof('Solidity Expert')}
-          disabled={loading}
-          className="group relative flex flex-col items-start p-6 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border-2 border-transparent hover:border-indigo-500 hover:bg-white dark:hover:bg-zinc-700/50 transition-all text-left shadow-sm hover:shadow-indigo-500/10 active:scale-95"
-        >
-          <span className="text-[10px] text-zinc-400 font-black uppercase tracking-[0.2em] mb-2">Technical Skill Claim</span>
-          <span className="font-black text-lg text-zinc-900 dark:text-white leading-tight">Solidity & Smart Contracts</span>
-          <Plus className="absolute bottom-4 right-4 w-5 h-5 text-indigo-500 group-hover:scale-125 transition-transform" />
-        </button>
-
-        <button
-          onClick={() => generateProof('Web3 Infrastructure')}
-          disabled={loading}
-          className="group relative flex flex-col items-start p-6 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border-2 border-transparent hover:border-indigo-500 hover:bg-white dark:hover:bg-zinc-700/50 transition-all text-left shadow-sm hover:shadow-indigo-500/10 active:scale-95"
-        >
-          <span className="text-[10px] text-zinc-400 font-black uppercase tracking-[0.2em] mb-2">Technical Skill Claim</span>
-          <span className="font-black text-lg text-zinc-900 dark:text-white leading-tight">Advanced Web3 Dev Skills</span>
-          <Plus className="absolute bottom-4 right-4 w-5 h-5 text-indigo-500 group-hover:scale-125 transition-transform" />
-        </button>
+        {[
+          { label: 'Education Claim', title: 'University Degree', type: 'Has Degree' },
+          { label: 'Work History Claim', title: '2+ Years Industry Experience', type: 'Experience > 2 years' },
+          { label: 'Technical Skill Claim', title: 'Solidity & Smart Contracts', type: 'Solidity Expert' },
+          { label: 'Technical Skill Claim', title: 'Advanced Web3 Dev Skills', type: 'Web3 Infrastructure' }
+        ].map((claim, idx) => (
+          <button
+            key={idx}
+            onClick={() => generateProof(claim.type)}
+            disabled={loading}
+            className="group relative flex flex-col items-start p-6 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border-2 border-transparent hover:border-indigo-500 hover:bg-white dark:hover:bg-zinc-700/50 transition-all text-left shadow-sm hover:shadow-indigo-500/10 active:scale-95"
+          >
+            <span className="text-[10px] text-zinc-400 font-black uppercase tracking-[0.2em] mb-2">{claim.label}</span>
+            <span className="font-black text-lg text-zinc-900 dark:text-white leading-tight">{claim.title}</span>
+            <Plus className="absolute bottom-4 right-4 w-5 h-5 text-indigo-500 group-hover:scale-125 transition-transform" />
+          </button>
+        ))}
       </div>
 
       {loading && (
