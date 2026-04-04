@@ -57,7 +57,7 @@ export default function TalentAuthPage() {
       }
     } catch (err: any) {
       console.error('Connection failed:', err);
-      setError(`Connection failed. Make sure Lace is set to Preview network and try again.`);
+      setError(`Connection failed. Open Lace, set Network to Preview, select Remote proof server, save and refresh.`);
       setIsConnecting(false);
     }
   };
@@ -156,12 +156,12 @@ export default function TalentAuthPage() {
                  <div className="w-full p-4 bg-indigo-500/5 border border-indigo-500/10 rounded-2xl space-y-3">
                     <div className="flex items-center gap-2 text-indigo-400">
                        <Info className="w-4 h-4 flex-shrink-0" />
-                       <span className="text-[9px] font-black uppercase tracking-widest">Network Requirements</span>
+                       <span className="text-[9px] font-black uppercase tracking-widest">Before connecting:</span>
                     </div>
                     <ul className="text-[9px] font-medium text-zinc-500 space-y-1.5 list-decimal pl-4 leading-relaxed">
                        <li>Open Lace extension, go to Settings &gt; Midnight</li>
-                       <li>Set Network to Preview</li>
-                       <li>Set Proof Server to: https://lace-proof-pub.preview.midnight.network</li>
+                       <li>Select Network: Preview</li>
+                       <li>Select Proof Server: Remote</li>
                        <li>Save and refresh this page before connecting</li>
                     </ul>
                  </div>
