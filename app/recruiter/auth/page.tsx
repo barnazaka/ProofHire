@@ -151,7 +151,7 @@ export default function RecruiterAuthPage() {
                          <span className="text-[10px] font-black uppercase tracking-widest leading-tight">{error}</span>
                       </div>
                       <a
-                        href="https://midnight.network/lace"
+                        href="https://chromewebstore.google.com/detail/lace/gafhhkghbfjjkeiendhlofajokpaflmk"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center justify-center gap-2 py-2 bg-rose-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-600 transition-colors"
