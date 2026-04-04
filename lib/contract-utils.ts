@@ -7,21 +7,22 @@ const isBrowser = typeof window !== 'undefined';
 export const getMidnightProviders = async () => {
   if (!isBrowser) throw new Error('Not in browser');
 
-  const midnight = (window as any).midnight;
-  if (!midnight?.mnLace) {
-    throw new Error('Midnight Lace wallet not found');
-  }
-
   const { FetchZkConfigProvider } = await import("@midnight-ntwrk/midnight-js-fetch-zk-config-provider");
   const { httpClientProofProvider } = await import("@midnight-ntwrk/midnight-js-http-client-proof-provider");
   const { levelPrivateStateProvider } = await import("@midnight-ntwrk/midnight-js-level-private-state-provider");
 
-  const wallet = midnight.mnLace;
-  const connectedApi = await wallet.connect('preview');
+  const { connectLaceWallet } = await import('@/components/WalletIntegration');
+  const connection = await connectLaceWallet();
 
-  // Get dynamic configuration from the wallet - no hardcoded URLs
-  const config = await connectedApi.getConfiguration();
-  const walletState = await connectedApi.state();
+  if (!connection) {
+    throw new Error('Midnight Lace wallet not found');
+  }
+
+  const connectedApi = connection.api;
+  const config = connection.config;
+
+  // Use connectedApi state method to get keys
+  const walletState = await (connectedApi as any).state();
 
   return {
     privateStateProvider: levelPrivateStateProvider({
@@ -39,10 +40,10 @@ export const getMidnightProviders = async () => {
       coinPublicKey: walletState.coinPublicKey,
       encryptionPublicKey: walletState.encryptionPublicKey,
       balanceTx: (tx: any, newCoins: any) =>
-        connectedApi.balanceAndProveTransaction(tx, newCoins),
+        (connectedApi as any).balanceAndProveTransaction(tx, newCoins),
     },
     midnightProvider: {
-      submitTx: (tx: any) => connectedApi.submitTransaction(tx),
+      submitTx: (tx: any) => (connectedApi as any).submitTransaction(tx),
     },
   };
 };
