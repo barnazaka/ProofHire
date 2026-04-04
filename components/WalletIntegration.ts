@@ -7,13 +7,16 @@ import type { InitialAPI } from "@midnight-ntwrk/dapp-connector-api";
 export const shortenAddress = (address: string) => {
   if (!address) return '';
   if (address.length <= 13) return address;
-  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  return `${address.slice(0, 8)}...${address.slice(-6)}`;
 };
 
 export const checkWalletAvailable = () => {
-  return typeof window !== 'undefined' &&
-    (window as any).midnight !== undefined &&
-    (window as any).midnight.mnLace !== undefined;
+  if (typeof window === 'undefined' || !window.midnight) return false;
+
+  return (window as any).midnight.mnLace !== undefined ||
+    Object.values(window.midnight).some(
+      (wallet) => !!wallet && typeof wallet === 'object' && 'apiVersion' in (wallet as any)
+    );
 };
 
 export const waitForWallet = (): Promise<boolean> => {
@@ -25,7 +28,7 @@ export const waitForWallet = (): Promise<boolean> => {
 
     let attempts = 0;
     const interval = setInterval(() => {
-      if ((window as any).midnight?.mnLace) {
+      if (checkWalletAvailable()) {
         clearInterval(interval);
         resolve(true);
       }
@@ -44,11 +47,22 @@ export const connectLaceWallet = async () => {
   try {
     const found = await waitForWallet();
     if (!found) {
-      throw new Error('Lace wallet not detected. Please install the extension and refresh the page.');
+      throw new Error('Midnight Lace wallet not found. Please install the extension and refresh the page.');
     }
 
-    const wallet: InitialAPI = (window as any).midnight.mnLace;
-    const connectedApi = await wallet.connect('preview');
+    // Dynamic lookup — handles both mnLace and UUID-keyed wallets (v4.x)
+    const walletEntry = (
+      (window as any).midnight.mnLace ||
+      Object.values((window as any).midnight).find(
+        (wallet) => !!wallet && typeof wallet === 'object' && 'apiVersion' in (wallet as any)
+      )
+    ) as InitialAPI | undefined;
+
+    if (!walletEntry) {
+      throw new Error('No compatible Midnight wallet found.');
+    }
+
+    const connectedApi = await walletEntry.connect('preview');
 
     // Dynamic config from wallet
     const config = await connectedApi.getConfiguration();

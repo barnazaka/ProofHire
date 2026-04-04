@@ -1,0 +1,723 @@
+
+> tmp_next@0.1.0 dev
+> next dev --webpack
+
+▲ Next.js 16.2.2 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+- Environments: .env.local
+✓ Ready in 672ms
+
+○ Compiling / ...
+ GET / 200 in 10.0s (next.js: 9.5s, application-code: 448ms)
+ GET / 200 in 112ms (next.js: 8ms, application-code: 103ms)
+ GET /talent/auth 200 in 2.8s (next.js: 2.4s, application-code: 340ms)
+ GET / 200 in 1454ms (next.js: 1113ms, application-code: 341ms)
+ GET /talent/auth 200 in 57ms (next.js: 4ms, application-code: 52ms)
+ GET /recruiter/auth 200 in 920ms (next.js: 838ms, application-code: 82ms)
+ GET /talent 404 in 1390ms (next.js: 1261ms, application-code: 130ms)
+ GET /recruiter 404 in 62ms (next.js: 3ms, application-code: 59ms)
+ GET / 200 in 160ms (next.js: 21ms, application-code: 140ms)
+ GET / 200 in 109ms (next.js: 7ms, application-code: 102ms)
+ GET /talent/auth 200 in 72ms (next.js: 21ms, application-code: 51ms)
+ GET / 200 in 79ms (next.js: 3ms, application-code: 76ms)
+ GET /recruiter/auth 200 in 70ms (next.js: 26ms, application-code: 44ms)
+○ Compiling /talent/dashboard ...
+⚠ ./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-http-client-proof-provider/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/wallet-sdk-address-format/dist/index.js
+./node_modules/@midnight-ntwrk/midnight-js-utils/dist/index.mjs
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-types/dist/index.mjs
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/onchain-runtime-v3/midnight_onchain_runtime_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/onchain-runtime-v3/midnight_onchain_runtime_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/onchain-runtime-v3/midnight_onchain_runtime_wasm.js
+./node_modules/@midnight-ntwrk/compact-runtime/dist/index.js
+./managed/proof-hire/contract/index.js
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[browser] ./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-http-client-proof-provider/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+[browser] ./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/wallet-sdk-address-format/dist/index.js
+./node_modules/@midnight-ntwrk/midnight-js-utils/dist/index.mjs
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+[browser] ./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+[browser] ./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-types/dist/index.mjs
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+[browser] ./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+[browser] There were more warnings in other files.
+You can find a complete log in the terminal.
+ GET /talent/dashboard 200 in 19.9s (next.js: 19.6s, application-code: 341ms)
+[browser] ./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+[browser] ./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+[browser] ./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+[browser] ./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+[browser] ./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+[browser] There were more warnings in other files.
+You can find a complete log in the terminal.
+ GET /talent/auth 200 in 67ms (next.js: 24ms, application-code: 43ms)
+⚠ ./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-http-client-proof-provider/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/wallet-sdk-address-format/dist/index.js
+./node_modules/@midnight-ntwrk/midnight-js-utils/dist/index.mjs
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-types/dist/index.mjs
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/onchain-runtime-v3/midnight_onchain_runtime_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/onchain-runtime-v3/midnight_onchain_runtime_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/onchain-runtime-v3/midnight_onchain_runtime_wasm.js
+./node_modules/@midnight-ntwrk/compact-runtime/dist/index.js
+./managed/proof-hire/contract/index.js
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+⚠ ./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-http-client-proof-provider/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/wallet-sdk-address-format/dist/index.js
+./node_modules/@midnight-ntwrk/midnight-js-utils/dist/index.mjs
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-types/dist/index.mjs
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/onchain-runtime-v3/midnight_onchain_runtime_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/onchain-runtime-v3/midnight_onchain_runtime_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/onchain-runtime-v3/midnight_onchain_runtime_wasm.js
+./node_modules/@midnight-ntwrk/compact-runtime/dist/index.js
+./managed/proof-hire/contract/index.js
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+[browser] ./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-http-client-proof-provider/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+[browser] ./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/wallet-sdk-address-format/dist/index.js
+./node_modules/@midnight-ntwrk/midnight-js-utils/dist/index.mjs
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+[browser] ./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+[browser] ./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-types/dist/index.mjs
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+[browser] ./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+[browser] There were more warnings in other files.
+You can find a complete log in the terminal.
+⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /recruiter/dashboard 200 in 4.5s (next.js: 4.2s, application-code: 347ms)
+[browser] ./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+[browser] ./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+[browser] ./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+[browser] ./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+[browser] ./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+[browser] There were more warnings in other files.
+You can find a complete log in the terminal.
+ GET /recruiter/auth 200 in 52ms (next.js: 20ms, application-code: 32ms)
+⚠ ./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-http-client-proof-provider/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/wallet-sdk-address-format/dist/index.js
+./node_modules/@midnight-ntwrk/midnight-js-utils/dist/index.mjs
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-types/dist/index.mjs
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/onchain-runtime-v3/midnight_onchain_runtime_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/onchain-runtime-v3/midnight_onchain_runtime_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/onchain-runtime-v3/midnight_onchain_runtime_wasm.js
+./node_modules/@midnight-ntwrk/compact-runtime/dist/index.js
+./managed/proof-hire/contract/index.js
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+⚠ ./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-http-client-proof-provider/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/wallet-sdk-address-format/dist/index.js
+./node_modules/@midnight-ntwrk/midnight-js-utils/dist/index.mjs
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-types/dist/index.mjs
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+
+./node_modules/@midnight-ntwrk/onchain-runtime-v3/midnight_onchain_runtime_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/onchain-runtime-v3/midnight_onchain_runtime_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/onchain-runtime-v3/midnight_onchain_runtime_wasm.js
+./node_modules/@midnight-ntwrk/compact-runtime/dist/index.js
+./managed/proof-hire/contract/index.js
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+[browser] ./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-http-client-proof-provider/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+[browser] ./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/wallet-sdk-address-format/dist/index.js
+./node_modules/@midnight-ntwrk/midnight-js-utils/dist/index.mjs
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+[browser] ./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+[browser] ./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-types/dist/index.mjs
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+[browser] ./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm_bg.wasm
+./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm.js
+./node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
+./lib/contract-utils.ts
+./components/ProofGenerator.tsx
+./app/talent/dashboard/page.tsx
+[browser] There were more warnings in other files.
+You can find a complete log in the terminal.
+ GET /talent/onboarding 200 in 3.5s (next.js: 3.2s, application-code: 275ms)
+⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[browser] ./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+[browser] ./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+[browser] ./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+[browser] ./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+[browser] ./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+[browser] There were more warnings in other files.
+You can find a complete log in the terminal.
+ GET /talent/auth 200 in 72ms (next.js: 15ms, application-code: 57ms)
+ GET / 200 in 103ms (next.js: 16ms, application-code: 87ms)
+[browser] ./node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+[browser] ./node_modules/@midnight-ntwrk/ledger-v8/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+[browser] ./node_modules/@midnight-ntwrk/midnight-js-contracts/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+[browser] ./node_modules/@midnight-ntwrk/midnight-js-types/node_modules/@midnight-ntwrk/ledger-v7/midnight_ledger_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+[browser] ./node_modules/@midnight-ntwrk/onchain-runtime-v2/midnight_onchain_runtime_wasm_bg.wasm
+The generated code contains 'async/await' because this module is using "asyncWebAssembly".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+[browser] There were more warnings in other files.
+You can find a complete log in the terminal.
