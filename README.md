@@ -19,7 +19,7 @@ Traditional hiring is broken. Candidates must expose their full identities (CVs,
 -   **Smart Contracts**: Compact v0.22.0
 -   **ZK Proofs**: Client-side proving via Midnight SDK
 -   **Wallet**: Lace Wallet (Midnight Preview)
--   **Frontend**: Next.js 15, Tailwind CSS, Framer Motion
+-   **Frontend**: Next.js 16, Tailwind CSS, Framer Motion
 -   **Encryption**: AES-256 for local browser storage
 
 ## 📋 Features
@@ -36,8 +36,23 @@ Traditional hiring is broken. Candidates must expose their full identities (CVs,
 ### Prerequisites
 
 -   [Node.js](https://nodejs.org/) (v20+)
--   [Midnight Lace Wallet](https://midnight.network/docs/user-guides/lace-wallet) (Connected to Preview Network)
+-   [Midnight Lace Wallet](https://chromewebstore.google.com/detail/lace/gafhhkghbfjjkeiendhlofajokpaflmk) (Connected to Preview Network)
 -   [Midnight SDK](https://midnight.network/docs/developer-guides/sdk-setup)
+
+### Configuring Lace Wallet for Preview Network
+
+1. Open the Lace wallet extension in Chrome
+2. Go to Settings > Midnight
+3. Set Network to Preview
+4. Set Proof Server to: https://lace-proof-pub.preview.midnight.network
+5. Click Save configuration
+6. Refresh the ProofHire app page
+7. Click Connect Lace Wallet
+
+### Getting Test Tokens
+
+1. Visit https://faucet.preview.midnight.network to get tNIGHT tokens
+2. Open Lace wallet, go to Tokens, click Generate tDUST for transaction fees
 
 ### Local Development
 
