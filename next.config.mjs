@@ -7,10 +7,14 @@ const nextConfig = {
       layers: true,
     };
 
-    config.module.rules.push({
-      test: /\.wasm$/,
-      type: "webassembly/async",
-    });
+    // Fix for parseVec error in Next.js 15
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@midnight-ntwrk/ledger-v7': false,
+      '@midnight-ntwrk/ledger-v8': false,
+      '@midnight-ntwrk/onchain-runtime-v2': false,
+      '@midnight-ntwrk/onchain-runtime-v3': false,
+    };
 
     if (!isServer) {
       config.resolve.fallback = {
