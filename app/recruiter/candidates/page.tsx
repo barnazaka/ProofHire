@@ -120,10 +120,12 @@ export default function RecruiterCandidates() {
       // Retrieve wallet commitment from proof (stored as array)
       const walletCommitment = new Uint8Array((proof as any).walletCommitment || []);
 
+      // The 'proofHash' in our proof object is the Uint8Array commitment
+      const pHash = new Uint8Array((proof as any).proofHash || []);
+
       const result = await verifyCandidateClaim(
         contractAddress,
-        walletCommitment,
-        proof.type.replace(' (Verified)', '')
+        pHash
       );
 
       setVerified(prev => ({ ...prev, [id]: !!result }));

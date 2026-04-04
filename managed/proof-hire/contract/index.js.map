@@ -1,0 +1,8 @@
+{
+  "version": 3,
+  "file": "index.js",
+  "sourceRoot": "../../../",
+  "sources": ["contracts/proof-hire.compact"],
+  "names": [],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;EAAA;;;;;;;;;;MAUA,AAAA,YAGC;;;;;cAH2B,UAA0B;cAAE,oBAA6B;;;;;;;;;;;;;;;;;;yCAAzD,UAA0B,+BAAE,oBAA6B;;;;;;;;;8CAAzD,UAA0B;8CAAE,oBAA6B;;;OAGpF;MAED,AAAA,WAKC;;;;;cAL0B,UAA0B;cAAE,WAAoB;cAAE,WAA2B;cAAE,WAAmB;;;;;;;;;;;;;;;;;;;;;;;;;yCAAlG,UAA0B,+BAAE,WAAoB,+BAAE,WAA2B,+BAAE,WAAmB;;;;;;;;;6CAAlG,UAA0B;6CAAE,WAAoB;6CAAE,WAA2B;6CAAE,WAAmB;;;OAK5H;MAED,AAAA,WAEC;;;;;cAF0B,OAAgB;;;;;;;;;;;;;;;;;;yCAAhB,OAAgB;;;;;;;wEAAhB,OAAgB;;;OAE1C;MAED,AAAA,WAEC;;OAAA;MAED,AAAA,YACC;;OAAA;;;;;;;;;;;;GACA;EAhCD;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;IAEA;;;;;;;;;yEAA0C;IAC1C;;;;;;;;;yEAAyC;IAEzC;;;;;;;;;yEAAoC;IACpC;;;;;;;;;yEAA2C;IAC3C;;;;;;;;;yEAAwC;IACxC;;;;;;;;;yEAA4C;;;;;;;GAwB3C;EAtBD,AAAA,eAGC,4BAH2B,UAA0B,EAAE,oBAA6B;IACjF;;;;;;;2HAAqB,UAAQ;;yEAApB;IACT;;;;;;;2HAA2B,oBAAkB;;yEAA9B;;GAClB;EAED,AAAA,cAKC;;iBAL0B,UAA0B;iBAAE,WAAoB;iBAAE,WAA2B;iBAAE,WAAmB;;IACzH;;;;;;;2HAAsB,WAAS;;yEAArB;IACV;;;;;;;2HAAsB,WAAS;;yEAArB;IACV;;;;;;;2HAA2B,WAAS;;yEAArB;IACf;;;;;;;2HAAuB,UAAQ;;yEAApB;;GACd;EAED,AAAA,cAEC,4BAF0B,OAAgB;iDAC/B;;;;;;;;;;;sHAAU;yBAAI,OAAK;GAC9B;EAED,AAAA,cAEC,CAF0B,WAA2B,IACzC,WAAS,cACrB;EAED,AAAA,eACC,iBAAA;;;;;;;;;;;;;;;;;;;;IA7BD;qCAAA;;;;;;;;;;;0GAA0C;KAAA;IAC1C;qCAAA;;;;;;;;;;;0GAAyC;KAAA;IAEzC;qCAAA;;;;;;;;;;;0GAAoC;KAAA;IACpC;qCAAA;;;;;;;;;;;0GAA2C;KAAA;IAC3C;qCAAA;;;;;;;;;;;0GAAwC;KAAA;IACxC;qCAAA;;;;;;;;;;;0GAA4C;KAAA;;;;;;;;EAkB5C,AAAA,WAEC;;;;UAF0B,WAA2B;yCAA3B,WAA2B;GAErD;EAED,AAAA,YACC;;;;;GAAA;;;;"
+}
