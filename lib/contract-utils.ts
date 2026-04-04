@@ -19,23 +19,8 @@ export const getMidnightProviders = async () => {
   const wallet = midnight.mnLace;
   const connectedApi = await wallet.connect('preview');
 
-  // Fallback to public Preview endpoints if getConfiguration returns empty/fails
-  let uris;
-  try {
-    uris = await connectedApi.getConfiguration();
-    if (!uris || !uris.proverServerUri) {
-      throw new Error('Incomplete configuration from wallet');
-    }
-  } catch (e) {
-    console.warn('[Midnight] Falling back to public Preview endpoints');
-    uris = {
-      indexerUri: 'https://indexer.preview.midnight.network/api/v3/graphql',
-      indexerWsUri: 'wss://indexer.preview.midnight.network/api/v3/graphql/ws',
-      proverServerUri: 'https://lace-proof-pub.preview.midnight.network',
-      substrateNodeUri: 'https://rpc.preview.midnight.network',
-    };
-  }
-
+  // Get dynamic configuration from the wallet - no hardcoded URLs
+  const config = await connectedApi.getConfiguration();
   const walletState = await connectedApi.state();
 
   return {
@@ -46,7 +31,7 @@ export const getMidnightProviders = async () => {
       window.location.origin,
       fetch.bind(window)
     ),
-    proofProvider: (httpClientProofProvider as any)(uris.proverServerUri),
+    proofProvider: (httpClientProofProvider as any)(config.proverServerUri),
     publicDataProvider: {
        queryPublicData: async () => ({})
     } as any,

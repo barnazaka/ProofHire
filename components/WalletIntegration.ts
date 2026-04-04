@@ -44,11 +44,14 @@ export const connectLaceWallet = async () => {
   try {
     const found = await waitForWallet();
     if (!found) {
-      throw new Error('Lace wallet not detected. Make sure the extension is installed and the page is refreshed.');
+      throw new Error('Lace wallet not detected. Please install the extension and refresh the page.');
     }
 
     const wallet: InitialAPI = (window as any).midnight.mnLace;
     const connectedApi = await wallet.connect('preview');
+
+    // Dynamic config from wallet
+    const config = await connectedApi.getConfiguration();
 
     const addresses = await connectedApi.getShieldedAddresses();
     const address = addresses.shieldedAddress;
@@ -61,7 +64,8 @@ export const connectLaceWallet = async () => {
     return {
       api: connectedApi,
       address,
-      status
+      status,
+      config
     };
   } catch (error: any) {
     console.error('Wallet connection failed:', error);

@@ -44,7 +44,7 @@ Traditional hiring is broken. Candidates must expose their full identities (CVs,
 1. Open the Lace wallet extension in Chrome
 2. Go to Settings > Midnight
 3. Set Network to Preview
-4. Set Proof Server to: https://lace-proof-pub.preview.midnight.network
+4. Select Proof Server: Remote
 5. Click Save configuration
 6. Refresh the ProofHire app page
 7. Click Connect Lace Wallet
