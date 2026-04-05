@@ -174,6 +174,15 @@ export default function TalentOnboardingPage() {
       const existingProofs = JSON.parse(localStorage.getItem('proofhire_proofs') || '[]');
       localStorage.setItem('proofhire_proofs', JSON.stringify([newProof, ...existingProofs]));
 
+      // Update global ledger for recruiter demo
+      const globalProofs = JSON.parse(localStorage.getItem('proofhire_proofs_global') || '[]');
+      localStorage.setItem('proofhire_proofs_global', JSON.stringify([{
+        ...newProof,
+        candidateId: formData.fullName.split(' ')[0] + '_' + Math.random().toString(36).substring(2, 5),
+        hash: hashHex.slice(0, 10),
+        proofHash: Array.from(piiHash)
+      }, ...globalProofs]));
+
       setDeploymentStatus('Identity Anchored Successfully.');
       setShowSuccess(true);
 
