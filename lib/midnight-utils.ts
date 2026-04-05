@@ -71,8 +71,13 @@ export const deployAndAnchorCV = async (name: string, piiHash: Uint8Array) => {
   if (!isBrowser) return null;
 
   const { deployContract } = await import('@midnight-ntwrk/midnight-js-contracts');
-  const contractMod = await import('../managed/cv-proof/contract/contract/index');
   const providers = await setupProviders();
+
+  // Dynamic import with verification to avoid "initialization" errors
+  const contractMod = await import('../managed/cv-proof/contract/contract/index');
+  if (!contractMod || !contractMod.Contract) {
+    throw new Error('Contract module failed to initialize correctly.');
+  }
 
   // Witness for the CV Contract
   const witnesses = {
@@ -115,8 +120,13 @@ export const verifyCVClaim = async (contractAddress: string, expectedHash: Uint8
   if (!isBrowser) return false;
 
   const { findDeployedContract } = await import('@midnight-ntwrk/midnight-js-contracts');
-  const contractMod = await import('../managed/cv-proof/contract/contract/index');
   const providers = await setupProviders();
+
+  // Dynamic import with verification
+  const contractMod = await import('../managed/cv-proof/contract/contract/index');
+  if (!contractMod || !contractMod.Contract) {
+    throw new Error('Contract module failed to initialize correctly.');
+  }
 
   const deployed = await (findDeployedContract as any)(providers, {
     compiledContract: {
