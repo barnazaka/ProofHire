@@ -59,11 +59,11 @@ export default function ProofVerifier() {
       if (proof.proofHash) {
          pHash = new Uint8Array(proof.proofHash);
       } else {
-         // Fallback/Simulated if not present
+         // Deterministic mock if not present
          pHash = new Uint8Array(32).fill(0x1a);
       }
 
-      // REAL SDK CALL
+      // Attempt verification on Midnight
       const isValid = await verifyCandidateClaim(contractAddress, pHash);
 
       const result = isValid ? 'valid' : 'invalid';

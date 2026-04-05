@@ -7,13 +7,13 @@
 - Local:         http://localhost:3001
 - Network:       http://192.168.0.2:3001
 - Environments: .env.local
-✓ Ready in 731ms
+✓ Ready in 956ms
 ⨯ Another next dev server is already running.
 
 - Local:        http://localhost:3000
-- PID:          1687619
+- PID:          1833730
 - Dir:          /app
 - Log:          .next/dev/logs/next-development.log
 
-Run kill 1687619 to stop it.
+Run kill 1833730 to stop it.
 [?25h

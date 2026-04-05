@@ -24,6 +24,9 @@ interface CandidateProof {
   education?: string;
   experience?: number;
   skills?: string[];
+  publicName?: string;
+  headline?: string;
+  contractAddress?: string;
 }
 
 export default function RecruiterCandidates() {
@@ -338,18 +341,18 @@ export default function RecruiterCandidates() {
                        <div className="w-20 h-20 bg-zinc-800 rounded-3xl flex items-center justify-center border border-zinc-700 shadow-inner group-hover:bg-indigo-600/10 transition-colors relative">
                           {proof.type.includes('ZK') || proof.type.includes('Researcher') ? <BrainCircuit className="w-10 h-10 text-indigo-500" /> : <Shield className="w-10 h-10 text-indigo-500" />}
                           <div className="absolute -top-2 -right-2 w-6 h-6 bg-zinc-900 border border-zinc-800 rounded-full flex items-center justify-center text-[8px] font-black">
-                             {proof.experience}y
+                             {proof.experience || 0}y
                           </div>
                        </div>
                        <div className="space-y-2">
                           <div className="flex items-center gap-3">
-                             <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">ID: {proof.candidateId}</span>
+                             <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Node: {proof.publicName || 'Anonymous'}</span>
                              <div className="w-1.5 h-1.5 bg-zinc-700 rounded-full"></div>
                              <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">{proof.timestamp}</span>
                              <div className="w-1.5 h-1.5 bg-zinc-700 rounded-full"></div>
-                             <span className="text-[10px] font-black uppercase tracking-widest text-indigo-500 font-mono italic">{proof.education}</span>
+                             <span className="text-[10px] font-black uppercase tracking-widest text-indigo-500 font-mono italic">{proof.education || 'Verified Degree'}</span>
                           </div>
-                          <h3 className="text-2xl font-black italic uppercase tracking-tighter">{proof.type}</h3>
+                          <h3 className="text-2xl font-black italic uppercase tracking-tighter">{proof.headline || proof.type}</h3>
 
                           <div className="flex flex-wrap gap-2">
                              {proof.skills?.map(skill => (
@@ -361,7 +364,7 @@ export default function RecruiterCandidates() {
 
                           <div className="flex items-center gap-2 text-[10px] font-mono text-zinc-600 bg-black/40 px-3 py-1 rounded-lg w-fit border border-white/5">
                              <Fingerprint className="w-3 h-3" />
-                             {proof.hash}
+                             {proof.contractAddress || proof.hash}
                           </div>
                        </div>
                     </div>

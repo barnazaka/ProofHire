@@ -174,11 +174,22 @@ export default function TalentOnboardingPage() {
       const existingProofs = JSON.parse(localStorage.getItem('proofhire_proofs') || '[]');
       localStorage.setItem('proofhire_proofs', JSON.stringify([newProof, ...existingProofs]));
 
-      // Update global ledger for recruiter demo
+      // Update global ledger for recruiter demo with full metadata
       const globalProofs = JSON.parse(localStorage.getItem('proofhire_proofs_global') || '[]');
       localStorage.setItem('proofhire_proofs_global', JSON.stringify([{
         ...newProof,
-        candidateId: formData.fullName.split(' ')[0] + '_' + Math.random().toString(36).substring(2, 5),
+        candidateId: (formData.fullName.split(' ')[0] || 'Talent') + '_' + Math.random().toString(36).substring(2, 5),
+        publicName: formData.fullName,
+        headline: formData.headline,
+        location: formData.location,
+        primaryRole: formData.primaryRole,
+        education: formData.educationLevel,
+        fieldOfStudy: formData.fieldOfStudy,
+        institutionName: formData.institutionName,
+        graduationYear: formData.graduationYear,
+        experience: formData.experiences.reduce((sum, exp) => sum + (parseInt(exp.years) || 0), 0),
+        skills: formData.skills.map(s => s.name),
+        bio: formData.bio,
         hash: hashHex.slice(0, 10),
         proofHash: Array.from(piiHash)
       }, ...globalProofs]));

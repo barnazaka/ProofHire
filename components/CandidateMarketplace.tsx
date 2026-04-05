@@ -14,6 +14,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import CryptoJS from 'crypto-js';
 import { verifyCVClaim } from '@/lib/midnight-utils';
+import { decryptData } from '@/lib/encryption-utils';
 
 interface TalentProfile {
   id: string;
@@ -38,34 +39,27 @@ export default function CandidateMarketplace() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate finding candidates on the network
-    // In a real app, we would query the indexer for deployed CV contracts
-    const globalProofs = JSON.parse(localStorage.getItem('proofhire_proofs') || '[]');
-    const localData = localStorage.getItem('proofhire_talent_data');
+    // REAL DATA SCAN: Find candidates anchored to the Midnight Global Ledger (Simulated)
+    const globalProofs = JSON.parse(localStorage.getItem('proofhire_proofs_global') || '[]');
 
-    // For the hackathon demo, if we have local data, we show one candidate
-    if (localData && globalProofs.length > 0) {
-       // We can't actually decrypt the data here without the user's key,
-       // but for the demo we assume the Recruiter can see the "Public Name"
-       // from the ledger and the rest is hidden/verified.
-       // Here we mock the public profile based on the anchored data.
-       const latestProof = globalProofs[0];
+    if (globalProofs.length > 0) {
+       const candidatesList = globalProofs.map((proof: any) => ({
+          id: proof.id,
+          fullName: proof.publicName || 'Anonymous Candidate',
+          headline: proof.headline || 'Sovereign Contributor',
+          location: proof.location || 'Remote / Global',
+          primaryRole: proof.primaryRole || 'Engineering',
+          educationLevel: proof.education || 'Verified Degree',
+          fieldOfStudy: proof.fieldOfStudy || 'General',
+          institutionName: proof.institutionName || 'Academy',
+          graduationYear: proof.graduationYear || '2024',
+          experiences: [{ id: '1', title: proof.headline || 'Engineer', company: 'Verified History', years: proof.experience || '?' }],
+          skills: (proof.skills || []).map((s: string, i: number) => ({ id: i.toString(), name: s, level: 'Expert' })),
+          contractAddress: proof.contractAddress,
+          bio: proof.bio || 'This candidate has anchored their CV to the Midnight Network using Zero-Knowledge Proofs.'
+       }));
 
-       setCandidates([{
-          id: latestProof.id,
-          fullName: 'Satoshi Nakamoto', // This would be the 'publicName' from the ledger
-          headline: 'Senior Blockchain Architect',
-          location: 'Remote / Switzerland',
-          primaryRole: 'ZK Researcher',
-          educationLevel: 'PhD',
-          fieldOfStudy: 'Computer Science',
-          institutionName: 'University of Oxford',
-          graduationYear: '2018',
-          experiences: [{ id: '1', title: 'Lead Engineer', company: 'Global Tech', years: '5' }],
-          skills: [{ id: 's1', name: 'Midnight SDK', level: 'Expert' }, { id: 's2', name: 'Rust', level: 'Expert' }],
-          contractAddress: latestProof.contractAddress,
-          bio: 'Architecting the future of privacy-preserving protocols on Midnight.'
-       }]);
+       setCandidates(candidatesList);
     }
 
     setIsLoading(false);

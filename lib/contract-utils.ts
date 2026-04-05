@@ -17,9 +17,8 @@ export const deployAndSubmitProof = async (userAddr: string, proofHash: Uint8Arr
 
   try {
     const { deployContract } = await import('@midnight-ntwrk/midnight-js-contracts');
-    const contractMod = await import('../managed/cv-proof/contract/contract/index');
-
     const providers = await setupProviders();
+    const contractMod = await import('../managed/cv-proof/contract/contract/index');
     const deployed = await (deployContract as any)(providers, {
       compiledContract: {
         Contract: contractMod.Contract,
