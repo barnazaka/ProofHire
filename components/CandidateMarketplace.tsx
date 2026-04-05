@@ -8,7 +8,8 @@ import {
   Fingerprint, Sparkles, Globe,
   CheckCircle2, Clock, Calendar, Lock,
   FileText, History, Search, Hash,
-  ArrowLeft, Check, X, Shield, AlertCircle
+  ArrowLeft, Check, X, Shield, AlertCircle,
+  Loader2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CryptoJS from 'crypto-js';
