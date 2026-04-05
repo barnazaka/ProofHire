@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  turbopack: {},
   webpack: (config, { isServer }) => {
     config.experiments = {
       ...config.experiments,
@@ -17,6 +16,12 @@ const nextConfig = {
         crypto: false,
         stream: false,
         buffer: false,
+      };
+
+      // Fix for isomorphic-ws in browser
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        'isomorphic-ws': 'isomorphic-ws/browser.js',
       };
     }
     return config;

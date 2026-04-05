@@ -3,23 +3,27 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Briefcase, ShieldCheck, ChevronRight, Search, Lock, Zap, Loader2, LogOut, Copy, Check, ClipboardList, UserCheck, Sparkles } from 'lucide-react';
+import {
+  ArrowLeft, Briefcase, ShieldCheck,
+  ChevronRight, Search, Lock, Zap,
+  Loader2, LogOut, Copy, Check,
+  ClipboardList, UserCheck, Sparkles,
+  LayoutDashboard, MessageSquare, Target,
+  Users, Terminal, Globe, Filter, X
+} from 'lucide-react';
 import { shortenAddress } from '@/components/WalletIntegration';
 import ThemeToggle from '@/components/ThemeToggle';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import CandidateMarketplace from '@/components/CandidateMarketplace';
 
 export default function RecruiterDashboard() {
   const [walletConnected, setWalletConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [stats, setStats] = useState({
-    activeRequirements: 0,
-    candidatesFound: 0,
-    verificationsDone: 0
-  });
-  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [activePage, setActivePage] = useState('marketplace');
   const [primaryFilter, setPrimaryFilter] = useState('');
+  const [showFilterModal, setShowFilterModal] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -29,16 +33,6 @@ export default function RecruiterDashboard() {
     if (savedAddress && savedRole === 'recruiter') {
       setWalletAddress(savedAddress);
       setWalletConnected(true);
-
-      // Load stats
-      const savedReqs = localStorage.getItem('proofhire_requirements');
-      if (savedReqs) {
-        setStats(prev => ({ ...prev, activeRequirements: JSON.parse(savedReqs).length }));
-      }
-      const globalProofs = localStorage.getItem('proofhire_proofs_global');
-      if (globalProofs) {
-        setStats(prev => ({ ...prev, candidatesFound: JSON.parse(globalProofs).length }));
-      }
 
       const savedFilter = localStorage.getItem('recruiter_primary_filter');
       if (!savedFilter) {
@@ -68,30 +62,6 @@ export default function RecruiterDashboard() {
     }
   };
 
-  if (!walletConnected) {
-    return (
-      <div className="flex min-h-screen bg-white dark:bg-black items-center justify-center">
-        <Loader2 className="w-12 h-12 text-indigo-600 animate-spin" />
-      </div>
-    );
-  }
-
-  const NavCard = ({ href, title, description, icon: Icon, color }: any) => (
-    <Link href={href} className="group relative">
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-zinc-200 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 rounded-[2rem] opacity-75 group-hover:opacity-100 transition duration-300 blur-sm group-hover:blur-md group-hover:from-indigo-500 group-hover:to-purple-600"></div>
-      <div className="relative flex flex-col h-full p-8 bg-white dark:bg-zinc-900 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 transition-transform duration-300 group-hover:-translate-y-1">
-        <div className={`w-14 h-14 ${color} rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform`}>
-          <Icon className="w-7 h-7" />
-        </div>
-        <h3 className="text-2xl font-black mb-3 tracking-tight group-hover:text-indigo-500 transition-colors uppercase italic">{title}</h3>
-        <p className="text-zinc-500 text-sm leading-relaxed mb-8 font-medium">{description}</p>
-        <div className="mt-auto flex items-center text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600 group-hover:gap-3 transition-all">
-          Initialize <ChevronRight className="w-4 h-4" />
-        </div>
-      </div>
-    </Link>
-  );
-
   const saveFilter = (e: React.FormEvent) => {
     e.preventDefault();
     if (primaryFilter.trim()) {
@@ -100,10 +70,35 @@ export default function RecruiterDashboard() {
     }
   };
 
+  if (!walletConnected) {
+    return (
+      <div className="flex min-h-screen bg-black items-center justify-center">
+        <Loader2 className="w-12 h-12 text-indigo-600 animate-spin" />
+      </div>
+    );
+  }
+
+  const SidebarItem = ({ id, icon: Icon, label, status }: { id: string, icon: any, label: string, status?: string }) => (
+    <button
+      onClick={() => setActivePage(id)}
+      className={`w-full flex items-center justify-between px-6 py-4 rounded-2xl transition-all group ${activePage === id ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-600/20' : 'text-zinc-500 hover:bg-zinc-900 hover:text-white'}`}
+    >
+      <div className="flex items-center gap-4">
+        <Icon className={`w-5 h-5 ${activePage === id ? 'text-white' : 'text-zinc-600 group-hover:text-indigo-500'} transition-colors`} />
+        <span className="text-[10px] font-black uppercase tracking-[0.2em] italic">{label}</span>
+      </div>
+      {status && (
+        <span className={`text-[8px] font-black px-2 py-0.5 rounded-md uppercase ${activePage === id ? 'bg-white/20 text-white' : 'bg-zinc-800 text-zinc-500'}`}>
+          {status}
+        </span>
+      )}
+    </button>
+  );
+
   return (
-    <div className="flex flex-col min-h-screen bg-white dark:bg-black font-sans text-zinc-900 dark:text-white transition-colors duration-300">
+    <div className="flex min-h-screen bg-black text-white font-sans selection:bg-indigo-600">
       {showFilterModal && (
-          <div id="filter-modal" className="fixed inset-0 z-[100] flex items-center justify-center p-8">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-8">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -121,13 +116,12 @@ export default function RecruiterDashboard() {
               <div className="space-y-4">
                  <h2 className="text-4xl font-black italic uppercase tracking-tightest text-white">Target Focus.</h2>
                  <p className="text-zinc-500 font-medium text-sm leading-relaxed px-8">
-                    To optimize your ZK-candidate discovery engine, specify your primary hiring target.
-                    This helps the protocol prioritize relevant proof commitments.
+                    Specify your primary hiring target to calibrate the ZK discovery engine.
                  </p>
               </div>
               <form onSubmit={saveFilter} className="space-y-6">
-                 <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Primary Hiring Role / Skill</label>
+                 <div className="space-y-2 text-left">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 pl-2">Primary Hiring Role</label>
                     <input
                       autoFocus
                       value={primaryFilter}
@@ -140,160 +134,147 @@ export default function RecruiterDashboard() {
                    type="submit"
                    className="w-full py-6 bg-white text-black rounded-2xl font-black uppercase italic tracking-widest hover:bg-indigo-600 hover:text-white transition-all shadow-xl"
                  >
-                    Set Command Focus
+                    Set Focus Area
                  </button>
               </form>
             </motion.div>
           </div>
         )}
 
-      <header className="px-10 py-6 flex justify-between items-center border-b border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-black/50 backdrop-blur-2xl sticky top-0 z-50">
-        <div className="flex items-center gap-4">
-          <Link href="/" className="mr-4 p-3 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-2xl transition-all">
-            <ArrowLeft className="w-6 h-6" />
-          </Link>
-          <div className="flex items-center gap-3">
-             <div className="p-2 bg-zinc-900 dark:bg-zinc-100 rounded-xl shadow-lg shadow-black/20">
-                <ShieldCheck className="w-6 h-6 text-white dark:text-zinc-900" />
-             </div>
-             <span className="text-2xl font-black tracking-tighter uppercase italic">Recruiter Engine</span>
-          </div>
-        </div>
+      {/* LEFT SIDEBAR */}
+      <aside className="w-80 border-r border-zinc-900 flex flex-col p-8 sticky top-0 h-screen">
+         <div className="flex items-center gap-3 mb-16">
+            <div className="p-2 bg-zinc-100 rounded-xl shadow-lg shadow-white/10">
+               <ShieldCheck className="w-6 h-6 text-black" />
+            </div>
+            <span className="text-2xl font-black tracking-tighter uppercase italic">Recruiter Engine.</span>
+         </div>
 
-        <div className="flex items-center gap-4">
-          <ThemeToggle />
-          <div className="relative">
+         <div className="flex-1 space-y-2">
+            <SidebarItem id="marketplace" icon={Search} label="Talent Marketplace" />
+            <SidebarItem id="rules" icon={ClipboardList} label="Hiring Rules" status="1 Active" />
+            <SidebarItem id="candidates" icon={Users} label="Sovereign Shortlist" status="0" />
+            <SidebarItem id="terminal" icon={Terminal} label="Verification Console" />
+         </div>
+
+         <div className="mt-auto space-y-6">
+            <div className="p-6 bg-indigo-600 rounded-[2rem] space-y-4 shadow-xl shadow-indigo-600/20">
+               <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-indigo-100/60 italic">Midnight Indexer</span>
+               </div>
+               <div className="space-y-1">
+                  <p className="text-[10px] font-black text-indigo-100/60 uppercase tracking-widest leading-none">Scanning Block</p>
+                  <p className="text-xl font-black italic text-white uppercase tracking-tighter">#2,481,209</p>
+               </div>
+            </div>
+
             <button
-              onClick={() => setShowDropdown(!showDropdown)}
-              className="flex items-center gap-4 px-5 py-2.5 bg-zinc-50 dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm transition-all hover:border-indigo-500"
+              onClick={handleLogout}
+              className="w-full flex items-center gap-4 px-6 py-4 bg-white/5 border border-white/10 hover:bg-rose-900/20 hover:border-rose-900/50 hover:text-rose-500 rounded-2xl transition-all text-[10px] font-black uppercase tracking-widest italic"
             >
-              <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div>
-              <span className="text-xs font-black font-mono tracking-tight">
-                {shortenAddress(walletAddress || '')}
-              </span>
-              <div className="w-8 h-8 bg-zinc-900 dark:bg-zinc-100 rounded-xl flex items-center justify-center text-white dark:text-zinc-900 text-[10px] font-black italic shadow-inner">
-                {walletAddress?.slice(-2).toUpperCase()}
-              </div>
+               <LogOut className="w-4 h-4" />
+               Disconnect Engine
             </button>
+         </div>
+      </aside>
 
-            {showDropdown && (
-              <div className="absolute right-0 mt-3 w-64 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] shadow-2xl p-4 space-y-2 z-[60] animate-in fade-in slide-in-from-top-2 duration-200">
-                <div className="p-4 border-b border-zinc-100 dark:border-zinc-800 mb-2">
-                  <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1">Authenticated via</p>
-                  <p className="text-sm font-black italic">Lace Wallet v1.2</p>
+      {/* MAIN CONTENT */}
+      <div className="flex-1 flex flex-col">
+        {/* HEADER */}
+        <header className="px-12 py-8 flex justify-between items-center bg-black/50 backdrop-blur-3xl border-b border-zinc-900 sticky top-0 z-50">
+           <div className="flex flex-col">
+              <h2 className="text-xs font-black uppercase tracking-[0.4em] text-indigo-500 italic">Command Center</h2>
+              <div className="flex items-center gap-3">
+                 <Target className="w-4 h-4 text-zinc-600" />
+                 <span className="text-sm font-bold text-zinc-400 uppercase tracking-widest italic">{primaryFilter || 'General Focus'}</span>
+              </div>
+           </div>
+
+           <div className="flex items-center gap-8">
+              <button
+                onClick={() => setShowFilterModal(true)}
+                className="p-3 bg-zinc-900 border border-zinc-800 rounded-xl hover:bg-zinc-800 transition-colors"
+              >
+                 <Filter className="w-5 h-5 text-zinc-400" />
+              </button>
+              <ThemeToggle />
+
+              <div className="relative">
+                <button
+                  onClick={() => setShowDropdown(!showDropdown)}
+                  className="flex items-center gap-5 pl-6 pr-3 py-3 bg-zinc-900 border border-zinc-800 rounded-[2rem] hover:border-indigo-600/50 transition-all shadow-2xl"
+                >
+                  <div className="flex flex-col items-end">
+                    <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest leading-none">Command Address</span>
+                    <span className="text-xs font-black italic font-mono text-white tracking-tight">{shortenAddress(walletAddress || '')}</span>
+                  </div>
+                  <div className="w-12 h-12 bg-zinc-100 rounded-2xl flex items-center justify-center text-black text-[10px] font-black italic shadow-inner border-2 border-white/10">
+                    {walletAddress?.slice(-2).toUpperCase()}
+                  </div>
+                </button>
+
+                {showDropdown && (
+                  <div className="absolute right-0 mt-4 w-72 bg-zinc-900 border border-zinc-800 rounded-[2.5rem] shadow-3xl p-6 space-y-4 z-[60] animate-in fade-in slide-in-from-top-4 duration-300">
+                    <div className="space-y-1 pb-4 border-b border-zinc-800">
+                      <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest italic">Lace Wallet v1.2</p>
+                      <p className="text-sm font-black italic text-white uppercase tracking-tighter">Midnight Testnet</p>
+                    </div>
+                    <button
+                      onClick={copyAddress}
+                      className="w-full flex items-center justify-between p-4 hover:bg-white/5 rounded-2xl transition-all text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-white"
+                    >
+                      <span className="flex items-center gap-3">
+                        <Copy className="w-4 h-4" />
+                        {copied ? 'Copied!' : 'Copy Wallet'}
+                      </span>
+                      {copied && <Check className="w-4 h-4 text-green-500" />}
+                    </button>
+                  </div>
+                )}
+              </div>
+           </div>
+        </header>
+
+        {/* PAGE BODY */}
+        <main className="p-12 max-w-7xl w-full mx-auto">
+          {activePage === 'marketplace' ? (
+             <div className="space-y-12">
+                <div className="flex items-end justify-between">
+                   <div className="space-y-2">
+                      <h1 className="text-6xl font-black italic uppercase tracking-tightest leading-none">Talent<br /><span className="text-indigo-600">Marketplace.</span></h1>
+                      <div className="flex items-center gap-3">
+                         <Users className="w-4 h-4 text-zinc-600" />
+                         <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest italic">Displaying sovereign nodes matching focus: {primaryFilter}</p>
+                      </div>
+                   </div>
+                   <div className="flex gap-4">
+                      <div className="px-6 py-4 bg-zinc-900 border border-zinc-800 rounded-2xl flex flex-col gap-1">
+                         <span className="text-[8px] font-black text-zinc-500 uppercase tracking-widest">Active Candidates</span>
+                         <span className="text-2xl font-black italic text-white leading-none">248</span>
+                      </div>
+                      <div className="px-6 py-4 bg-zinc-900 border border-zinc-800 rounded-2xl flex flex-col gap-1">
+                         <span className="text-[8px] font-black text-zinc-500 uppercase tracking-widest">Midnight Block</span>
+                         <span className="text-2xl font-black italic text-indigo-500 leading-none">2.4M</span>
+                      </div>
+                   </div>
                 </div>
 
-                <button
-                  onClick={copyAddress}
-                  className="w-full flex items-center justify-between p-4 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-2xl transition-colors text-xs font-black uppercase tracking-widest"
-                >
-                  <span className="flex items-center gap-3">
-                    <Copy className="w-4 h-4 text-zinc-400" />
-                    {copied ? 'Copied!' : 'Copy Address'}
-                  </span>
-                  {copied && <Check className="w-4 h-4 text-green-500" />}
-                </button>
-
-                <button
-                  onClick={handleLogout}
-                  className="w-full flex items-center gap-3 p-4 hover:bg-rose-50 dark:hover:bg-rose-900/20 text-rose-600 rounded-2xl transition-colors text-xs font-black uppercase tracking-widest"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Disconnect
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </header>
-
-      <main className="flex-1 max-w-screen-2xl mx-auto w-full p-8 lg:p-12">
-        <div className="mb-16 flex items-end justify-between">
-          <div>
-            <motion.h1
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="text-7xl font-black tracking-tighter mb-4 italic leading-none"
-            >
-              RECRUITER<br /><span className="text-indigo-600">COMMAND.</span>
-            </motion.h1>
-            <p className="text-zinc-400 font-black text-xs uppercase tracking-widest italic flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-amber-500" />
-              Automated Trust Engine Active
-            </p>
-          </div>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="flex gap-6"
-          >
-            <div className="px-10 py-6 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] flex items-center gap-6 min-w-[200px]">
-              <div>
-                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest leading-none mb-2">Rules Deployed</p>
-                <p className="text-3xl font-black italic leading-none">{stats.activeRequirements}</p>
-              </div>
-            </div>
-            <div className="px-10 py-6 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] flex items-center gap-6 min-w-[200px]">
-              <div>
-                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest leading-none mb-2">Candidates Found</p>
-                <p className="text-3xl font-black italic leading-none">{stats.candidatesFound}</p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-16">
-          <NavCard
-            href="/recruiter/requirements"
-            title="Rule Builder"
-            description="Define the mathematical requirements for your open positions. Specify skills and experience thresholds."
-            icon={ClipboardList}
-            color="bg-zinc-900 dark:bg-zinc-100 dark:text-zinc-900"
-          />
-          <NavCard
-            href="/recruiter/candidates"
-            title="ZK Browser"
-            description="Explore verified candidates who have already proven they meet your requirements on the ledger."
-            icon={Search}
-            color="bg-indigo-600"
-          />
-          <NavCard
-            href="/recruiter/verify"
-            title="Proof Terminal"
-            description="Directly verify a specific candidate proof hash against the Midnight smart contract."
-            icon={UserCheck}
-            color="bg-purple-600"
-          />
-        </div>
-
-        <div className="p-16 rounded-[4rem] bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 overflow-hidden relative group border border-zinc-800 dark:border-zinc-200">
-          <div className="absolute bottom-0 right-0 p-12 opacity-5 dark:opacity-[0.03] group-hover:scale-125 transition-transform duration-700">
-            <Lock className="w-96 h-96" />
-          </div>
-          <div className="max-w-2xl relative z-10">
-            <h2 className="text-5xl font-black tracking-tighter mb-6 italic uppercase leading-none">Trust, Without Exposure.</h2>
-            <p className="text-zinc-400 dark:text-zinc-500 text-lg mb-10 font-medium leading-relaxed">
-              Verify credentials through mathematical certainty. Every candidate in the ProofHire ecosystem is pre-authenticated by the Midnight protocol before you even see their profile.
-            </p>
-            <button className="px-10 py-5 bg-indigo-600 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:scale-105 transition-all shadow-2xl">
-              Initialize Trust Protocol
-            </button>
-          </div>
-        </div>
-      </main>
-
-      <footer className="px-10 py-12 border-t border-zinc-200 dark:border-zinc-800 text-center flex flex-col md:flex-row items-center justify-between">
-        <div className="flex items-center gap-6">
-           <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
-              Automated Compliance Active
-           </span>
-           <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(99,102,241,0.5)]"></div>
-        </div>
-        <div className="mt-4 md:mt-0 text-[11px] font-black text-zinc-400 uppercase tracking-widest flex items-center gap-2">
-           Midnight Smart Contract: <span className="text-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 px-3 py-1 rounded-lg italic font-mono uppercase tracking-tight">ProofHireContract_v1.0</span>
-        </div>
-      </footer>
+                <CandidateMarketplace />
+             </div>
+          ) : (
+             <div className="h-[60vh] flex flex-col items-center justify-center text-center space-y-6">
+                <div className="w-24 h-24 bg-zinc-900 border border-zinc-800 rounded-[2.5rem] flex items-center justify-center text-zinc-700 animate-pulse">
+                   <Target className="w-10 h-10" />
+                </div>
+                <div className="space-y-2">
+                   <h3 className="text-2xl font-black italic uppercase tracking-tighter text-zinc-400">Rule Logic Initializing</h3>
+                   <p className="text-xs font-medium text-zinc-600 uppercase tracking-[0.2em]">Synchronizing {activePage} with Midnight ledger...</p>
+                </div>
+             </div>
+          )}
+        </main>
+      </div>
     </div>
   );
 }

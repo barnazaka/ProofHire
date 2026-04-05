@@ -4,26 +4,12 @@
   "runtime-version": "0.15.0",
   "circuits": [
     {
-      "name": "submitProof",
+      "name": "submitCV",
       "pure": false,
       "proof": true,
       "arguments": [
         {
-          "name": "user",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
-        },
-        {
-          "name": "proof",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
-        },
-        {
-          "name": "cType",
+          "name": "name",
           "type": {
             "type-name": "Opaque",
             "tsType": "string"
@@ -37,12 +23,12 @@
       }
     },
     {
-      "name": "verifyCandidateClaim",
+      "name": "verifyHash",
       "pure": false,
-      "proof": true,
+      "proof": false,
       "arguments": [
         {
-          "name": "pHash",
+          "name": "expectedHash",
           "type": {
             "type-name": "Bytes",
             "length": 32
@@ -50,11 +36,31 @@
         }
       ],
       "result-type": {
-        "type-name": "Boolean"
+        "type-name": "Tuple",
+        "types": [
+        ]
       }
     }
   ],
   "witnesses": [
+    {
+      "name": "getCVData",
+      "arguments": [
+      ],
+      "result type": {
+        "type-name": "Struct",
+        "name": "CVData",
+        "elements": [
+          {
+            "name": "nameHash",
+            "type": {
+              "type-name": "Bytes",
+              "length": 32
+            }
+          }
+        ]
+      }
+    }
   ],
   "contracts": [
   ]
