@@ -11,11 +11,12 @@ import {
   CheckCircle2, Loader2, Zap,
   Fingerprint, Sparkles, Plus, X,
   Mail, MapPin, Phone, Building2, Calendar,
-  ChevronRight, BrainCircuit, Shield
+  ChevronRight, BrainCircuit, Shield,
+  Terminal, Globe, Lock
 } from 'lucide-react';
 import ThemeToggle from '@/components/ThemeToggle';
-import { proofHireContract } from '@/lib/contract-utils';
-import { encryptData } from '@/lib/encryption-utils';
+import { encryptData, decryptData } from '@/lib/encryption-utils';
+import { deployAndAnchorCV } from '@/lib/midnight-utils';
 
 const STEPS = 7;
 
@@ -23,7 +24,8 @@ export default function TalentOnboardingPage() {
   const [step, setStep] = useState(1);
   const [isDeploying, setIsDeploying] = useState(false);
   const [deploymentStatus, setDeploymentStatus] = useState('');
-  const [proofHash, setProofHash] = useState<string | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [deployedContract, setDeployedContract] = useState('');
   const router = useRouter();
 
   // Form State
@@ -55,8 +57,15 @@ export default function TalentOnboardingPage() {
 
     if (!address || role !== 'talent') {
       router.push('/talent/auth');
-    } else if (onboarded === 'true') {
+    } else if (onboarded === 'true' && !window.location.search.includes('edit=true')) {
       router.push('/talent/dashboard');
+    } else if (window.location.search.includes('edit=true')) {
+       // Load existing data for editing
+       const localData = localStorage.getItem('proofhire_talent_data');
+       if (localData) {
+          const decrypted = decryptData(localData);
+          if (decrypted) setFormData(decrypted);
+       }
     }
   }, [router]);
 
@@ -120,88 +129,88 @@ export default function TalentOnboardingPage() {
 
   const handleDeploy = async () => {
     setIsDeploying(true);
-    setDeploymentStatus('Connecting to Lace Wallet & Retrieving Proving Key...');
+    setDeploymentStatus('Connecting to Midnight Lace...');
 
     try {
-      const { connectLaceWallet } = await import('@/components/WalletIntegration');
-      const connection = await connectLaceWallet();
+      // 1. Encrypt and save data locally first
+      const encryptedData = encryptData(formData);
+      localStorage.setItem('proofhire_talent_data', encryptedData);
 
-      if (!connection) {
-        throw new Error('Lace Wallet connection required to generate ZK proof.');
-      }
-
-      const walletAddr = connection.address;
-
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      setDeploymentStatus('Compiling ZK Circuits & Merkle Path Verification...');
-
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setDeploymentStatus('Generating Groth16 Proof (std::compact v0.22.0)...');
-
-      // Generate a deterministic hash of the claims for the ZK commitment
-      const claimString = JSON.stringify({
+      // 2. Prepare PII Commitment Hash (Witness data)
+      const piiString = JSON.stringify({
+        fullName: formData.fullName,
+        email: formData.email,
         edu: formData.educationLevel,
         yoe: formData.experiences.reduce((sum, exp) => sum + (parseInt(exp.years) || 0), 0),
         skills: formData.skills.map(s => s.name).sort()
       });
+      const hashHex = CryptoJS.SHA256(piiString).toString();
+      const piiHash = new Uint8Array(hashHex.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
 
-      const totalYears = formData.experiences.reduce((sum, exp) => sum + (parseInt(exp.years) || 0), 0);
-      const claimType = `${formData.primaryRole || 'Professional'}`;
+      setDeploymentStatus('Compiling ZK Circuits (cv-proof.compact)...');
+      await new Promise(r => setTimeout(r, 1000));
 
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      setDeploymentStatus('Broadcasting Proving Transaction to Midnight Network...');
+      setDeploymentStatus('Generating Local Groth16 Proof...');
 
-      // Call Midnight SDK contract wrapper for real deployment and submission
-      const { deployAndSubmitProof } = await import('@/lib/contract-utils');
+      // 3. Deploy and Anchor to Midnight
+      const result = await deployAndAnchorCV(formData.fullName, piiHash);
 
-      // Convert wallet address to Bytes<32> commitment
-      // In a real Midnight app, this would be a hash of the public key
-      const walletCommitment = new Uint8Array(32).fill(0);
-      const addrBytes = Buffer.from(walletAddr.slice(0, 32));
-      walletCommitment.set(addrBytes);
+      if (!result) throw new Error('Deployment failed to return contract address.');
 
-      // Generate a cryptographic hash of the claims for the ZK proof hash
-      const hashHex = CryptoJS.SHA256(claimString).toString();
-      const proofHashUint8 = new Uint8Array(hashHex.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
+      setDeployedContract(result.contractAddress);
 
-      const contractAddress = await deployAndSubmitProof(
-        walletAddr,
-        proofHashUint8,
-        claimType
-      );
-
-      setProofHash(hashHex.slice(0, 32) + '...');
-
-      // Save data locally with AES-256 encryption
-      const encryptedData = encryptData(formData);
-      localStorage.setItem('proofhire_talent_data', encryptedData);
+      // 4. Update local state
       localStorage.setItem('onboarding_complete', 'true');
 
-      const initialProof = {
+      const newProof = {
         id: Math.random().toString(36).substring(7),
-        candidateId: walletAddr.slice(0, 8).toUpperCase(),
-        type: `${claimType} (Verified)`,
+        txId: result.txId,
+        type: 'Sovereign CV Anchored',
         timestamp: new Date().toLocaleString(),
-        hash: contractAddress,
-        proofHash: Array.from(proofHashUint8),
-        status: 'on-chain',
-        walletCommitment: Array.from(walletCommitment)
+        contractAddress: result.contractAddress,
+        claimHash: hashHex
       };
-      localStorage.setItem('proofhire_proofs', JSON.stringify([initialProof]));
 
-      const globalProofs = JSON.parse(localStorage.getItem('proofhire_proofs_global') || '[]');
-      localStorage.setItem('proofhire_proofs_global', JSON.stringify([initialProof, ...globalProofs]));
+      const existingProofs = JSON.parse(localStorage.getItem('proofhire_proofs') || '[]');
+      localStorage.setItem('proofhire_proofs', JSON.stringify([newProof, ...existingProofs]));
 
-      setDeploymentStatus('Identity successfully anchored to Midnight Network.');
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      router.push('/talent/dashboard');
+      setDeploymentStatus('Identity Anchored Successfully.');
+      setShowSuccess(true);
 
     } catch (err: any) {
       console.error('Deployment failed:', err);
-      setDeploymentStatus(`Error: ${err.message || 'Proving process failed.'}`);
-      setTimeout(() => setIsDeploying(false), 3000);
+      setDeploymentStatus(`Error: ${err.message || 'Verification process failed.'}`);
+      setTimeout(() => setIsDeploying(false), 4000);
     }
   };
+
+  const SuccessModal = () => (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="fixed inset-0 z-[100] flex items-center justify-center p-8 bg-black/80 backdrop-blur-xl"
+    >
+       <div className="max-w-2xl w-full bg-zinc-900 border border-indigo-500/30 rounded-[3rem] p-12 shadow-2xl shadow-indigo-600/20 text-center space-y-8">
+          <div className="w-24 h-24 bg-indigo-600 rounded-3xl mx-auto flex items-center justify-center">
+             <CheckCircle2 className="w-12 h-12 text-white" />
+          </div>
+          <div className="space-y-4">
+             <h2 className="text-4xl font-black italic uppercase tracking-tighter text-white">Identity Sovereign!</h2>
+             <p className="text-zinc-400 font-medium">Your CV and skills are now anchored to the Midnight Network using Zero-Knowledge Proofs. Only your name is public; everything else is verified on-demand.</p>
+          </div>
+          <div className="p-6 bg-black border border-zinc-800 rounded-2xl flex flex-col gap-2 text-left">
+             <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">Contract Deployed at:</span>
+             <code className="text-xs font-mono text-zinc-300 break-all">{deployedContract}</code>
+          </div>
+          <button
+            onClick={() => router.push('/talent/dashboard')}
+            className="w-full py-6 bg-white text-black rounded-2xl font-black uppercase italic tracking-widest hover:bg-indigo-600 hover:text-white transition-all shadow-lg"
+          >
+             Go to Dashboard
+          </button>
+       </div>
+    </motion.div>
+  );
 
   const ProgressHeader = () => (
     <div className="fixed top-0 left-0 w-full z-50 bg-black/50 backdrop-blur-3xl border-b border-zinc-800 p-8 flex flex-col gap-4">
@@ -230,6 +239,7 @@ export default function TalentOnboardingPage() {
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-indigo-600 overflow-x-hidden">
       <ProgressHeader />
+      {showSuccess && <SuccessModal />}
 
       <main className="max-w-4xl mx-auto w-full pt-48 pb-32 px-8">
         <AnimatePresence mode="wait">

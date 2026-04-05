@@ -1,8 +1,0 @@
-{
-  "version": 3,
-  "file": "index.js",
-  "sourceRoot": "../../../../",
-  "sources": ["contracts/proof-hire.compact"],
-  "names": [],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;EAAA;;;;;;;;;;MAMA,AAAA,WAIC;;;;;cAJ0B,MAAe;cAAE,OAAgB;cAAE,OAAuB;;;;;;;;;;;;;;;;;;;;;;;;;yCAA1D,MAAe,+BAAE,OAAgB,+BAAE,OAAuB;;;;;;;;;6CAA1D,MAAe;6CAAE,OAAgB;6CAAE,OAAuB;;;OAIpF;MAED,AAAA,oBAEC;;;;;cAFmC,OAAgB;;;;;;;;;;;;;;;;;;yCAAhB,OAAgB;;;;;;;;;sDAAhB,OAAgB;;;OAEnD;;;;;;;;;;GACA;EAfD;;;;;;;;;;;;;;;;;;;;;;;;;;;;;IAEA;;;;;;;;;yEAAmC;IACnC;;;;;;;;;yEAAoC;IACpC;;;;;;;;;yEAA2C;;;;;;;GAW1C;EATD,AAAA,cAIC,4BAJ0B,MAAe,EAAE,OAAgB,EAAE,OAAuB;IACjF;;;;;;;2HAAqB,MAAI;;yEAAhB;IACT;;;;;;;2HAAsB,OAAK;;yEAAjB;IACV;;;;;;;2HAAsB,OAAK;;yEAAjB;;GACb;EAED,AAAA,uBAEC,4BAFmC,OAAgB;iDACxC;;;;;;;;;;;sHAAU;yBAAa,OAAK;GACvC;;;;;;;;;;;;;;;;;;;;IAZD;qCAAA;;;;;;;;;;;0GAAmC;KAAA;IACnC;qCAAA;;;;;;;;;;;0GAAoC;KAAA;IACpC;qCAAA;;;;;;;;;;;0GAA2C;KAAA;;;;;;;;;;"
-}

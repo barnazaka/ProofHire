@@ -1,0 +1,38 @@
+pragma language_version >= 0.22.0;
+
+import CompactStandardLibrary;
+
+// CVData structure for private CV data
+struct CVData {
+    nameHash: Bytes<32>;
+}
+
+// Witness: provider of private CV data
+witness getCVData(): CVData;
+
+// On-chain state
+export ledger submissionCount: Counter;
+export ledger ownerAddress: ZswapCoinPublicKey;
+export ledger publicName: Opaque<"string">;
+
+/**
+ * Submit CV Circuit:
+ * Anchors the basic public identity and increments submission count.
+ */
+export circuit submitCV(name: Opaque<"string">): [] {
+    const cvData = getCVData();
+
+    // Disclose public info for the recruiter marketplace
+    publicName = disclose(name);
+    ownerAddress = disclose(ownPublicKey());
+
+    submissionCount.increment(1);
+}
+
+/**
+ * Verification circuit for a hash.
+ */
+export circuit verifyHash(expectedHash: Bytes<32>): [] {
+    const cvData = getCVData();
+    disclose(cvData.nameHash == expectedHash);
+}

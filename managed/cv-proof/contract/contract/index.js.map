@@ -1,0 +1,8 @@
+{
+  "version": 3,
+  "file": "index.js",
+  "sourceRoot": "../../../../",
+  "sources": ["contracts/cv-proof.compact", "compiler/standard-library.compact"],
+  "names": [],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;EAAA;;;;;;;;;;;;;MAqBA,AAAA,QAQC;;;;;cARuB,MAAsB;;;;;;;;;;;yCAAtB,MAAsB;;;;;;;qEAAtB,MAAsB;;;OAQ7C;MAKD,AAAA,UAGC;;;;;cAHyB,cAAuB;;;;;;;;;;;;;;;;;;yCAAvB,cAAuB;;;;;;;;;4CAAvB,cAAuB;;;OAGhD;;;;;;;GACA;EAtCD;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;IAaA;;;;;;;;;yEAAuC;IACvC;;;;;;;;;yEAA+C;IAC/C;;;;;;;;;yEAA2C;;;;;;;GAuB1C;ECtCD,AAAA;;;;;;;;EDUA,AAAA,YAA4B;;0DAA5B,SAA4B;;;;;;;;;;;;;;GAAA;EAW5B,AAAA,WAQC,4BARuB,MAAsB;UACpC,QAAoB;IAG1B;;;;;;;2HAAsB,MAAI;;yEAAhB;UACV,KAAY;IAAZ;;;;;;;2HAAA,KAAY;;yEAAA;UAEZ,KAAe;IAAf;;;;;;;;;;6FAAA,KAAe;;;;wEAAA;;GAClB;EAKD,AAAA,aAGC,4BAHyB,cAAuB;UACvC,QAAoB;kBACjB,QAAM,WAAa,cAAY;;GAC3C;;;;;;;;;;;;;;;;;;;;IAxBD;qCAAA;;;;;;;;;;;0GAAuC;KAAA;IACvC;qCAAA;;;;;;;;;;;0GAA+C;KAAA;IAC/C;qCAAA;;;;;;;;;;;0GAA2C;KAAA;;;;;;;;;;"
+}
