@@ -17,13 +17,15 @@ const nextConfig = {
         stream: false,
         buffer: false,
       };
-
-      // Fix for isomorphic-ws in browser
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        'isomorphic-ws': 'isomorphic-ws/browser.js',
-      };
     }
+
+    // Fix for isomorphic-ws in browser and server
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      'isomorphic-ws': isServer
+        ? new URL('./lib/ws-bridge-node.js', import.meta.url).pathname
+        : new URL('./lib/ws-bridge.js', import.meta.url).pathname,
+    };
     return config;
   },
 };
