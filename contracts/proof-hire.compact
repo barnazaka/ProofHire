@@ -41,14 +41,25 @@ circuit commitCredential(credential: Bytes<32>, sk: Bytes<32>): Bytes<32> {
     return persistentHash<Vector<2, Bytes<32>>>([credential, sk]);
 }
 
+constructor() {
+    const sk = localSecretKey();
+    const pk = computePublicKey(sk, round as Field);
+    cvOwner = disclose(pk);
+    cvStatus = CVStatus.DRAFT;
+    proofOfSchool = pad(32, "");
+    proofOfSkills = pad(32, "");
+    proofOfExperience = pad(32, "");
+    proofOfCertifications = pad(32, "");
+}
+
 export circuit submitSchoolProof(): [] {
     const sk = localSecretKey();
     const pk = computePublicKey(sk, round as Field);
     assert(cvOwner == pk, "Not authorized");
     assert(cvStatus == CVStatus.DRAFT, "CV already live");
     const school = getSchoolCredential();
-    const commitment = commitCredential(school, sk);
-    proofOfSchool = disclose(commitment);
+    const c = commitCredential(school, sk);
+    proofOfSchool = disclose(c);
 }
 
 export circuit submitSkillsProof(): [] {
@@ -57,8 +68,8 @@ export circuit submitSkillsProof(): [] {
     assert(cvOwner == pk, "Not authorized");
     assert(cvStatus == CVStatus.DRAFT, "CV already live");
     const skills = getSkillsCredential();
-    const commitment = commitCredential(skills, sk);
-    proofOfSkills = disclose(commitment);
+    const c = commitCredential(skills, sk);
+    proofOfSkills = disclose(c);
 }
 
 export circuit submitExperienceProof(): [] {
@@ -67,8 +78,8 @@ export circuit submitExperienceProof(): [] {
     assert(cvOwner == pk, "Not authorized");
     assert(cvStatus == CVStatus.DRAFT, "CV already live");
     const experience = getExperienceCredential();
-    const commitment = commitCredential(experience, sk);
-    proofOfExperience = disclose(commitment);
+    const c = commitCredential(experience, sk);
+    proofOfExperience = disclose(c);
 }
 
 export circuit submitCertificationsProof(): [] {
@@ -77,8 +88,8 @@ export circuit submitCertificationsProof(): [] {
     assert(cvOwner == pk, "Not authorized");
     assert(cvStatus == CVStatus.DRAFT, "CV already live");
     const certs = getCertificationsCredential();
-    const commitment = commitCredential(certs, sk);
-    proofOfCertifications = disclose(commitment);
+    const c = commitCredential(certs, sk);
+    proofOfCertifications = disclose(c);
 }
 
 export circuit saveCV(): [] {
