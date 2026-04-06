@@ -94,7 +94,7 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('submitSchoolProof',
                                      'argument 1 (as invoked from Typescript)',
-                                     'proof-hire.compact line 45 char 1',
+                                     'proof-hire.compact line 44 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
@@ -117,7 +117,7 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('submitSkillsProof',
                                      'argument 1 (as invoked from Typescript)',
-                                     'proof-hire.compact line 55 char 1',
+                                     'proof-hire.compact line 54 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
@@ -140,7 +140,7 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('submitExperienceProof',
                                      'argument 1 (as invoked from Typescript)',
-                                     'proof-hire.compact line 65 char 1',
+                                     'proof-hire.compact line 64 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
@@ -163,7 +163,7 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('submitCertificationsProof',
                                      'argument 1 (as invoked from Typescript)',
-                                     'proof-hire.compact line 75 char 1',
+                                     'proof-hire.compact line 74 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
@@ -187,7 +187,7 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('saveCV',
                                      'argument 1 (as invoked from Typescript)',
-                                     'proof-hire.compact line 85 char 1',
+                                     'proof-hire.compact line 84 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
@@ -211,14 +211,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('verifySchoolProof',
                                      'argument 1 (as invoked from Typescript)',
-                                     'proof-hire.compact line 96 char 1',
+                                     'proof-hire.compact line 95 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(commitment_0.buffer instanceof ArrayBuffer && commitment_0.BYTES_PER_ELEMENT === 1 && commitment_0.length === 32)) {
           __compactRuntime.typeError('verifySchoolProof',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'proof-hire.compact line 96 char 1',
+                                     'proof-hire.compact line 95 char 1',
                                      'Bytes<32>',
                                      commitment_0)
         }
@@ -247,14 +247,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('verifySkillsProof',
                                      'argument 1 (as invoked from Typescript)',
-                                     'proof-hire.compact line 101 char 1',
+                                     'proof-hire.compact line 100 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(commitment_0.buffer instanceof ArrayBuffer && commitment_0.BYTES_PER_ELEMENT === 1 && commitment_0.length === 32)) {
           __compactRuntime.typeError('verifySkillsProof',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'proof-hire.compact line 101 char 1',
+                                     'proof-hire.compact line 100 char 1',
                                      'Bytes<32>',
                                      commitment_0)
         }
@@ -283,14 +283,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('verifyExperienceProof',
                                      'argument 1 (as invoked from Typescript)',
-                                     'proof-hire.compact line 106 char 1',
+                                     'proof-hire.compact line 105 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(commitment_0.buffer instanceof ArrayBuffer && commitment_0.BYTES_PER_ELEMENT === 1 && commitment_0.length === 32)) {
           __compactRuntime.typeError('verifyExperienceProof',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'proof-hire.compact line 106 char 1',
+                                     'proof-hire.compact line 105 char 1',
                                      'Bytes<32>',
                                      commitment_0)
         }
@@ -319,14 +319,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('verifyCertificationsProof',
                                      'argument 1 (as invoked from Typescript)',
-                                     'proof-hire.compact line 111 char 1',
+                                     'proof-hire.compact line 110 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(commitment_0.buffer instanceof ArrayBuffer && commitment_0.BYTES_PER_ELEMENT === 1 && commitment_0.length === 32)) {
           __compactRuntime.typeError('verifyCertificationsProof',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'proof-hire.compact line 111 char 1',
+                                     'proof-hire.compact line 110 char 1',
                                      'Bytes<32>',
                                      commitment_0)
         }
@@ -354,7 +354,7 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('clearProfile',
                                      'argument 1 (as invoked from Typescript)',
-                                     'proof-hire.compact line 116 char 1',
+                                     'proof-hire.compact line 115 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
@@ -510,19 +510,19 @@ export class Contract {
                                                                                               alignment: _descriptor_3.alignment() }).encode() } },
                                        { ins: { cached: false, n: 1 } }]);
     const sk_0 = this._localSecretKey_0(context, partialProofData);
-    const pk_0 = this._computePublicKey_0(sk_0,
-                                          _descriptor_3.fromValue(__compactRuntime.queryLedgerState(context,
-                                                                                                    partialProofData,
-                                                                                                    [
-                                                                                                     { dup: { n: 0 } },
-                                                                                                     { idx: { cached: false,
-                                                                                                              pushPath: false,
-                                                                                                              path: [
-                                                                                                                     { tag: 'value',
-                                                                                                                       value: { value: _descriptor_10.toValue(6n),
-                                                                                                                                alignment: _descriptor_10.alignment() } }] } },
-                                                                                                     { popeq: { cached: true,
-                                                                                                                result: undefined } }]).value));
+    const tmp_0 = this._computePublicKey_0(sk_0,
+                                           _descriptor_3.fromValue(__compactRuntime.queryLedgerState(context,
+                                                                                                     partialProofData,
+                                                                                                     [
+                                                                                                      { dup: { n: 0 } },
+                                                                                                      { idx: { cached: false,
+                                                                                                               pushPath: false,
+                                                                                                               path: [
+                                                                                                                      { tag: 'value',
+                                                                                                                        value: { value: _descriptor_10.toValue(6n),
+                                                                                                                                 alignment: _descriptor_10.alignment() } }] } },
+                                                                                                      { popeq: { cached: true,
+                                                                                                                 result: undefined } }]).value));
     __compactRuntime.queryLedgerState(context,
                                       partialProofData,
                                       [
@@ -530,7 +530,7 @@ export class Contract {
                                                  value: __compactRuntime.StateValue.newCell({ value: _descriptor_10.toValue(0n),
                                                                                               alignment: _descriptor_10.alignment() }).encode() } },
                                        { push: { storage: true,
-                                                 value: __compactRuntime.StateValue.newCell({ value: _descriptor_1.toValue(pk_0),
+                                                 value: __compactRuntime.StateValue.newCell({ value: _descriptor_1.toValue(tmp_0),
                                                                                               alignment: _descriptor_1.alignment() }).encode() } },
                                        { ins: { cached: false, n: 1 } }]);
     __compactRuntime.queryLedgerState(context,
@@ -687,7 +687,7 @@ export class Contract {
     return this._persistentHash_1([new Uint8Array([112, 114, 111, 111, 102, 104, 105, 114, 101, 58, 112, 107, 58, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
                                    __compactRuntime.convertFieldToBytes(32,
                                                                         r_0,
-                                                                        'proof-hire.compact line 26 char 36'),
+                                                                        'proof-hire.compact line 36 char 36'),
                                    sk_0]);
   }
   _commitCredential_0(credential_0, sk_0) {
@@ -738,7 +738,7 @@ export class Contract {
                             0,
                             'CV already live');
     const school_0 = this._getSchoolCredential_0(context, partialProofData);
-    const c_0 = this._commitCredential_0(school_0, sk_0);
+    const commitment_0 = this._commitCredential_0(school_0, sk_0);
     __compactRuntime.queryLedgerState(context,
                                       partialProofData,
                                       [
@@ -746,7 +746,7 @@ export class Contract {
                                                  value: __compactRuntime.StateValue.newCell({ value: _descriptor_10.toValue(1n),
                                                                                               alignment: _descriptor_10.alignment() }).encode() } },
                                        { push: { storage: true,
-                                                 value: __compactRuntime.StateValue.newCell({ value: _descriptor_1.toValue(c_0),
+                                                 value: __compactRuntime.StateValue.newCell({ value: _descriptor_1.toValue(commitment_0),
                                                                                               alignment: _descriptor_1.alignment() }).encode() } },
                                        { ins: { cached: false, n: 1 } }]);
     return [];
@@ -796,7 +796,7 @@ export class Contract {
                             0,
                             'CV already live');
     const skills_0 = this._getSkillsCredential_0(context, partialProofData);
-    const c_0 = this._commitCredential_0(skills_0, sk_0);
+    const commitment_0 = this._commitCredential_0(skills_0, sk_0);
     __compactRuntime.queryLedgerState(context,
                                       partialProofData,
                                       [
@@ -804,7 +804,7 @@ export class Contract {
                                                  value: __compactRuntime.StateValue.newCell({ value: _descriptor_10.toValue(2n),
                                                                                               alignment: _descriptor_10.alignment() }).encode() } },
                                        { push: { storage: true,
-                                                 value: __compactRuntime.StateValue.newCell({ value: _descriptor_1.toValue(c_0),
+                                                 value: __compactRuntime.StateValue.newCell({ value: _descriptor_1.toValue(commitment_0),
                                                                                               alignment: _descriptor_1.alignment() }).encode() } },
                                        { ins: { cached: false, n: 1 } }]);
     return [];
@@ -855,7 +855,7 @@ export class Contract {
                             'CV already live');
     const experience_0 = this._getExperienceCredential_0(context,
                                                          partialProofData);
-    const c_0 = this._commitCredential_0(experience_0, sk_0);
+    const commitment_0 = this._commitCredential_0(experience_0, sk_0);
     __compactRuntime.queryLedgerState(context,
                                       partialProofData,
                                       [
@@ -863,7 +863,7 @@ export class Contract {
                                                  value: __compactRuntime.StateValue.newCell({ value: _descriptor_10.toValue(3n),
                                                                                               alignment: _descriptor_10.alignment() }).encode() } },
                                        { push: { storage: true,
-                                                 value: __compactRuntime.StateValue.newCell({ value: _descriptor_1.toValue(c_0),
+                                                 value: __compactRuntime.StateValue.newCell({ value: _descriptor_1.toValue(commitment_0),
                                                                                               alignment: _descriptor_1.alignment() }).encode() } },
                                        { ins: { cached: false, n: 1 } }]);
     return [];
@@ -914,7 +914,7 @@ export class Contract {
                             'CV already live');
     const certs_0 = this._getCertificationsCredential_0(context,
                                                         partialProofData);
-    const c_0 = this._commitCredential_0(certs_0, sk_0);
+    const commitment_0 = this._commitCredential_0(certs_0, sk_0);
     __compactRuntime.queryLedgerState(context,
                                       partialProofData,
                                       [
@@ -922,7 +922,7 @@ export class Contract {
                                                  value: __compactRuntime.StateValue.newCell({ value: _descriptor_10.toValue(4n),
                                                                                               alignment: _descriptor_10.alignment() }).encode() } },
                                        { push: { storage: true,
-                                                 value: __compactRuntime.StateValue.newCell({ value: _descriptor_1.toValue(c_0),
+                                                 value: __compactRuntime.StateValue.newCell({ value: _descriptor_1.toValue(commitment_0),
                                                                                               alignment: _descriptor_1.alignment() }).encode() } },
                                        { ins: { cached: false, n: 1 } }]);
     return [];

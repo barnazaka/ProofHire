@@ -21,6 +21,16 @@ witness getSkillsCredential(): Bytes<32>;
 witness getExperienceCredential(): Bytes<32>;
 witness getCertificationsCredential(): Bytes<32>;
 
+constructor() {
+    const sk = localSecretKey();
+    cvOwner = disclose(computePublicKey(sk, round as Field));
+    cvStatus = CVStatus.DRAFT;
+    proofOfSchool = pad(32, "");
+    proofOfSkills = pad(32, "");
+    proofOfExperience = pad(32, "");
+    proofOfCertifications = pad(32, "");
+}
+
 circuit computePublicKey(sk: Bytes<32>, r: Field): Bytes<32> {
     return persistentHash<Vector<3, Bytes<32>>>(
         [pad(32, "proofhire:pk:"), r as Bytes<32>, sk]
