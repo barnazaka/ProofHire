@@ -3,21 +3,27 @@ import type * as __compactRuntime from '@midnight-ntwrk/compact-runtime';
 export enum CVStatus { DRAFT = 0, LIVE = 1 }
 
 export type Witnesses<PS> = {
+  localSecretKey(context: __compactRuntime.WitnessContext<Ledger, PS>): [PS, Uint8Array];
   getSchoolCredential(context: __compactRuntime.WitnessContext<Ledger, PS>): [PS, Uint8Array];
   getSkillsCredential(context: __compactRuntime.WitnessContext<Ledger, PS>): [PS, Uint8Array];
   getExperienceCredential(context: __compactRuntime.WitnessContext<Ledger, PS>): [PS, Uint8Array];
-  getEmailCredential(context: __compactRuntime.WitnessContext<Ledger, PS>): [PS, Uint8Array];
-  getYoECredential(context: __compactRuntime.WitnessContext<Ledger, PS>): [PS, Uint8Array];
-  localSecretKey(context: __compactRuntime.WitnessContext<Ledger, PS>): [PS, Uint8Array];
+  getCertificationsCredential(context: __compactRuntime.WitnessContext<Ledger, PS>): [PS, Uint8Array];
 }
 
 export type ImpureCircuits<PS> = {
   submitSchoolProof(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
   submitSkillsProof(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
   submitExperienceProof(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
-  submitEmailProof(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
-  submitYoEProof(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
-  saveCV(context: __compactRuntime.CircuitContext<PS>, name_0: Uint8Array): __compactRuntime.CircuitResults<PS, []>;
+  submitCertificationsProof(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
+  saveCV(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
+  verifySchoolProof(context: __compactRuntime.CircuitContext<PS>,
+                    commitment_0: Uint8Array): __compactRuntime.CircuitResults<PS, boolean>;
+  verifySkillsProof(context: __compactRuntime.CircuitContext<PS>,
+                    commitment_0: Uint8Array): __compactRuntime.CircuitResults<PS, boolean>;
+  verifyExperienceProof(context: __compactRuntime.CircuitContext<PS>,
+                        commitment_0: Uint8Array): __compactRuntime.CircuitResults<PS, boolean>;
+  verifyCertificationsProof(context: __compactRuntime.CircuitContext<PS>,
+                            commitment_0: Uint8Array): __compactRuntime.CircuitResults<PS, boolean>;
   clearProfile(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
 }
 
@@ -25,36 +31,47 @@ export type ProvableCircuits<PS> = {
   submitSchoolProof(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
   submitSkillsProof(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
   submitExperienceProof(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
-  submitEmailProof(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
-  submitYoEProof(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
-  saveCV(context: __compactRuntime.CircuitContext<PS>, name_0: Uint8Array): __compactRuntime.CircuitResults<PS, []>;
+  submitCertificationsProof(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
+  saveCV(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
+  verifySchoolProof(context: __compactRuntime.CircuitContext<PS>,
+                    commitment_0: Uint8Array): __compactRuntime.CircuitResults<PS, boolean>;
+  verifySkillsProof(context: __compactRuntime.CircuitContext<PS>,
+                    commitment_0: Uint8Array): __compactRuntime.CircuitResults<PS, boolean>;
+  verifyExperienceProof(context: __compactRuntime.CircuitContext<PS>,
+                        commitment_0: Uint8Array): __compactRuntime.CircuitResults<PS, boolean>;
+  verifyCertificationsProof(context: __compactRuntime.CircuitContext<PS>,
+                            commitment_0: Uint8Array): __compactRuntime.CircuitResults<PS, boolean>;
   clearProfile(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
 }
 
 export type PureCircuits = {
-  hireCandidate(): [];
 }
 
 export type Circuits<PS> = {
   submitSchoolProof(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
   submitSkillsProof(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
   submitExperienceProof(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
-  submitEmailProof(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
-  submitYoEProof(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
-  saveCV(context: __compactRuntime.CircuitContext<PS>, name_0: Uint8Array): __compactRuntime.CircuitResults<PS, []>;
-  hireCandidate(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
+  submitCertificationsProof(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
+  saveCV(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
+  verifySchoolProof(context: __compactRuntime.CircuitContext<PS>,
+                    commitment_0: Uint8Array): __compactRuntime.CircuitResults<PS, boolean>;
+  verifySkillsProof(context: __compactRuntime.CircuitContext<PS>,
+                    commitment_0: Uint8Array): __compactRuntime.CircuitResults<PS, boolean>;
+  verifyExperienceProof(context: __compactRuntime.CircuitContext<PS>,
+                        commitment_0: Uint8Array): __compactRuntime.CircuitResults<PS, boolean>;
+  verifyCertificationsProof(context: __compactRuntime.CircuitContext<PS>,
+                            commitment_0: Uint8Array): __compactRuntime.CircuitResults<PS, boolean>;
   clearProfile(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
 }
 
 export type Ledger = {
-  readonly talentName: Uint8Array;
-  readonly proofSchool: Uint8Array;
-  readonly proofSkills: Uint8Array;
-  readonly proofExperience: Uint8Array;
-  readonly proofEmail: Uint8Array;
-  readonly proofYoE: Uint8Array;
-  readonly cvStatus: CVStatus;
   readonly cvOwner: Uint8Array;
+  readonly proofOfSchool: Uint8Array;
+  readonly proofOfSkills: Uint8Array;
+  readonly proofOfExperience: Uint8Array;
+  readonly proofOfCertifications: Uint8Array;
+  readonly cvStatus: CVStatus;
+  readonly round: bigint;
 }
 
 export type ContractReferenceLocations = any;
