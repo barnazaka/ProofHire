@@ -7,7 +7,7 @@
 - Local:         http://localhost:3001
 - Network:       http://192.168.0.2:3001
 - Environments: .env.local
-✓ Ready in 608ms
+✓ Ready in 707ms
 ⨯ Another next dev server is already running.
 
 - Local:        http://localhost:3000

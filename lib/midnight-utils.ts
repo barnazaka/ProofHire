@@ -1,55 +1,90 @@
 'use client';
 
+/**
+ * FIXED VERSION with all declarations moved to top level
+ * and dynamic imports handled within functions to avoid TDZ.
+ */
+
 const isBrowser = typeof window !== 'undefined';
 
+// --- Types ---
+export type ContractProviders = any;
+
+// --- Helper Functions ---
+
+/**
+ * Wait for Midnight Lace wallet to be available in the window object.
+ * Supports v0.4.x UUID-style keys.
+ */
+export const waitForWallet = (): Promise<string | null> => {
+  return new Promise((resolve) => {
+    if (!isBrowser) return resolve(null);
+
+    let attempts = 0;
+    const interval = setInterval(() => {
+      const midnight = (window as any).midnight;
+      if (midnight) {
+        // Try to find mnLace or any UUID key
+        const keys = Object.keys(midnight);
+        const laceKey = keys.find(k => k === 'mnLace' || /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(k));
+        if (laceKey) {
+            clearInterval(interval);
+            resolve(laceKey);
+        }
+      }
+      attempts++;
+      if (attempts > 20) {
+        clearInterval(interval);
+        resolve(null);
+      }
+    }, 500);
+  });
+};
+
+/**
+ * Initialize and setup Midnight Providers using dynamic configuration from the wallet.
+ */
 export const setupProviders = async () => {
   if (!isBrowser) return null;
 
+  // Wait for wallet first
+  const walletKey = await waitForWallet();
+  if (!walletKey) {
+    throw new Error('Midnight Lace wallet not detected. Please install and refresh.');
+  }
+
+  // Import SDK components
   const { setNetworkId } = await import("@midnight-ntwrk/midnight-js-network-id");
   const { FetchZkConfigProvider } = await import("@midnight-ntwrk/midnight-js-fetch-zk-config-provider");
   const { indexerPublicDataProvider } = await import("@midnight-ntwrk/midnight-js-indexer-public-data-provider");
   const { levelPrivateStateProvider } = await import("@midnight-ntwrk/midnight-js-level-private-state-provider");
-  const { makeWasmProvingService } = await import("@midnight-ntwrk/wallet-sdk-capabilities");
+  const { httpClientProofProvider } = await import("@midnight-ntwrk/midnight-js-http-client-proof-provider");
 
-  // Set network to Preview
+  // Connect to wallet and get config
+  const midnight = (window as any).midnight![walletKey];
+  const connectedApi = await (midnight as any).connect('preview');
+  const uris = await (connectedApi as any).getConfiguration();
+  const walletState = await (connectedApi as any).state();
+
+  // Ensure network ID is set correctly
   try {
     setNetworkId('preview');
   } catch (e) {
-    // Already set or error
+    // Ignore if already set
   }
-
-  // Find Midnight Lace wallet dynamically (DApp Connector API v4.x)
-  const midnight = (window as any).midnight;
-  if (!midnight) {
-     throw new Error('Midnight Lace wallet not found. Please install the extension.');
-  }
-
-  const walletEntry = midnight.mnLace || Object.values(midnight).find(
-    (w: any) => !!w && typeof w === 'object' && 'apiVersion' in w
-  );
-
-  if (!walletEntry) {
-    throw new Error('Midnight Lace wallet entry not found.');
-  }
-
-  const connectedApi = await (walletEntry as any).connect();
-  const walletState = await (connectedApi as any).state();
-
-  const indexerUri = "https://indexer.preview.midnight.network/api/v4/graphql";
-  const indexerWsUri = "wss://indexer.preview.midnight.network/api/v4/graphql";
 
   return {
     privateStateProvider: levelPrivateStateProvider({
-      privateStateStoreName: "talent-credential-private-state-v1",
+      privateStateStoreName: "proofhire-private-state-v3",
     }),
     zkConfigProvider: new FetchZkConfigProvider(
       window.location.origin,
       fetch.bind(window),
     ),
-    proofProvider: makeWasmProvingService(),
+    proofProvider: httpClientProofProvider(uris.proverServerUri),
     publicDataProvider: indexerPublicDataProvider(
-      indexerUri,
-      indexerWsUri,
+      uris.indexerUri,
+      uris.indexerWsUri
     ),
     walletProvider: {
       coinPublicKey: walletState.coinPublicKey,
@@ -63,17 +98,30 @@ export const setupProviders = async () => {
   };
 };
 
+/**
+ * Deployment and Contract Interaction Functions
+ */
+
 export const deployTalentContract = async () => {
   if (!isBrowser) return null;
 
   const { deployContract } = await import('@midnight-ntwrk/midnight-js-contracts');
   const providers = await setupProviders();
-  const contractMod = await import('../contracts/managed/talent-credential/contract/index');
+  const contractMod = await import('../contracts/managed/proof-hire/contract/index');
 
+  // Witnesses for the contract
   const witnesses = {
-    getSchoolData: (witnessContext: any) => [witnessContext.privateState, "hidden"],
-    getSkillsData: (witnessContext: any) => [witnessContext.privateState, "hidden"],
-    getExperienceData: (witnessContext: any) => [witnessContext.privateState, "hidden"],
+    localSecretKey: () => {
+        const stored = localStorage.getItem('proofhire_sk');
+        if (stored) return new Uint8Array(JSON.parse(stored));
+        const sk = crypto.getRandomValues(new Uint8Array(32));
+        localStorage.setItem('proofhire_sk', JSON.stringify(Array.from(sk)));
+        return sk;
+    },
+    getSchoolCredential: (context: any) => context.privateState.school || new Uint8Array(32),
+    getSkillsCredential: (context: any) => context.privateState.skills || new Uint8Array(32),
+    getExperienceCredential: (context: any) => context.privateState.experience || new Uint8Array(32),
+    getCertificationsCredential: (context: any) => context.privateState.certs || new Uint8Array(32),
   };
 
   const deployed = await (deployContract as any)(providers, {
@@ -83,9 +131,9 @@ export const deployTalentContract = async () => {
       pureCircuits: contractMod.pureCircuits,
       contractReferenceLocations: contractMod.contractReferenceLocations
     },
-    privateStateId: 'talent-credential-private-state-v1',
+    privateStateId: 'proofhire-private-state-v3',
     initialPrivateState: {},
-    witnesses: witnesses,
+    witnesses,
   });
 
   const contractAddress = (deployed as any).deployTxData.public.contractAddress;
@@ -94,82 +142,60 @@ export const deployTalentContract = async () => {
   return contractAddress;
 };
 
-export const publishCV = async (address: string, name: string) => {
-  const { findDeployedContract } = await import('@midnight-ntwrk/midnight-js-contracts');
-  const providers = await setupProviders();
-  const contractMod = await import('../contracts/managed/talent-credential/contract/index');
-
-  const contract = await (findDeployedContract as any)(providers, {
-    compiledContract: {
-      Contract: contractMod.Contract,
-      ledger: contractMod.ledger,
-      pureCircuits: contractMod.pureCircuits,
-      contractReferenceLocations: contractMod.contractReferenceLocations
-    },
-    contractAddress: address,
-    privateStateId: 'talent-credential-private-state-v1',
-  });
-
-  return await (contract.callTx as any).publishCV(name);
-};
-
-export const proveSchool = async (address: string, commitment: Uint8Array) => {
+// --- Generic Call Wrapper with Private State Update ---
+const callContractCircuit = async (address: string, circuitName: string, privateStateUpdate?: any, ...args: any[]) => {
     const { findDeployedContract } = await import('@midnight-ntwrk/midnight-js-contracts');
     const providers = await setupProviders();
-    const contractMod = await import('../contracts/managed/talent-credential/contract/index');
+    const contractMod = await import('../contracts/managed/proof-hire/contract/index');
 
     const contract = await (findDeployedContract as any)(providers, {
-      compiledContract: {
-        Contract: contractMod.Contract,
-        ledger: contractMod.ledger,
-        pureCircuits: contractMod.pureCircuits,
-        contractReferenceLocations: contractMod.contractReferenceLocations
-      },
-      contractAddress: address,
-      privateStateId: 'talent-credential-private-state-v1',
+        compiledContract: {
+            Contract: contractMod.Contract,
+            ledger: contractMod.ledger,
+            pureCircuits: contractMod.pureCircuits,
+            contractReferenceLocations: contractMod.contractReferenceLocations
+        },
+        contractAddress: address,
+        privateStateId: 'proofhire-private-state-v3',
     });
 
-    return await (contract.callTx as any).proveSchool(commitment);
+    if (privateStateUpdate) {
+        // Update private state before proving
+        const currentState = await providers?.privateStateProvider.get('proofhire-private-state-v3');
+        await providers?.privateStateProvider.set('proofhire-private-state-v3', {
+            ...currentState,
+            ...privateStateUpdate
+        });
+    }
+
+    return await (contract.callTx as any)[circuitName](...args);
 };
 
-export const proveSkills = async (address: string, commitment: Uint8Array) => {
-    const { findDeployedContract } = await import('@midnight-ntwrk/midnight-js-contracts');
-    const providers = await setupProviders();
-    const contractMod = await import('../contracts/managed/talent-credential/contract/index');
+// --- Specific Circuit Wrappers (Aligned with UI & Contract) ---
 
-    const contract = await (findDeployedContract as any)(providers, {
-      compiledContract: contractMod,
-      contractAddress: address,
-      privateStateId: 'talent-credential-private-state-v1',
-    });
+export const proveSchool = (address: string, commitment: Uint8Array) =>
+    callContractCircuit(address, 'submitSchoolProof', { school: commitment });
 
-    return await (contract.callTx as any).proveSkills(commitment);
-};
+export const proveSkills = (address: string, commitment: Uint8Array) =>
+    callContractCircuit(address, 'submitSkillsProof', { skills: commitment });
 
-export const proveExperience = async (address: string, commitment: Uint8Array) => {
-    const { findDeployedContract } = await import('@midnight-ntwrk/midnight-js-contracts');
-    const providers = await setupProviders();
-    const contractMod = await import('../contracts/managed/talent-credential/contract/index');
+export const proveExperience = (address: string, commitment: Uint8Array) =>
+    callContractCircuit(address, 'submitExperienceProof', { experience: commitment });
 
-    const contract = await (findDeployedContract as any)(providers, {
-      compiledContract: contractMod,
-      contractAddress: address,
-      privateStateId: 'talent-credential-private-state-v1',
-    });
+export const proveCertifications = (address: string, commitment: Uint8Array) =>
+    callContractCircuit(address, 'submitCertificationsProof', { certs: commitment });
 
-    return await (contract.callTx as any).proveExperience(commitment);
-};
+export const publishCV = (address: string, name: string) =>
+    callContractCircuit(address, 'saveCV');
 
-export const hireCandidate = async (address: string) => {
-    const { findDeployedContract } = await import('@midnight-ntwrk/midnight-js-contracts');
-    const providers = await setupProviders();
-    const contractMod = await import('../contracts/managed/talent-credential/contract/index');
+export const hireCandidate = (address: string) =>
+    callContractCircuit(address, 'saveCV'); // Reusing saveCV as a placeholder for 'hire' if ledger update is needed
 
-    const contract = await (findDeployedContract as any)(providers, {
-      compiledContract: contractMod,
-      contractAddress: address,
-      privateStateId: 'talent-credential-private-state-v1',
-    });
+export const verifySchoolProof = (address: string, commitment: Uint8Array) =>
+    callContractCircuit(address, 'verifySchoolProof', null, commitment);
 
-    return await (contract.callTx as any).hireCandidate();
-};
+export const verifySkillsProof = (address: string, commitment: Uint8Array) =>
+    callContractCircuit(address, 'verifySkillsProof', null, commitment);
+
+export const verifyExperienceProof = (address: string, commitment: Uint8Array) =>
+    callContractCircuit(address, 'verifyExperienceProof', null, commitment);

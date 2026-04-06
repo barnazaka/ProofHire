@@ -40,10 +40,10 @@ Traditional recruitment requires sharing full CVs just for initial screening. Pr
    ```
 
 2. **Compile Smart Contract (Compact)**
-   The project uses a custom `talent-credential.compact` contract.
+   The project uses a custom `proof-hire.compact` contract.
    ```bash
    # From the project root
-   compact compile contracts/talent-credential.compact contracts/managed/talent-credential
+   compact compile contracts/proof-hire.compact contracts/managed/proof-hire
    ```
 
 3. **Environment Variables**
@@ -71,7 +71,7 @@ Traditional recruitment requires sharing full CVs just for initial screening. Pr
 
 - `contracts/`: Pure Compact source (`.compact`) and compiled artifacts.
 - `lib/`: Midnight SDK initialization, WASM proving services, and contract utilities.
-- `app/talent/onboarding/`: 6-step wizard for candidate data entry and ZKP generation.
+- `app/talent/onboarding/`: 7-step wizard for candidate data entry and ZKP generation.
 - `app/marketplace/`: Recruiter dashboard for proof verification and candidate discovery.
 
 ## 🔒 Security & Privacy

@@ -73,6 +73,17 @@ export default function Home() {
                   Recruiter Engine <ChevronRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
                 </Link>
              </div>
+
+             <div className="pt-20">
+                <a
+                  href="https://chromewebstore.google.com/detail/lace/gafhhkghbfjjkeiendhlofajokpaflmk"
+                  target="_blank"
+                  className="inline-flex items-center gap-3 px-8 py-4 border border-zinc-800 rounded-3xl text-xs font-black uppercase tracking-widest text-zinc-500 hover:text-white hover:border-indigo-600 transition-all group"
+                >
+                  <ShieldCheck className="w-5 h-5 text-indigo-500 group-hover:animate-bounce" />
+                  Install Lace Wallet to Connect
+                </a>
+             </div>
           </motion.div>
         </div>
       </section>
