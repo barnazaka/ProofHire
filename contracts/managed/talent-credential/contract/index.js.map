@@ -1,8 +1,0 @@
-{
-  "version": 3,
-  "file": "index.js",
-  "sourceRoot": "../../../",
-  "sources": ["contracts/talent-credential.compact"],
-  "names": [],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;EAAA;;;;;;;;;;;;;;;;;;;MAkBA,AAAA,SAGC;;;;;cAHwB,MAAsB;;;;;;;;;;;yCAAtB,MAAsB;;;;;;;sEAAtB,MAAsB;;;OAG9C;MAGD,AAAA,WAGC;;;;;cAH0B,YAAqB;;;;;;;;;;;;;;;;;;yCAArB,YAAqB;;;;;;;;;6CAArB,YAAqB;;;OAG/C;MAGD,AAAA,WAGC;;;;;cAH0B,YAAqB;;;;;;;;;;;;;;;;;;yCAArB,YAAqB;;;;;;;;;6CAArB,YAAqB;;;OAG/C;MAGD,AAAA,eAGC;;;;;cAH8B,YAAqB;;;;;;;;;;;;;;;;;;yCAArB,YAAqB;;;;;;;;;iDAArB,YAAqB;;;OAGnD;MAGD,AAAA,aAEC;;;;;;;;;;;;;;;;;;;;;;OAAA;;;;;;;;;;;;;;;;GACA;EA7CD;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;IAKA;;;;;;;;;yEAA2C;IAC3C;;;;;;;;;yEAA+C;IAC/C;;;;;;;;;yEAA+C;IAC/C;;;;;;;;;yEAAmD;IACnD;;;;;;;;;yEAA+B;IAC/B;;;;;;;;;yEAA8B;;;;;;;GAmC7B;EAhCD,AAAA,gBAA0C;;0DAA1C,aAA0C;;;;;;;GAAA;EAC1C,AAAA,gBAA0C;;0DAA1C,aAA0C;;;;;;;GAAA;EAC1C,AAAA,oBAA8C;;0DAA9C,iBAA8C;;;;;;;GAAA;EAG9C,AAAA,YAGC,4BAHwB,MAAsB;IAC3C;;;;;;;2HAAsB,MAAI;;yEAAhB;IACV;;;;;;;;;yEAAM;;GACT;EAGD,AAAA,cAGC,4BAH0B,YAAqB;UACtC,SAAyB;IAC/B;;;;;;;2HAAiC,YAAU;;yEAAtB;;GACxB;EAGD,AAAA,cAGC,4BAH0B,YAAqB;UACtC,SAAyB;IAC/B;;;;;;;2HAAiC,YAAU;;yEAAtB;;GACxB;EAGD,AAAA,kBAGC,4BAH8B,YAAqB;UAC1C,aAAiC;IACvC;;;;;;;2HAAqC,YAAU;;yEAAtB;;GAC5B;EAGD,AAAA,gBAEC;IADG;;;;;;;;;yEAAO;;GACV;;;;;;;;;;;;;;;;IAvCD;qCAAA;;;;;;;;;;;0GAA2C;KAAA;IAC3C;qCAAA;;;;;;;;;;;0GAA+C;KAAA;IAC/C;qCAAA;;;;;;;;;;;0GAA+C;KAAA;IAC/C;qCAAA;;;;;;;;;;;0GAAmD;KAAA;IACnD;qCAAA;;;;;;;;;;;0GAA+B;KAAA;IAC/B;qCAAA;;;;;;;;;;;0GAA8B;KAAA;;;;;;;;;;;;;;"
-}
