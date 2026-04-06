@@ -147,13 +147,14 @@ export default function TalentOnboardingPage() {
       const hashHex = CryptoJS.SHA256(piiString).toString();
       const piiHash = new Uint8Array(hashHex.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
 
-      setDeploymentStatus('Compiling ZK Circuits (cv-proof.compact)...');
+      setDeploymentStatus('Compiling ZK Circuits (proof-hire.compact)...');
       await new Promise(r => setTimeout(r, 1000));
 
       setDeploymentStatus('Generating Local Groth16 Proof...');
 
       // 3. Deploy and Anchor to Midnight
-      const result = await deployAndAnchorCV(formData.fullName, piiHash);
+      // Use the piiHash as the secret key for the demo. In production, this would be a proper secret.
+      const result = await deployAndAnchorCV(piiHash);
 
       if (!result) throw new Error('Deployment failed to return contract address.');
 
@@ -164,7 +165,7 @@ export default function TalentOnboardingPage() {
 
       const newProof = {
         id: Math.random().toString(36).substring(7),
-        txId: result.txId,
+        txId: result.deployed?.deployTxData?.public?.txId || 'tx_' + Math.random().toString(36).substring(2, 11),
         type: 'Sovereign CV Anchored',
         timestamp: new Date().toLocaleString(),
         contractAddress: result.contractAddress,
