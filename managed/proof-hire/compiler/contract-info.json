@@ -40,7 +40,19 @@
       }
     },
     {
-      "name": "submitCertificationsProof",
+      "name": "submitEmailProof",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "submitYoEProof",
       "pure": false,
       "proof": true,
       "arguments": [
@@ -56,6 +68,13 @@
       "pure": false,
       "proof": true,
       "arguments": [
+        {
+          "name": "name",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        }
       ],
       "result-type": {
         "type-name": "Tuple",
@@ -64,71 +83,15 @@
       }
     },
     {
-      "name": "verifySchoolProof",
-      "pure": false,
-      "proof": true,
+      "name": "hireCandidate",
+      "pure": true,
+      "proof": false,
       "arguments": [
-        {
-          "name": "commitment",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
-        }
       ],
       "result-type": {
-        "type-name": "Boolean"
-      }
-    },
-    {
-      "name": "verifySkillsProof",
-      "pure": false,
-      "proof": true,
-      "arguments": [
-        {
-          "name": "commitment",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
-        }
-      ],
-      "result-type": {
-        "type-name": "Boolean"
-      }
-    },
-    {
-      "name": "verifyExperienceProof",
-      "pure": false,
-      "proof": true,
-      "arguments": [
-        {
-          "name": "commitment",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
-        }
-      ],
-      "result-type": {
-        "type-name": "Boolean"
-      }
-    },
-    {
-      "name": "verifyCertificationsProof",
-      "pure": false,
-      "proof": true,
-      "arguments": [
-        {
-          "name": "commitment",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
-        }
-      ],
-      "result-type": {
-        "type-name": "Boolean"
+        "type-name": "Tuple",
+        "types": [
+        ]
       }
     },
     {
@@ -145,15 +108,6 @@
     }
   ],
   "witnesses": [
-    {
-      "name": "localSecretKey",
-      "arguments": [
-      ],
-      "result type": {
-        "type-name": "Bytes",
-        "length": 32
-      }
-    },
     {
       "name": "getSchoolCredential",
       "arguments": [
@@ -182,7 +136,25 @@
       }
     },
     {
-      "name": "getCertificationsCredential",
+      "name": "getEmailCredential",
+      "arguments": [
+      ],
+      "result type": {
+        "type-name": "Bytes",
+        "length": 32
+      }
+    },
+    {
+      "name": "getYoECredential",
+      "arguments": [
+      ],
+      "result type": {
+        "type-name": "Bytes",
+        "length": 32
+      }
+    },
+    {
+      "name": "localSecretKey",
       "arguments": [
       ],
       "result type": {
