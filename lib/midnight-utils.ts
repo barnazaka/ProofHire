@@ -62,12 +62,11 @@ export const setupProviders = async () => {
   const { httpClientProofProvider } = await import("@midnight-ntwrk/midnight-js-http-client-proof-provider");
   const { indexerPublicDataProvider } = await import("@midnight-ntwrk/midnight-js-indexer-public-data-provider");
   const { levelPrivateStateProvider } = await import("@midnight-ntwrk/midnight-js-level-private-state-provider");
-  const { httpClientProofProvider } = await import("@midnight-ntwrk/midnight-js-http-client-proof-provider");
 
   // Connect to wallet and get config
   const midnight = (window as any).midnight![walletKey];
   const connectedApi = await (midnight as any).connect('preview');
-  const uris = await (connectedApi as any).getConfiguration();
+  const config = await (connectedApi as any).getConfiguration();
   const walletState = await (connectedApi as any).state();
 
   // Ensure network ID is set correctly
@@ -77,24 +76,6 @@ export const setupProviders = async () => {
   } catch (e) {
     // Already set or error
   }
-
-  // Find Midnight Lace wallet dynamically (DApp Connector API v4.x)
-  const midnight = (window as any).midnight;
-  if (!midnight) {
-     throw new Error('Midnight Lace wallet not found. Please install the extension.');
-  }
-
-  const walletEntry = midnight.mnLace || Object.values(midnight).find(
-    (w: any) => !!w && typeof w === 'object' && 'apiVersion' in w
-  );
-
-  if (!walletEntry) {
-    throw new Error('Midnight Lace wallet entry not found.');
-  }
-
-  const connectedApi = await (walletEntry as any).connect();
-  const config = await (connectedApi as any).getConfiguration();
-  const walletState = await (connectedApi as any).state();
 
   return {
     privateStateProvider: levelPrivateStateProvider({
@@ -122,28 +103,29 @@ export const setupProviders = async () => {
 };
 
 /**
- * Deploys the CV Proof contract and anchors the user's identity.
+ * Deploys the ProofHire contract and anchors the user's identity.
  */
-export const deployAndAnchorCV = async (name: string, piiHash: Uint8Array) => {
+export const deployAndAnchorCV = async (secretKey: Uint8Array) => {
   if (!isBrowser) return null;
 
   const { deployContract } = await import('@midnight-ntwrk/midnight-js-contracts');
   const providers = await setupProviders();
 
   // Dynamic import with verification to avoid "initialization" errors
-  const contractMod = await import('../managed/cv-proof/contract/contract/index');
+  const contractMod = await import('../managed/proof-hire/contract/index');
   if (!contractMod || !contractMod.Contract) {
     throw new Error('Contract module failed to initialize correctly.');
   }
 
   // Witness for the CV Contract
   const witnesses = {
-    getCVData: (witnessContext: any) => {
-      // Return the private state and the CVData struct
-      return [witnessContext.privateState, {
-        nameHash: piiHash // 32 bytes hash of PII
-      }];
-    }
+    localSecretKey: (witnessContext: any) => {
+      return [witnessContext.privateState, secretKey];
+    },
+    getSchoolCredential: (witnessContext: any) => [witnessContext.privateState, new Uint8Array(32)],
+    getSkillsCredential: (witnessContext: any) => [witnessContext.privateState, new Uint8Array(32)],
+    getExperienceCredential: (witnessContext: any) => [witnessContext.privateState, new Uint8Array(32)],
+    getCertificationsCredential: (witnessContext: any) => [witnessContext.privateState, new Uint8Array(32)],
   };
 
   const deployed = await (deployContract as any)(providers, {
@@ -153,34 +135,142 @@ export const deployAndAnchorCV = async (name: string, piiHash: Uint8Array) => {
       pureCircuits: contractMod.pureCircuits,
       contractReferenceLocations: contractMod.contractReferenceLocations
     } as any,
-    privateStateId: 'cv-private-state-v1',
+    privateStateId: 'proofhire-private-state-v1',
     initialPrivateState: {},
     witnesses,
   });
 
-  // Call submitCV circuit to anchor the name on-chain
-  const result = await (deployed.callTx as any).submitCV(name);
-
   const contractAddress = (deployed as any).deployTxData.public.contractAddress;
-  localStorage.setItem('proofhire_cv_contract_address', contractAddress);
+  localStorage.setItem('proofhire_contract_address', contractAddress);
 
   return {
     contractAddress,
-    txId: result.txId || 'tx_' + Math.random().toString(36).substring(2, 11)
+    deployed
   };
 };
 
 /**
- * Verifies a specific hash (e.g. for a degree or skill) using the ZK circuit.
+ * Submits a school proof to the contract.
  */
-export const verifyCVClaim = async (contractAddress: string, expectedHash: Uint8Array) => {
+export const submitSchoolProof = async (contractAddress: string, schoolCredential: Uint8Array, secretKey: Uint8Array) => {
+  if (!isBrowser) return null;
+
+  const { findDeployedContract } = await import('@midnight-ntwrk/midnight-js-contracts');
+  const providers = await setupProviders();
+  const contractMod = await import('../managed/proof-hire/contract/index');
+
+  const deployed = await (findDeployedContract as any)(providers, {
+    compiledContract: {
+        Contract: contractMod.Contract,
+        ledger: contractMod.ledger,
+        pureCircuits: contractMod.pureCircuits,
+        contractReferenceLocations: contractMod.contractReferenceLocations
+      } as any,
+    contractAddress,
+    privateStateId: 'proofhire-private-state-v1',
+    witnesses: {
+        localSecretKey: (witnessContext: any) => [witnessContext.privateState, secretKey],
+        getSchoolCredential: (witnessContext: any) => [witnessContext.privateState, schoolCredential],
+    }
+  });
+
+  return await (deployed.callTx as any).submitSchoolProof();
+};
+
+/**
+ * Submits a skills proof to the contract.
+ */
+export const submitSkillsProof = async (contractAddress: string, skillsCredential: Uint8Array, secretKey: Uint8Array) => {
+    if (!isBrowser) return null;
+
+    const { findDeployedContract } = await import('@midnight-ntwrk/midnight-js-contracts');
+    const providers = await setupProviders();
+    const contractMod = await import('../managed/proof-hire/contract/index');
+
+    const deployed = await (findDeployedContract as any)(providers, {
+      compiledContract: {
+          Contract: contractMod.Contract,
+          ledger: contractMod.ledger,
+          pureCircuits: contractMod.pureCircuits,
+          contractReferenceLocations: contractMod.contractReferenceLocations
+        } as any,
+      contractAddress,
+      privateStateId: 'proofhire-private-state-v1',
+      witnesses: {
+          localSecretKey: (witnessContext: any) => [witnessContext.privateState, secretKey],
+          getSkillsCredential: (witnessContext: any) => [witnessContext.privateState, skillsCredential],
+      }
+    });
+
+    return await (deployed.callTx as any).submitSkillsProof();
+};
+
+/**
+ * Submits an experience proof to the contract.
+ */
+export const submitExperienceProof = async (contractAddress: string, experienceCredential: Uint8Array, secretKey: Uint8Array) => {
+    if (!isBrowser) return null;
+
+    const { findDeployedContract } = await import('@midnight-ntwrk/midnight-js-contracts');
+    const providers = await setupProviders();
+    const contractMod = await import('../managed/proof-hire/contract/index');
+
+    const deployed = await (findDeployedContract as any)(providers, {
+      compiledContract: {
+          Contract: contractMod.Contract,
+          ledger: contractMod.ledger,
+          pureCircuits: contractMod.pureCircuits,
+          contractReferenceLocations: contractMod.contractReferenceLocations
+        } as any,
+      contractAddress,
+      privateStateId: 'proofhire-private-state-v1',
+      witnesses: {
+          localSecretKey: (witnessContext: any) => [witnessContext.privateState, secretKey],
+          getExperienceCredential: (witnessContext: any) => [witnessContext.privateState, experienceCredential],
+      }
+    });
+
+    return await (deployed.callTx as any).submitExperienceProof();
+};
+
+/**
+ * Saves the CV, moving it from DRAFT to LIVE.
+ */
+export const saveCV = async (contractAddress: string, secretKey: Uint8Array) => {
+    if (!isBrowser) return null;
+
+    const { findDeployedContract } = await import('@midnight-ntwrk/midnight-js-contracts');
+    const providers = await setupProviders();
+    const contractMod = await import('../managed/proof-hire/contract/index');
+
+    const deployed = await (findDeployedContract as any)(providers, {
+      compiledContract: {
+          Contract: contractMod.Contract,
+          ledger: contractMod.ledger,
+          pureCircuits: contractMod.pureCircuits,
+          contractReferenceLocations: contractMod.contractReferenceLocations
+        } as any,
+      contractAddress,
+      privateStateId: 'proofhire-private-state-v1',
+      witnesses: {
+          localSecretKey: (witnessContext: any) => [witnessContext.privateState, secretKey],
+      }
+    });
+
+    return await (deployed.callTx as any).saveCV();
+};
+
+/**
+ * Verifies a specific school proof using the ZK circuit.
+ */
+export const verifySchoolProof = async (contractAddress: string, commitment: Uint8Array) => {
   if (!isBrowser) return false;
 
   const { findDeployedContract } = await import('@midnight-ntwrk/midnight-js-contracts');
   const providers = await setupProviders();
 
   // Dynamic import with verification
-  const contractMod = await import('../managed/cv-proof/contract/contract/index');
+  const contractMod = await import('../managed/proof-hire/contract/index');
   if (!contractMod || !contractMod.Contract) {
     throw new Error('Contract module failed to initialize correctly.');
   }
@@ -193,15 +283,21 @@ export const verifyCVClaim = async (contractAddress: string, expectedHash: Uint8
       contractReferenceLocations: contractMod.contractReferenceLocations
     } as any,
     contractAddress,
-    privateStateId: 'cv-private-state-v1',
+    privateStateId: 'proofhire-private-state-v1',
   });
 
   try {
-    // This calls the ZK circuit verifyHash
-    const result = await (deployed.callTx as any).verifyHash(expectedHash);
+    const result = await (deployed.callTx as any).verifySchoolProof(commitment);
     return !!result;
   } catch (e) {
     console.error('Verification failed:', e);
     return false;
   }
+};
+
+/**
+ * Verifies a specific claim using the ZK circuit. (Legacy for compatibility)
+ */
+export const verifyCVClaim = async (contractAddress: string, expectedHash: Uint8Array) => {
+    return verifySchoolProof(contractAddress, expectedHash);
 };
