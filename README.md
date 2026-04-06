@@ -1,84 +1,107 @@
-# ProofHire: Talent Credential Protocol
+# ProofHire Protocol
 
-**A Privacy-First Recruitment Network on Midnight.**
+**The First Privacy-First Decentralized Recruitment Network on Midnight.**
 
-ProofHire leverages Zero-Knowledge Proofs (ZKP) and WASM-based proving to allow candidates to verify their qualifications (Education, Skills, Experience) without revealing private details.
+ProofHire allows candidates to prove their qualifications, skills, and experience without revealing a single byte of Personal Identifiable Information (PII). Powered by Zero-Knowledge Proofs (ZKP) on the Midnight Network.
 
-## 🚀 The ZKP Advantage
+## 🚀 Vision
 
-Traditional recruitment requires sharing full CVs just for initial screening. ProofHire changes this:
-- **Talent** generates proofs locally in the browser.
-- **Midnight Network** stores only the cryptographic commitments.
-- **Recruiters** verify proofs on-chain with mathematical certainty.
+Traditional hiring is broken. Candidates must expose their full identities (CVs, LinkedIn, Degrees) just to verify they meet basic job requirements. ProofHire flips the script:
+
+1.  **Candidate Input**: Enter data locally. It stays in your browser.
+2.  **ZK Proof Generation**: Your browser generates a mathematical proof of your claim (e.g., "I have a CS Degree").
+3.  **On-Chain Anchoring**: Only the proof commitment is stored on the Midnight ledger.
+4.  **Recruiter Verification**: Recruiters verify your claims against the ledger with cryptographic certainty. No PII is exchanged until you decide to reveal it.
 
 ## 🛠 Tech Stack
 
-- **Blockchain**: Midnight Network (Preview Testnet)
-- **Smart Contracts**: Compact (ZK-Native)
-- **Proving Engine**: `@midnight-ntwrk/wallet-sdk-capabilities` (WASM-based Proving)
-- **Wallet**: Midnight Lace
-- **Frontend**: Next.js, Tailwind CSS, Framer Motion
+-   **Blockchain**: Midnight Network (Cardano sidechain)
+-   **Smart Contracts**: Compact v0.22.0
+-   **ZK Proofs**: Client-side proving via Midnight SDK
+-   **Wallet**: Lace Wallet (Midnight Preview)
+-   **Frontend**: Next.js 16, Tailwind CSS, Framer Motion
+-   **Encryption**: AES-256 for local browser storage
 
 ## 📋 Features
 
-- **Multi-Step Onboarding**: Blocking ZKP generation for each credential step.
-- **WASM Proving**: Proving happens directly in the browser (no proof server required).
-- **Sovereign Marketplace**: Discover candidates verified by the Midnight ledger.
-- **On-Chain Actions**: Trigger "Hire" events directly on the blockchain.
+-   **Sovereign Identity**: Your wallet address is your ID.
+-   **Multi-Step Onboarding**: Comprehensive talent profile wizard.
+-   **Proof Factory**: Generate proofs for degrees, years of experience, and technical skills.
+-   **Recruiter Dashboard**: Create requirements and verify candidate claims.
+-   **Selective Reveal**: Encrypted communication channel for optional data sharing.
+-   **NFT Badges**: Automatic badge minting for verified high-tier skills (Solidity, etc.).
 
-## 🔧 Setup & Installation
+## 🔧 Installation & Setup
 
 ### Prerequisites
-- Node.js v20+
-- [Midnight Lace Wallet](https://midnight.network/docs/developer-guides/lace-extension) (Set to **Preview Network**, Proof Server: **Remote**)
 
-### Deployment & Local Development
+-   [Node.js](https://nodejs.org/) (v20+)
+-   [Midnight Lace Wallet](https://chromewebstore.google.com/detail/lace/gafhhkghbfjjkeiendhlofajokpaflmk) (Connected to Preview Network)
+-   [Midnight SDK](https://midnight.network/docs/developer-guides/sdk-setup)
 
-1. **Install Dependencies**
-   ```bash
-   npm install
-   ```
+### Configuring Lace Wallet for Preview Network
 
-2. **Compile Smart Contract (Compact)**
-   The project uses a custom `proof-hire.compact` contract.
-   ```bash
-   # From the project root
-   compact compile contracts/proof-hire.compact contracts/managed/proof-hire
-   ```
+1. Open the Lace wallet extension in Chrome
+2. Go to Settings > Midnight
+3. Set Network to Preview
+4. Select Proof Server: Remote
+5. Click Save configuration
+6. Refresh the ProofHire app page
+7. Click Connect Lace Wallet
 
-3. **Environment Variables**
-   Create a `.env.local` file in the root:
-   ```env
-   # Midnight Testnet Configuration
-   NEXT_PUBLIC_MIDNIGHT_NETWORK=preview
-   NEXT_PUBLIC_INDEXER_URI=https://indexer.preview-testnet.midnight.network/v1/graphql
-   NEXT_PUBLIC_NODE_URI=https://rpc.preview-testnet.midnight.network
-   NEXT_PUBLIC_PROOF_SERVER_URI=http://localhost:8080
-   ```
+### Getting Test Tokens
 
-4. **Run Development Server**
-   ```bash
-   npm run dev
-   ```
+1. Visit https://faucet.preview.midnight.network to get tNIGHT tokens
+2. Open Lace wallet, go to Tokens, click Generate tDUST for transaction fees
 
-5. **Build for Production**
-   If building for Vercel or production, use the custom webpack flag to handle the Midnight SDK's Node.js dependencies:
-   ```bash
-   npm run build -- --webpack
-   ```
+### Local Development
 
-## 🛠 Project Structure
+1.  **Clone the repository**
+    ```bash
+    git clone https://github.com/your-repo/proof-hire.git
+    cd proof-hire
+    ```
 
-- `contracts/`: Pure Compact source (`.compact`) and compiled artifacts.
-- `lib/`: Midnight SDK initialization, WASM proving services, and contract utilities.
-- `app/talent/onboarding/`: 7-step wizard for candidate data entry and ZKP generation.
-- `app/marketplace/`: Recruiter dashboard for proof verification and candidate discovery.
+2.  **Install dependencies**
+    ```bash
+    npm install
+    ```
 
-## 🔒 Security & Privacy
+3.  **Compile Smart Contracts**
+    ```bash
+    compact compile contracts/proof-hire.compact managed/proof-hire/contract
+    ```
 
-- **Zero-Knowledge**: No PII (Full Name, School Name, Skills) is ever sent to the blockchain. Only cryptographic commitments are stored.
-- **Local Storage**: Temporary PII is stored in the browser's `localStorage` and is cleared upon onboarding completion or session reset.
-- **WASM Proving**: Unlike traditional dApps that rely on remote proof servers, ProofHire uses `makeWasmProvingService()` to generate proofs entirely within the user's browser, ensuring maximum privacy.
+4.  **Setup Environment Variables**
+    Create a `.env.local` file:
+    ```env
+    NEXT_PUBLIC_ENCRYPTION_KEY=your_secret_32_char_key
+    NEXT_PUBLIC_MIDNIGHT_NETWORK=preview
+    ```
+
+5.  **Run Development Server**
+    ```bash
+    npm run dev
+    ```
+
+6.  **Visit [http://localhost:3000](http://localhost:3000)**
+
+## 🛡 Security & Privacy
+
+-   **Zero Raw Data On-Chain**: We never send names, emails, or exact CV data to the blockchain.
+-   **Local Proving**: Proofs are generated on the user's machine, not a server.
+-   **Encrypted Storage**: Local browser data is secured with AES-256. If you clear your browser data, your PII is gone forever (sovereign ownership).
+
+## 🚀 Deployment (Vercel)
+
+ProofHire is optimized for Vercel.
+
+1.  Push your code to GitHub.
+2.  Connect the repository to Vercel.
+3.  Add the environment variables from `.env.example`.
+4.  Deployment will automatically use the optimized Webpack configuration for Midnight WASM modules.
 
 ---
-Built for the Midnight Ecosystem. "Mathematically Certain, Privacy by Design."
+
+Built for the **Midnight Hackathon 2026** by Jules.
+"Mathematically certain, Privacy by default."

@@ -23,7 +23,6 @@
     "@midnight-ntwrk/onchain-runtime-v2": "^2.0.1",
     "@midnight-ntwrk/onchain-runtime-v3": "^3.0.0",
     "@midnight-ntwrk/wallet-sdk-address-format": "^3.1.0",
-    "@midnight-ntwrk/wallet-sdk-capabilities": "^3.2.0",
     "@types/crypto-js": "^4.2.2",
     "buffer": "^6.0.3",
     "clsx": "^2.1.1",
