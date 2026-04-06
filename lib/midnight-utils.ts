@@ -3,17 +3,74 @@
 // Advanced Midnight SDK Utilities for ProofHire
 // Handles Contract Deployment, ZKP Generation, and Ledger Interactions
 
+/**
+ * FIXED VERSION with all declarations moved to top level
+ * and dynamic imports handled within functions to avoid TDZ.
+ */
+
 const isBrowser = typeof window !== 'undefined';
 
+// --- Types ---
+export type ContractProviders = any;
+
+// --- Helper Functions ---
+
+/**
+ * Wait for Midnight Lace wallet to be available in the window object.
+ * Supports v0.4.x UUID-style keys.
+ */
+export const waitForWallet = (): Promise<string | null> => {
+  return new Promise((resolve) => {
+    if (!isBrowser) return resolve(null);
+
+    let attempts = 0;
+    const interval = setInterval(() => {
+      const midnight = (window as any).midnight;
+      if (midnight) {
+        // Try to find mnLace or any UUID key
+        const keys = Object.keys(midnight);
+        const laceKey = keys.find(k => k === 'mnLace' || /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(k));
+        if (laceKey) {
+            clearInterval(interval);
+            resolve(laceKey);
+        }
+      }
+      attempts++;
+      if (attempts > 20) {
+        clearInterval(interval);
+        resolve(null);
+      }
+    }, 500);
+  });
+};
+
+/**
+ * Initialize and setup Midnight Providers using dynamic configuration from the wallet.
+ */
 export const setupProviders = async () => {
   if (!isBrowser) throw new Error('Midnight SDK requires a browser environment.');
 
+  // Wait for wallet first
+  const walletKey = await waitForWallet();
+  if (!walletKey) {
+    throw new Error('Midnight Lace wallet not detected. Please install and refresh.');
+  }
+
+  // Import SDK components
+  const { setNetworkId } = await import("@midnight-ntwrk/midnight-js-network-id");
   const { FetchZkConfigProvider } = await import("@midnight-ntwrk/midnight-js-fetch-zk-config-provider");
   const { httpClientProofProvider } = await import("@midnight-ntwrk/midnight-js-http-client-proof-provider");
   const { indexerPublicDataProvider } = await import("@midnight-ntwrk/midnight-js-indexer-public-data-provider");
   const { levelPrivateStateProvider } = await import("@midnight-ntwrk/midnight-js-level-private-state-provider");
-  const { setNetworkId } = await import("@midnight-ntwrk/midnight-js-network-id");
+  const { httpClientProofProvider } = await import("@midnight-ntwrk/midnight-js-http-client-proof-provider");
 
+  // Connect to wallet and get config
+  const midnight = (window as any).midnight![walletKey];
+  const connectedApi = await (midnight as any).connect('preview');
+  const uris = await (connectedApi as any).getConfiguration();
+  const walletState = await (connectedApi as any).state();
+
+  // Ensure network ID is set correctly
   // Set network to Preview/Testnet
   try {
     (setNetworkId as any)('testnet');
@@ -41,7 +98,7 @@ export const setupProviders = async () => {
 
   return {
     privateStateProvider: levelPrivateStateProvider({
-      privateStateStoreName: "proofhire-private-state-v1",
+      privateStateStoreName: "proofhire-private-state-v3",
     }),
     zkConfigProvider: new FetchZkConfigProvider(
       window.location.origin,
@@ -98,7 +155,7 @@ export const deployAndAnchorCV = async (name: string, piiHash: Uint8Array) => {
     } as any,
     privateStateId: 'cv-private-state-v1',
     initialPrivateState: {},
-    witnesses: witnesses,
+    witnesses,
   });
 
   // Call submitCV circuit to anchor the name on-chain

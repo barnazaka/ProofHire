@@ -1,0 +1,116 @@
+pragma language_version >= 0.22;
+
+import CompactStandardLibrary;
+
+export enum CVStatus {
+    DRAFT,
+    LIVE
+}
+
+export ledger cvOwner: Bytes<32>;
+export ledger proofOfSchool: Bytes<32>;
+export ledger proofOfSkills: Bytes<32>;
+export ledger proofOfExperience: Bytes<32>;
+export ledger proofOfCertifications: Bytes<32>;
+export ledger cvStatus: CVStatus;
+export ledger round: Counter;
+
+witness localSecretKey(): Bytes<32>;
+witness getSchoolCredential(): Bytes<32>;
+witness getSkillsCredential(): Bytes<32>;
+witness getExperienceCredential(): Bytes<32>;
+witness getCertificationsCredential(): Bytes<32>;
+
+constructor() {
+    const sk = localSecretKey();
+    cvOwner = disclose(publicKey(sk, round as Field));
+    cvStatus = CVStatus.DRAFT;
+}
+
+circuit publicKey(sk: Bytes<32>, round: Field): Bytes<32> {
+    return persistentHash<Vector<3, Bytes<32>>>(
+        [pad(32, "talent-cv:pk:"), round as Bytes<32>, sk]
+    );
+}
+
+circuit commitCredential(credential: Bytes<32>, sk: Bytes<32>): Bytes<32> {
+    return persistentHash<Vector<2, Bytes<32>>>([credential, sk]);
+}
+
+export circuit submitSchoolProof(): [] {
+    const sk = localSecretKey();
+    const pk = publicKey(sk, round as Field);
+    assert(cvOwner == pk, "Not authorized");
+    assert(cvStatus == CVStatus.DRAFT, "CV is already live");
+    const school = getSchoolCredential();
+    const commitment = commitCredential(school, sk);
+    proofOfSchool = disclose(commitment);
+}
+
+export circuit submitSkillsProof(): [] {
+    const sk = localSecretKey();
+    const pk = publicKey(sk, round as Field);
+    assert(cvOwner == pk, "Not authorized");
+    assert(cvStatus == CVStatus.DRAFT, "CV is already live");
+    const skills = getSkillsCredential();
+    const commitment = commitCredential(skills, sk);
+    proofOfSkills = disclose(commitment);
+}
+
+export circuit submitExperienceProof(): [] {
+    const sk = localSecretKey();
+    const pk = publicKey(sk, round as Field);
+    assert(cvOwner == pk, "Not authorized");
+    assert(cvStatus == CVStatus.DRAFT, "CV is already live");
+    const experience = getExperienceCredential();
+    const commitment = commitCredential(experience, sk);
+    proofOfExperience = disclose(commitment);
+}
+
+export circuit submitCertificationsProof(): [] {
+    const sk = localSecretKey();
+    const pk = publicKey(sk, round as Field);
+    assert(cvOwner == pk, "Not authorized");
+    assert(cvStatus == CVStatus.DRAFT, "CV is already live");
+    const certs = getCertificationsCredential();
+    const commitment = commitCredential(certs, sk);
+    proofOfCertifications = disclose(commitment);
+}
+
+export circuit saveCV(): [] {
+    const sk = localSecretKey();
+    const pk = publicKey(sk, round as Field);
+    assert(cvOwner == pk, "Not authorized");
+    assert(cvStatus == CVStatus.DRAFT, "CV is already live");
+    assert(proofOfSchool != pad(32, ""), "School proof required");
+    assert(proofOfSkills != pad(32, ""), "Skills proof required");
+    assert(proofOfExperience != pad(32, ""), "Experience proof required");
+    cvStatus = disclose(CVStatus.LIVE);
+}
+
+export circuit verifySchoolProof(commitment: Bytes<32>): Boolean {
+    assert(cvStatus == CVStatus.LIVE, "CV is not live");
+    return disclose(proofOfSchool == commitment);
+}
+
+export circuit verifySkillsProof(commitment: Bytes<32>): Boolean {
+    assert(cvStatus == CVStatus.LIVE, "CV is not live");
+    return disclose(proofOfSkills == commitment);
+}
+
+export circuit verifyExperienceProof(commitment: Bytes<32>): Boolean {
+    assert(cvStatus == CVStatus.LIVE, "CV is not live");
+    return disclose(proofOfExperience == commitment);
+}
+
+export circuit verifyCertificationsProof(commitment: Bytes<32>): Boolean {
+    assert(cvStatus == CVStatus.LIVE, "CV is not live");
+    return disclose(proofOfCertifications == commitment);
+}
+
+export circuit clearProfile(): [] {
+    const sk = localSecretKey();
+    const pk = publicKey(sk, round as Field);
+    assert(cvOwner == pk, "Not authorized");
+    cvStatus = disclose(CVStatus.DRAFT);
+}
