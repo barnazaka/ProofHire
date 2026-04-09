@@ -1,4 +1,4 @@
-# ProofHire Protocol
+# ProofHire Protocol Outdated...... Theres a new one
 
 **The First Privacy-First Decentralized Recruitment Network on Midnight.**
 
